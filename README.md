@@ -1,3 +1,4 @@
+<img width="225" height="225" alt="CEFUSA logo" src="https://github.com/user-attachments/assets/b3e968d0-2c5e-4fab-9d7e-3790ea6cb518" />
 
 
 # 🏟️ Proyecto Web Application - CEFUSA
@@ -17,7 +18,7 @@ El propósito principal de este proyecto es **modernizar y centralizar la gesti�
 ---
 
 ## ⚙️ Funcionalidades principales
-
+    
 La aplicación web contará con los siguientes módulos clave:
 
 ### 👥 Gestión de Jugadores
