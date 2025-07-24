@@ -1,9 +1,9 @@
 <img width="225" height="225" alt="CEFUSA logo" src="https://github.com/user-attachments/assets/b3e968d0-2c5e-4fab-9d7e-3790ea6cb518" />
 
 
-# 🏟️ Proyecto Web Application - CEFUSA
+#  Proyecto Web Application - CEFUSA
 
-Bienvenido al repositorio oficial del proyecto de desarrollo de una **aplicación web para la escuela de fútbol CEFUSA**. Este espacio está destinado a documentar y alojar todo el código, estructura de base de datos, funcionalidades y procesos que conforman el nuevo **sistema de información del club**.
+Este es el repositorio del proyecto de desarrollo de una **aplicación web para la escuela de fútbol CEFUSA**. Donde vamos a documentar y alojar todo el código, estructura de base de datos, funcionalidades y procesos que conforman el nuevo sistema del club.
 
 ---
 
@@ -19,7 +19,7 @@ El propósito principal de este proyecto es **modernizar y centralizar la gesti�
 
 ## ⚙️ Funcionalidades principales
     
-La aplicación web contará con los siguientes módulos clave:
+La aplicación web tendrá las siguientes funcionalidades principales:
 
 ### 👥 Gestión de Jugadores
 - Registro y actualización de información personal.
