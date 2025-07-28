@@ -47,4 +47,4 @@ Este proyecto es desarrollado por estudiantes de Ingeniería de Sistemas de la U
 
 ## 📌 Sobre CEFUSA
 
-**CEFUSA (Centro de Formación de Fútbol Sala)** es una escuela deportiva enfocada en la formación integral de jóvenes deportistas. Ofrece entrenamientos, participación en torneos y desarrollo personal a través del deporte.
+**CEFUSA (Club Escuela de Futbol Sabaneta)** es una escuela deportiva enfocada en la formación integral de jóvenes deportistas. Ofrece entrenamientos, participación en torneos y desarrollo personal a través del deporte.
