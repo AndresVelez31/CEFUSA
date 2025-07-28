@@ -27,26 +27,15 @@ La aplicación web tendrá las siguientes funcionalidades principales:
 - Seguimiento de historial deportivo.
 
 ### 💳 Control de Pagos
-- Registro y verificación de pagos realizados por los jugadores o acudientes.
+- Registro de pagos realizados por los jugadores o acudientes.
 
 ### 📅 Planificación Deportiva
 - Creación y visualización de horarios de entrenamientos y partidos.
-- Asignación de espacios deportivos (canchas, sedes).
 
 ### 🗂️ Administración del Club
 - Gestión de usuarios y roles (administradores, entrenadores, acudientes).
 - Información general del club.
 - Módulo de reportes e indicadores clave.
-
----
-
-## 🛠️ Tecnologías utilizadas
-
-- **Frontend:** HTML5, CSS3, JavaScript (React, Angular o similar)
-- **Backend:** Node.js / Django / Laravel
-- **Base de Datos:** PostgreSQL / MongoDB
-- **Control de versiones:** Git + GitHub
-- **Despliegue:** Render / Vercel / Heroku
 
 ---
 
