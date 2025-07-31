@@ -1,50 +1,48 @@
 <img width="225" height="225" alt="CEFUSA logo" src="https://github.com/user-attachments/assets/b3e968d0-2c5e-4fab-9d7e-3790ea6cb518" />
 
 
-#  Proyecto Web Application - CEFUSA
+#  Web Application Project - CEFUSA
 
-Este es el repositorio del proyecto de desarrollo de una **aplicación web para la escuela de fútbol CEFUSA**. Donde vamos a documentar y alojar todo el código, estructura de base de datos, funcionalidades y procesos que conforman el nuevo sistema del club.
-
----
-
-## 📌 Objetivo del proyecto
-
-El propósito principal de este proyecto es **modernizar y centralizar la gestión de información** de la escuela de fútbol CEFUSA. Actualmente, los datos se almacenan de forma manual en archivos de Excel, lo que limita el acceso, la seguridad y la eficiencia del manejo de la información. Con esta nueva plataforma buscamos:
-
-- Mejorar la organización interna del club.
-- Digitalizar los procesos administrativos y deportivos.
-- Ofrecer una interfaz amigable para entrenadores, administrativos y padres de familia.
+This is the repository for the development project of a **web application for the CEFUSA soccer school**. Here we will document and host all the code, database structure, functionalities, and processes that make up the club's new system.
 
 ---
 
-## ⚙️ Funcionalidades principales
-    
-La aplicación web tendrá las siguientes funcionalidades principales:
+## 📌 Project objective
 
-### 👥 Gestión de Jugadores
-- Registro y actualización de información personal.
-- Asociación a grupos de entrenamiento por categoría de edad.
-- Seguimiento de historial deportivo.
+The main purpose of this project is to **modernize and centralize information management** at the CEFUSA soccer school. Currently, data is stored manually in Excel files, which limits access, security, and efficiency in information management. With this new platform, we seek to:
 
-### 💳 Control de Pagos
-- Registro de pagos realizados por los jugadores o acudientes.
-
-### 📅 Planificación Deportiva
-- Creación y visualización de horarios de entrenamientos y partidos.
-
-### 🗂️ Administración del Club
-- Gestión de usuarios y roles (administradores, entrenadores, acudientes).
-- Información general del club.
-- Módulo de reportes e indicadores clave.
+- Improve the club's internal organization.
+- Digitize administrative and sports processes.
+- Offer a user-friendly interface for coaches, administrators, and parents.
 
 ---
 
-## 👨‍💻 Contribuciones
+## ⚙️ Main features
 
-Este proyecto es desarrollado por estudiantes de Ingeniería de Sistemas de la Universidad EAFIT con el objetivo de aplicar conocimientos en bases de datos, desarrollo web y gestión de software.
+The web application will have the following main features:
+
+### 👥 Player Management
+- Registration and updating of personal information.
+- Association with training groups by age category.
+
+### 💳 Payment Control
+- Record payments made by players or guardians.
+
+### 🗂️ Club Administration
+- User and role management (administrators, coaches, guardians).
+- General club information.
+- Reporting and indicator module.
 
 ---
 
-## 📌 Sobre CEFUSA
+## 👨‍💻 Contributions
 
-**CEFUSA (Club Escuela de Futbol Sabaneta)** es una escuela deportiva enfocada en la formación integral de jóvenes deportistas. Ofrece entrenamientos, participación en torneos y desarrollo personal a través del deporte.
+This project is developed by Systems Engineering students at EAFIT University with the aim of applying knowledge in databases, web development, and software management.
+
+---
+
+## 📌 About CEFUSA
+
+**CEFUSA (Club Escuela de Futbol Sabaneta)** is a sports school focused on the comprehensive training of young athletes. It offers training, participation in tournaments, and personal development through sports.
+
+Translated with DeepL.com (free version)
