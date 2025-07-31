@@ -45,4 +45,3 @@ This project is developed by Systems Engineering students at EAFIT University wi
 
 **CEFUSA (Club Escuela de Futbol Sabaneta)** is a sports school focused on the comprehensive training of young athletes. It offers training, participation in tournaments, and personal development through sports.
 
-Translated with DeepL.com (free version)
