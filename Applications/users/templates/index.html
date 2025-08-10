@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %} Usuarios {% endblock %}
+
+{% block content %}
+
+
+<div class="card">
+    <div class="card-header">Listar Usuarios</div>
+    <div class="card-body">
+        <h4 class="card-title">Usuarios</h4>
+        
+        <div
+            class="table-responsive"
+        >
+            <table
+                class="table table-primary"
+            >
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Tipo de Identificación</th>
+                        <th scope="col">Número de Identificación</th>
+                        <th scope="col">Nombres</th>
+                        <th scope="col">Apellidos</th>
+                        <th scope="col">Ciudad de Residencia</th>
+                        <th scope="col">Dirección</th>
+                        <th scope="col">Correo Electrónico</th>
+                        <th scope="col">Teléfono</th>
+                        <th scope="col">Tipo de Régimen</th>
+                        <th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="">
+                        <td scope="row">0</td>
+                        <td>Cedula de Ciudadania</td>
+                        <td>I123456789</td>
+                        <td>Juan</td>
+                        <td>Perez</td>
+                        <td>Bogotá</td>
+                        <td>Calle 123 # 45-67</td>
+                        <td>juan.perez@example.com</td>
+                        <td>3001234567</td>
+                        <td>No Responsable de Iva</td>
+                        <td>Editar | Eliminar </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+    <div class="card-footer text-muted"></div>
+</div>
+
+
+
+{% endblock %}

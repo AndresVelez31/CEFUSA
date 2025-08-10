@@ -4,4 +4,4 @@ from django.http import HttpResponse
 # Create your views here.
 
 def usersManagement(request):
-    return render(request, 'usersManagement.html')
+    return render(request, 'index.html')
