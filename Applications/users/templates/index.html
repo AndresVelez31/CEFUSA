@@ -3,52 +3,217 @@
 {% block title %} Usuarios {% endblock %}
 
 {% block content %}
+
 <div class="card">
-    <div class="card-header">Listar Usuarios</div>
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Gestión de Usuarios</h4>
+            <div class="btn-group" role="group">
+                <a href="{% url 'users:busqueda_avanzada' %}" class="btn btn-info btn-sm">🔍 Búsqueda Avanzada</a>
+                <a href="#" class="btn btn-success btn-sm">+ Nuevo Acudiente</a>
+                <a href="#" class="btn btn-primary btn-sm">+ Nuevo Jugador</a>
+            </div>
+        </div>
+    </div>
+    
     <div class="card-body">
-        <h4 class="card-title">Usuarios</h4>
-        
-        <div class="table-responsive">
-            <table class="table table-primary">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Tipo de Identificación</th>
-                        <th scope="col">Número de Identificación</th>
-                        <th scope="col">Nombres</th>
-                        <th scope="col">Apellidos</th>
-                        <th scope="col">Ciudad de Residencia</th>
-                        <th scope="col">Dirección</th>
-                        <th scope="col">Correo Electrónico</th>
-                        <th scope="col">Teléfono</th>
-                        <th scope="col">Tipo de Régimen</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for a in acudientes %}
-                    <tr>
-                        <td scope="row">{{ a.id }}</td>
-                        <td>{{ a.tipo_doc }}</td>
-                        <td>{{ a.identificacion }}</td>
-                        <td>{{ a.nombre }}</td>
-                        <td>{{ a.apellidos }}</td>
-                        <td>{{ a.ciudad }}</td>
-                        <td>{{ a.direccion }}</td>
-                        <td>{{ a.correo }}</td>
-                        <td>{{ a.telefono }}</td>
-                        <td>{{ a.tipo_regimen }}</td>
-                        <td>Editar | Eliminar</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="11">No hay usuarios registrados.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <!-- Filtros globales -->
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <form method="GET" id="filtrosForm" class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Búsqueda general</label>
+                        <input type="text" class="form-control" name="search" 
+                               value="{{ request.GET.search }}" 
+                               placeholder="Nombre, apellido, identificación...">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Tipo de documento</label>
+                        <select class="form-select" name="tipo_doc">
+                            <option value="">Todos</option>
+                            {% for tipo in tipo_documentos %}
+                            <option value="{{ tipo }}" {% if request.GET.tipo_doc == tipo or request.GET.tipo_doc == get_tipo_doc_display %}selected{% endif %}>
+                                {{ get_tipo_doc_display }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Ciudad</label>
+                        <select class="form-select" name="ciudad">
+                            <option value="">Todas</option>
+                            {% for ciudad in ciudades_disponibles %}
+                            <option value="{{ ciudad }}" {% if request.GET.ciudad == ciudad %}selected{% endif %}>
+                                {{ ciudad }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Tipo de usuario</label>
+                        <select class="form-select" name="tipo_usuario" id="tipoUsuarioSelect">
+                            <option value="">Ambos</option>
+                            <option value="acudientes" {% if request.GET.tipo_usuario == 'acudientes' %}selected{% endif %}>Solo Acudientes</option>
+                            <option value="jugadores" {% if request.GET.tipo_usuario == 'jugadores' %}selected{% endif %}>Solo Jugadores</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Filtrar</button>
+                            <a href="{% url 'users:index' %}" class="btn btn-outline-secondary">Limpiar</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" id="userTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="acudientes-tab" data-bs-toggle="tab" 
+                        data-bs-target="#acudientes" type="button" role="tab">
+                    Acudientes ({{ acudientes.count }})
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="jugadores-tab" data-bs-toggle="tab" 
+                        data-bs-target="#jugadores" type="button" role="tab">
+                    Jugadores ({{ jugadores.count }})
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab content -->
+        <div class="tab-content mt-3" id="userTabContent">
+            <!-- Acudientes Tab -->
+            <div class="tab-pane fade show active" id="acudientes" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-primary">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Tipo Doc</th>
+                                <th scope="col">Identificación</th>
+                                <th scope="col">Nombres</th>
+                                <th scope="col">Apellidos</th>
+                                <th scope="col">Ciudad</th>
+                                <th scope="col">Direccion</th>
+                                <th scope="col">Correo</th>
+                                <th scope="col">Teléfono</th>
+                                <th scope="col">Régimen</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for acudiente in acudientes %}
+                            <tr>
+                                <td>{{ acudiente.id }}</td>
+                                <td>{{ acudiente.get_tipo_doc_display }}</td>
+                                <td>{{ acudiente.identificacion }}</td>
+                                <td>{{ acudiente.nombre }}</td>
+                                <td>{{ acudiente.apellidos }}</td>
+                                <td>{{ acudiente.ciudad }}</td>
+                                <td>{{ acudiente.direccion }}</td>
+                                <td>{{ acudiente.correo }}</td>
+                                <td>{{ acudiente.telefono }}</td>
+                                <td>{{ acudiente.get_tipo_regimen_display }}</td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-warning">Editar</a>
+                                    <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="10" class="text-center">No hay acudientes registrados</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Jugadores Tab -->
+            <div class="tab-pane fade" id="jugadores" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-success">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Tipo Doc</th>
+                                <th scope="col">Identificación</th>
+                                <th scope="col">Nombres</th>
+                                <th scope="col">Apellidos</th>
+                                <th scope="col">F. Nacimiento</th>
+                                <th scope="col">Ciudad</th>
+                                <th scope="col">Institución</th>
+                                <th scope="col">Acudiente</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for jugador in jugadores %}
+                            <tr>
+                                <td>{{ jugador.id }}</td>
+                                <td>{{ jugador.get_tipo_doc_display }}</td>
+                                <td>{{ jugador.identificacion }}</td>
+                                <td>{{ jugador.nombre }}</td>
+                                <td>{{ jugador.apellido }}</td>
+                                <td>{{ jugador.fecha_nacimiento }}</td>
+                                <td>{{ jugador.ciudad }}</td>
+                                <td>{{ jugador.institucion_educativa }}</td>
+                                <td>{{ jugador.acudiente.nombre }} {{ jugador.acudiente.apellidos }}</td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-warning">Editar</a>
+                                    <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="10" class="text-center">No hay jugadores registrados</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
     <div class="card-footer text-muted"></div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para cambiar automáticamente de pestaña según el filtro
+    const tipoUsuarioSelect = document.getElementById('tipoUsuarioSelect');
+    const acudientesTab = document.getElementById('acudientes-tab');
+    const jugadoresTab = document.getElementById('jugadores-tab');
+    
+    tipoUsuarioSelect.addEventListener('change', function() {
+        if (this.value === 'acudientes') {
+            acudientesTab.click();
+        } else if (this.value === 'jugadores') {
+            jugadoresTab.click();
+        }
+    });
+    
+    // Auto-submit en tiempo real (opcional)
+    const searchInput = document.querySelector('input[name="search"]');
+    let searchTimeout;
+    
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            document.getElementById('filtrosForm').submit();
+        }, 1000); // Espera 1000ms después de que el usuario deje de escribir
+    });
+    
+    // Cambiar pestaña activa según el tipo de usuario filtrado
+    const tipoUsuario = new URLSearchParams(window.location.search).get('tipo_usuario');
+    if (tipoUsuario === 'jugadores') {
+        jugadoresTab.click();
+    }
+});
+</script>
+
 {% endblock %}
