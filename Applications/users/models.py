@@ -6,18 +6,21 @@ class Acudiente(models.Model):
     id = models.AutoField(primary_key=True, db_column="idAcudiente")
 
     class TipoDocumento(models.TextChoices):
-        CC = "CC", "Cédula de ciudadanía"
-        CE = "CE", "Cédula de extranjería"
-        PA = "PA", "Pasaporte"
-        PEP = "PEP", "Permiso especial de permanencia"
-        OTRO = "OTRO", "Otro"
+        CC = "Cédula de ciudadanía", "Cédula de ciudadanía"
+        CE = "Cédula de extranjería", "Cédula de extranjería"
+        PA = "Pasaporte", "Pasaporte"
+        PEP = "Permiso especial de permanencia", "Permiso especial de permanencia"
+        OTRO = "Otro", "Otro"
 
     class TipoRegimen(models.TextChoices):
-        RESP_IVA = "RESP_IVA", "Responsable de IVA"
-        NO_RESP_IVA = "NO_RESP_IVA", "No responsable de IVA"
+        RESP_IVA = "Responsable de IVA", "Responsable de IVA"
+        NO_RESP_IVA = "No responsable de IVA", "No responsable de IVA"
 
-    tipo_doc = models.CharField(max_length=20, db_column="tipoDoc",
-                                choices=TipoDocumento.choices)
+    tipo_doc = models.CharField(
+        max_length=31, 
+        db_column="tipoDoc",
+        choices=TipoDocumento.choices)
+    
     identificacion = models.CharField(
         max_length=15,
         unique=True,
@@ -53,12 +56,12 @@ class Jugador(models.Model):
     id = models.AutoField(primary_key=True, db_column="idJugador")
 
     class TipoDocumento(models.TextChoices):
-        CC = "CC", "Cédula de ciudadanía"
-        TI = "TI", "Tarjeta de identidad"
-        RC = "RC", "Registro civil"
-        PA = "PA", "Pasaporte"
-        TEP = "TEP", "Tarjeta especial de permanencia"
-        TE = "TE", "Tarjeta de extranjería"
+        CC = "Cédula de ciudadanía", "Cédula de ciudadanía"
+        TI = "Tarjeta de identidad", "Tarjeta de identidad"
+        RC = "Registro civil", "Registro civil"
+        PA = "Pasaporte", "Pasaporte"
+        TEP = "Tarjeta especial de permanencia", "Tarjeta especial de permanencia"
+        TE = "Tarjeta de extranjería", "Tarjeta de extranjería"
 
     class Jornada(models.TextChoices):
         MANANA = "MANANA", "Mañana"
@@ -66,7 +69,7 @@ class Jugador(models.Model):
 
     nombre = models.CharField(max_length=45, db_column="nombre")
     apellido = models.CharField(max_length=45, db_column="apellido")
-    tipo_doc = models.CharField(max_length=20, db_column="tipoDoc",
+    tipo_doc = models.CharField(max_length=31, db_column="tipoDoc",
                                 choices=TipoDocumento.choices)
     identificacion = models.CharField(max_length=15, db_column="identificacion",
                                       validators=[MinLengthValidator(5)])

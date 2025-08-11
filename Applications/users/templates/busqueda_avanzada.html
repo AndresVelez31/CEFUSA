@@ -54,12 +54,14 @@
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <label class="form-label">Tipo Doc</label>
+                                <label class="form-label">Tipo de documento</label>
                                 <select class="form-select" name="tipo_doc">
                                     <option value="">Todos</option>
-                                    <option value="CC" {% if request.GET.tipo_doc == 'CC' %}selected{% endif %}>CC</option>
-                                    <option value="TI" {% if request.GET.tipo_doc == 'TI' %}selected{% endif %}>TI</option>
-                                    <option value="CE" {% if request.GET.tipo_doc == 'CE' %}selected{% endif %}>CE</option>
+                                    {% for tipo in tipos_doc_en_bd %}
+                                        <option value="{{ tipo }}" {% if request.GET.tipo_doc == tipo %}selected{% endif %}>
+                                            {{ tipo }}
+                                        </option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -120,10 +122,13 @@
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">Régimen Tributario</label>
-                                <select class="form-select" name="regimen">
+                                <select class="form-select" name="tipo_regimen">
                                     <option value="">Todos</option>
-                                    <option value="RESP_IVA" {% if request.GET.regimen == 'RESP_IVA' %}selected{% endif %}>Responsable IVA</option>
-                                    <option value="NO_RESP_IVA" {% if request.GET.regimen == 'NO_RESP_IVA' %}selected{% endif %}>No Responsable</option>
+                                    {% for valor in tipo_regimenes_en_bd %}
+                                        <option value="{{ valor }}" {% if request.GET.tipo_regimen == valor %}selected{% endif %}>
+                                            {{ valor }}
+                                        </option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </form>
@@ -224,5 +229,21 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Auto-submit en tiempo real (opcional)
+    const searchInput = document.querySelector('input[name="search"]');
+    let searchTimeout;
+    
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            document.getElementById('filtrosForm').submit();
+        }, 1000); // Espera 1000ms después de que el usuario deje de escribir
+    });
+});
+</script>
 
 {% endblock %}
