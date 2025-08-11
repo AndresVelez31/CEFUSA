@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from .models import Acudiente, Jugador
 
 # Create your views here.
 
 def usersManagement(request):
-    return render(request, 'index.html')
+    acudientes = Acudiente.objects.all()
+    return render(request, 'index.html', {'Acudientes': acudientes})
