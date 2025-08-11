@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %} Usuarios - Búsqueda Avanzada {% endblock %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Búsqueda Avanzada de Usuarios</h4>
+            <div class="btn-group" role="group">
+                <a href="{% url 'users:index' %}" class="btn btn-outline-secondary btn-sm">Vista Simple</a>
+                <a href="#" class="btn btn-success btn-sm">+ Nuevo Acudiente</a>
+                <a href="#" class="btn btn-primary btn-sm">+ Nuevo Jugador</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card-body">
+        <!-- Filtros Avanzados -->
+        <div class="accordion mb-3" id="filtrosAvanzados">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                            data-bs-target="#collapseFilters">
+                        <i class="bi bi-funnel me-2"></i>Filtros de Búsqueda
+                    </button>
+                </h2>
+                <div id="collapseFilters" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                        <form method="GET" class="row g-3">
+                            <!-- Filtros básicos -->
+                            <div class="col-md-4">
+                                <label class="form-label">Búsqueda</label>
+                                <input type="text" class="form-control" name="search" 
+                                       value="{{ request.GET.search }}" 
+                                       placeholder="Nombre, apellido, identificación...">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Tipo Usuario</label>
+                                <select class="form-select" name="tipo_usuario">
+                                    <option value="">Ambos</option>
+                                    <option value="acudientes" {% if request.GET.tipo_usuario == 'acudientes' %}selected{% endif %}>Acudientes</option>
+                                    <option value="jugadores" {% if request.GET.tipo_usuario == 'jugadores' %}selected{% endif %}>Jugadores</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Ciudad</label>
+                                <select class="form-select" name="ciudad">
+                                    <option value="">Todas</option>
+                                    {% for ciudad in ciudades_disponibles %}
+                                    <option value="{{ ciudad }}" {% if request.GET.ciudad == ciudad %}selected{% endif %}>{{ ciudad }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Tipo Doc</label>
+                                <select class="form-select" name="tipo_doc">
+                                    <option value="">Todos</option>
+                                    <option value="CC" {% if request.GET.tipo_doc == 'CC' %}selected{% endif %}>CC</option>
+                                    <option value="TI" {% if request.GET.tipo_doc == 'TI' %}selected{% endif %}>TI</option>
+                                    <option value="CE" {% if request.GET.tipo_doc == 'CE' %}selected{% endif %}>CE</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <div class="d-flex gap-1">
+                                    <button type="submit" class="btn btn-primary">Buscar</button>
+                                    <a href="?" class="btn btn-outline-secondary">Limpiar</a>
+                                </div>
+                            </div>
+
+                            <!-- Filtros específicos para jugadores -->
+                            <div class="col-12">
+                                <hr>
+                                <h6>Filtros específicos para Jugadores:</h6>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Institución Educativa</label>
+                                <input type="text" class="form-control" name="institucion" 
+                                       value="{{ request.GET.institucion }}" 
+                                       placeholder="Nombre de la institución">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Jornada</label>
+                                <select class="form-select" name="jornada">
+                                    <option value="">Todas</option>
+                                    <option value="MANANA" {% if request.GET.jornada == 'MANANA' %}selected{% endif %}>Mañana</option>
+                                    <option value="TARDE" {% if request.GET.jornada == 'TARDE' %}selected{% endif %}>Tarde</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Edad</label>
+                                <select class="form-select" name="rango_edad">
+                                    <option value="">Todas</option>
+                                    <option value="5-10" {% if request.GET.rango_edad == '5-10' %}selected{% endif %}>5-10 años</option>
+                                    <option value="11-15" {% if request.GET.rango_edad == '11-15' %}selected{% endif %}>11-15 años</option>
+                                    <option value="16-20" {% if request.GET.rango_edad == '16-20' %}selected{% endif %}>16-20 años</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Tiene Enfermedad</label>
+                                <select class="form-select" name="tiene_enfermedad">
+                                    <option value="">Todos</option>
+                                    <option value="true" {% if request.GET.tiene_enfermedad == 'true' %}selected{% endif %}>Sí</option>
+                                    <option value="false" {% if request.GET.tiene_enfermedad == 'false' %}selected{% endif %}>No</option>
+                                </select>
+                            </div>
+
+                            <!-- Filtros específicos para acudientes -->
+                            <div class="col-12">
+                                <hr>
+                                <h6>Filtros específicos para Acudientes:</h6>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Correo Electrónico</label>
+                                <input type="email" class="form-control" name="correo" 
+                                       value="{{ request.GET.correo }}" 
+                                       placeholder="email@ejemplo.com">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Régimen Tributario</label>
+                                <select class="form-select" name="regimen">
+                                    <option value="">Todos</option>
+                                    <option value="RESP_IVA" {% if request.GET.regimen == 'RESP_IVA' %}selected{% endif %}>Responsable IVA</option>
+                                    <option value="NO_RESP_IVA" {% if request.GET.regimen == 'NO_RESP_IVA' %}selected{% endif %}>No Responsable</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resultados -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>Resultados: {{ total_resultados }} usuario{{ total_resultados|pluralize }}</h5>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <input type="radio" class="btn-check" name="vista" id="vista-tabla" checked>
+                        <label class="btn btn-outline-primary" for="vista-tabla">Tabla</label>
+                        <input type="radio" class="btn-check" name="vista" id="vista-tarjetas">
+                        <label class="btn btn-outline-primary" for="vista-tarjetas">Tarjetas</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vista de tabla (por defecto) -->
+        <div id="vista-tabla-content">
+            {% if acudientes %}
+                <h6 class="text-primary">Acudientes ({{ acudientes.count }})</h6>
+                <div class="table-responsive mb-4">
+                    <table class="table table-sm table-hover">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>ID</th><th>Identificación</th><th>Nombre Completo</th>
+                                <th>Ciudad</th><th>Correo</th><th>Régimen</th><th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for acudiente in acudientes %}
+                            <tr>
+                                <td>{{ acudiente.id }}</td>
+                                <td>{{ acudiente.identificacion }}</td>
+                                <td>{{ acudiente.nombre }} {{ acudiente.apellidos }}</td>
+                                <td>{{ acudiente.ciudad }}</td>
+                                <td>{{ acudiente.correo }}</td>
+                                <td><small>{{ acudiente.get_tipo_regimen_display }}</small></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="#" class="btn btn-outline-primary">Ver</a>
+                                        <a href="#" class="btn btn-outline-warning">Editar</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+            {% if jugadores %}
+                <h6 class="text-success">Jugadores ({{ jugadores.count }})</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead class="table-success">
+                            <tr>
+                                <th>ID</th><th>Identificación</th><th>Nombre Completo</th>
+                                <th>Edad</th><th>Ciudad</th><th>Institución</th><th>Acudiente</th><th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for jugador in jugadores %}
+                            <tr>
+                                <td>{{ jugador.id }}</td>
+                                <td>{{ jugador.identificacion }}</td>
+                                <td>{{ jugador.nombre }} {{ jugador.apellido }}</td>
+                                <td>{{ jugador.edad }} años</td>
+                                <td>{{ jugador.ciudad }}</td>
+                                <td><small>{{ jugador.institucion_educativa }}</small></td>
+                                <td><small>{{ jugador.acudiente.nombre }}</small></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="#" class="btn btn-outline-primary">Ver</a>
+                                        <a href="#" class="btn btn-outline-warning">Editar</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+            {% if not acudientes and not jugadores %}
+                <div class="text-center py-5">
+                    <i class="bi bi-search fs-1 text-muted"></i>
+                    <h5 class="text-muted">No se encontraron resultados</h5>
+                    <p class="text-muted">Intenta ajustar los filtros de búsqueda</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
