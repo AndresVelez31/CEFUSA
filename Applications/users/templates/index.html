@@ -3,19 +3,13 @@
 {% block title %} Usuarios {% endblock %}
 
 {% block content %}
-
-
 <div class="card">
     <div class="card-header">Listar Usuarios</div>
     <div class="card-body">
         <h4 class="card-title">Usuarios</h4>
         
-        <div
-            class="table-responsive"
-        >
-            <table
-                class="table table-primary"
-            >
+        <div class="table-responsive">
+            <table class="table table-primary">
                 <thead>
                     <tr>
                         <th scope="col">ID</th>
@@ -28,31 +22,33 @@
                         <th scope="col">Correo Electrónico</th>
                         <th scope="col">Teléfono</th>
                         <th scope="col">Tipo de Régimen</th>
-                        <th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="">
-                        <td scope="row">0</td>
-                        <td>Cedula de Ciudadania</td>
-                        <td>I123456789</td>
-                        <td>Juan</td>
-                        <td>Perez</td>
-                        <td>Bogotá</td>
-                        <td>Calle 123 # 45-67</td>
-                        <td>juan.perez@example.com</td>
-                        <td>3001234567</td>
-                        <td>No Responsable de Iva</td>
-                        <td>Editar | Eliminar </td>
+                    {% for a in acudientes %}
+                    <tr>
+                        <td scope="row">{{ a.id }}</td>
+                        <td>{{ a.tipo_doc }}</td>
+                        <td>{{ a.identificacion }}</td>
+                        <td>{{ a.nombre }}</td>
+                        <td>{{ a.apellidos }}</td>
+                        <td>{{ a.ciudad }}</td>
+                        <td>{{ a.direccion }}</td>
+                        <td>{{ a.correo }}</td>
+                        <td>{{ a.telefono }}</td>
+                        <td>{{ a.tipo_regimen }}</td>
+                        <td>Editar | Eliminar</td>
                     </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="11">No hay usuarios registrados.</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
-        
     </div>
     <div class="card-footer text-muted"></div>
 </div>
-
-
-
 {% endblock %}
