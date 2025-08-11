@@ -6,4 +6,7 @@ from .models import Acudiente, Jugador
 
 def usersManagement(request):
     acudientes = Acudiente.objects.all()
-    return render(request, 'index.html', {'Acudientes': acudientes})
+    return render(request, "index.html", {
+        "acudientes": acudientes,
+        "acudientes_count": acudientes.count(),
+    })
