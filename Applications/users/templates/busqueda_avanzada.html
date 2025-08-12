@@ -388,6 +388,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const form = userDetailsContent.querySelector('#userEditForm');
         const formData = new FormData(form);
 
+        // Limpiar errores previos
+        userDetailsContent.querySelectorAll('.alert-danger').forEach(e => e.remove());
+
         try {
             const response = await fetch(`/users/edit/update/${userType}/${userId}/`, {
                 method: 'POST',
@@ -397,7 +400,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            const result = await response.json();
+            let result;
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                result = await response.json();
+            } else {
+                const text = await response.text();
+                userDetailsContent.innerHTML = `<div class="alert alert-danger">Error inesperado:<br>${text}</div>`;
+                return;
+            }
+
             if (result.success) {
                 // Recarga los detalles del usuario actualizado
                 const detailsResponse = await fetch(`/api/user-details/${userType}/${userId}/`);
@@ -405,6 +417,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 displayUserDetails(userData); // función que ya tienes para mostrar los detalles
                 btnSave.classList.add('d-none');
                 btnEdit.classList.remove('d-none');
+                userDetailsContent.insertAdjacentHTML('afterbegin', `<div class="alert alert-success">Usuario editado correctamente.</div>`);
             } else {
                 let errorHtml = '<div class="alert alert-danger">Corrige los errores:</div>';
                 for (const [field, errors] of Object.entries(result.errors)) {
