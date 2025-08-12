@@ -1,12 +1,15 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
+# Logic behind users templates (real function)
+from django.shortcuts import render
+from django.http import HttpResponse
 from django.db.models import Q
 from datetime import date, timedelta
 from .models import Acudiente, Jugador
 
 # Create your views here.
 
-def usersManagement(request):
+def usersManagement(request): # Basic research
     # Obtener parámetros de filtro
     search = request.GET.get('search', '')
     tipo_doc = request.GET.get('tipo_doc', '')
@@ -14,10 +17,11 @@ def usersManagement(request):
     tipo_usuario = request.GET.get('tipo_usuario', '')
     
     # Filtrar acudientes
-    acudientes = Acudiente.objects.all()
-    
+    acudientes = Acudiente.objects.all() #Internal function of django that obtains all records from the Acudiente table
+
     #Filtro de Busqueda General
-    if search:
+    # It works for all this paraemter withouth taking into account MAY o MIN
+    if search:  
         acudientes = acudientes.filter(
             Q(nombre__icontains=search) |
             Q(apellidos__icontains=search) |
@@ -29,6 +33,7 @@ def usersManagement(request):
             Q(tipo_regimen__icontains=search) |
             Q(tipo_doc__icontains=search)
         )
+
     #Filtro de Tipo de documento
     if tipo_doc:
         acudientes = acudientes.filter(tipo_doc=tipo_doc)
@@ -93,7 +98,9 @@ def usersManagement(request):
     }
     return render(request, 'index.html', context)
 
-def busqueda_avanzada(request):
+def busqueda_avanzada(request): # Advanced search view
+
+
     """Vista para búsqueda avanzada con filtros específicos"""
     
     # Parámetros básicos
@@ -319,3 +326,6 @@ def get_user_details(request, user_type, user_id):
         
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+def edit_user(request):
+    return HttpResponse("Aquí va la lógica para editar un usuario.")
