@@ -1,11 +1,15 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
+from django.template.loader import render_to_string
+from django.views.decorators.http import require_http_methods
 # Logic behind users templates (real function)
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db.models import Q
 from datetime import date, timedelta
+
 from .models import Acudiente, Jugador
+from .forms import AcudienteForm, JugadorForm
 
 # Create your views here.
 
@@ -99,7 +103,6 @@ def usersManagement(request): # Basic research
     return render(request, 'index.html', context)
 
 def busqueda_avanzada(request): # Advanced search view
-
 
     """Vista para búsqueda avanzada con filtros específicos"""
     
@@ -249,7 +252,6 @@ def busqueda_avanzada(request): # Advanced search view
     }
     return render(request, 'busqueda_avanzada.html', context)
 
-
 def get_user_details(request, user_type, user_id):
     """Vista AJAX para obtener detalles de un usuario"""
     if request.method != 'GET':
@@ -327,5 +329,45 @@ def get_user_details(request, user_type, user_id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-def edit_user(request):
-    return HttpResponse("Aquí va la lógica para editar un usuario.")
+# ... otras funciones
+@require_http_methods(["GET"])
+def get_user_edit_form(request, user_type, pk):
+    """
+    Devuelve el HTML del formulario de edición (partial) ya ligado a la instancia.
+    El frontend inyecta este HTML dentro del modal.
+    """
+    if user_type == 'acudiente':
+        obj = get_object_or_404(Acudiente, pk=pk)
+        form = AcudienteForm(instance=obj)
+        template = 'users/partials/acudiente_form.html'
+    elif user_type == 'jugador':
+        obj = get_object_or_404(Jugador, pk=pk)
+        form = JugadorForm(instance=obj)
+        template = 'users/partials/jugador_form.html'
+    else:
+        return HttpResponseBadRequest('Tipo de usuario inválido.')
+
+    html = render_to_string(template, {'form': form, 'obj': obj}, request=request)
+    return HttpResponse(html)
+
+@require_http_methods(["POST"])
+def update_user(request, user_type, pk):
+    """
+    Recibe POST con los campos del formulario. Devuelve JSON {success: True} o errores.
+    Es la vista que llamará tu JS cuando el usuario haga "Guardar".
+    """
+    if user_type == 'acudiente':
+        obj = get_object_or_404(Acudiente, pk=pk)
+        form = AcudienteForm(request.POST, instance=obj)
+    elif user_type == 'jugador':
+        obj = get_object_or_404(Jugador, pk=pk)
+        form = JugadorForm(request.POST, instance=obj)
+    else:
+        return JsonResponse({'success': False, 'error': 'Tipo inválido.'}, status=400)
+
+    if form.is_valid():
+        form.save()
+        return JsonResponse({'success': True, 'message': 'Usuario actualizado correctamente.'})
+    else:
+        # devolvemos errores del formulario para mostrarlos en el modal
+        return JsonResponse({'success': False, 'errors': form.errors}, status=400)

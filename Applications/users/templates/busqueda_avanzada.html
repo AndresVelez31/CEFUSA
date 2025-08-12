@@ -205,7 +205,7 @@
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <button type="button" class="btn btn-outline-primary btn-ver-usuario" 
-                                                data-user-type="jugador" data-user-id="{{ jugador.id }}">
+                                                data-user-type="jugador" data-user-id="{{ jugador.id }}" align="center">
                                             Ver
                                         </button>
 
@@ -247,14 +247,25 @@
                     </div>
                 </div>
             </div>
+            <!-- Modal footer -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+
+                <!-- Botón Editar (visible inicialmente) -->
+                <button type="button" id="btn-edit-user" class="btn btn-outline-primary">
+                    <i class="bi bi-pencil-square me-1"></i>Editar
+                </button>
+
+                <!-- Botón Guardar (oculto inicialmente, se mostrará cuando estemos en modo edición) -->
+                <button type="button" id="btn-save-user" class="btn btn-primary d-none">
+                    <i class="bi bi-save me-1"></i>Guardar
+                </button>
             </div>
         </div>
     </div>
 </div>
 
- <!-- We create a modal for print user details, in this-->
+ <!-- We create modal logic using JS-->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -320,6 +331,60 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         userDetailsContent.innerHTML = content;
+
+        // después de insertar el contenido:
+        if (btnEdit) {
+            // userData.tipo viene como 'Acudiente' o 'Jugador' desde el JSON que ya usas
+            btnEdit.dataset.userType = (userData.tipo || '').toLowerCase(); // 'acudiente' | 'jugador'
+            btnEdit.dataset.userId = userData.id || '';
+            btnEdit.classList.remove('d-none');     // mostrar Editar siempre que haya datos
+        }
+        if (btnSave) {
+            btnSave.classList.add('d-none');        // asegurar que Guardar esté oculto al mostrar detalles
+        }
+    }
+
+  // We "read" the buttoms
+    const btnEdit = document.getElementById('btn-edit-user');
+    const btnSave = document.getElementById('btn-save-user');
+
+    // Nos aseguramos de que existan los botones (por si el modal no está en la página)
+    if (btnEdit && btnSave) {
+
+        // Click en "Editar" -> por ahora mostramos un spinner y cambiamos los botones
+            btnEdit.addEventListener('click', async function () {
+                const userType = this.dataset.userType;
+                const userId = this.dataset.userId;
+
+                try {
+                     const url = `/users/${userType}/${userId}/edit/`;
+
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error('Error al cargar el formulario');
+
+                    const formHtml = await response.text();
+                    userDetailsContent.innerHTML = formHtml;
+
+                    btnEdit.classList.add('d-none');
+                    btnSave.classList.remove('d-none');
+
+                } catch (error) {
+                    userDetailsContent.innerHTML = `
+                        <div class="alert alert-danger">
+                            No se pudo cargar el formulario de edición: ${error.message}
+                        </div>
+                    `;
+                }
+            });
+
+
+        // Click en "Guardar" -> por ahora sólo logueamos. En el PASO 3 hará POST al servidor.
+        btnSave.addEventListener('click', function () {
+            console.log('Guardar pulsado - aquí haremos el POST del formulario al servidor');
+            // En pasos siguientes: tomar el <form id="userEditForm"> dentro de userDetailsContent
+            // const form = userDetailsContent.querySelector('#userEditForm');
+            // enviar FormData(form) a la URL de update
+        });
     }
     
     function generateAcudienteDetails(data) {
