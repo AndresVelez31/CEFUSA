@@ -20,19 +20,40 @@ def usersManagement(request): # Basic research
     acudientes = Acudiente.objects.all() #Internal function of django that obtains all records from the Acudiente table
 
     #Filtro de Busqueda General
-    # It works for all this paraemter withouth taking into account MAY o MIN
-    if search:  
-        acudientes = acudientes.filter(
-            Q(nombre__icontains=search) |
-            Q(apellidos__icontains=search) |
-            Q(identificacion__icontains=search) |
-            Q(correo__icontains=search) |
-            Q(ciudad__icontains=search) |
-            Q(telefono__icontains=search) |
-            Q(direccion__icontains=search) |
-            Q(tipo_regimen__icontains=search) |
-            Q(tipo_doc__icontains=search)
-        )
+     # It works for all this parameter without taking into account MAY or MIN
+    if search:
+        # Dividir la búsqueda en palabras para permitir buscar nombre y apellido por separado
+        search_words = search.strip().split()
+        
+        if len(search_words) > 1:
+            # Si hay múltiples palabras, buscar que contengan todas las palabras
+            acudiente_query = Q()
+            for word in search_words:
+                acudiente_query &= (
+                    Q(nombre__icontains=word) |
+                    Q(apellidos__icontains=word) |
+                    Q(identificacion__icontains=word) |
+                    Q(correo__icontains=word) |
+                    Q(ciudad__icontains=word) |
+                    Q(telefono__icontains=word) |
+                    Q(direccion__icontains=word) |
+                    Q(tipo_regimen__icontains=word) |
+                    Q(tipo_doc__icontains=word)
+                )
+            acudientes = acudientes.filter(acudiente_query)
+        else:
+            # Si es una sola palabra, usar el comportamiento original
+            acudientes = acudientes.filter(
+                Q(nombre__icontains=search) |
+                Q(apellidos__icontains=search) |
+                Q(identificacion__icontains=search) |
+                Q(correo__icontains=search) |
+                Q(ciudad__icontains=search) |
+                Q(telefono__icontains=search) |
+                Q(direccion__icontains=search) |
+                Q(tipo_regimen__icontains=search) |
+                Q(tipo_doc__icontains=search)
+            )
 
     #Filtro de Tipo de documento
     if tipo_doc:
@@ -50,14 +71,32 @@ def usersManagement(request): # Basic research
     jugadores = Jugador.objects.select_related('acudiente').all()
     
     if search:
-        jugadores = jugadores.filter(
-            Q(nombre__icontains=search) |
-            Q(apellido__icontains=search) |
-            Q(identificacion__icontains=search) |
-            Q(acudiente__nombre__icontains=search) |
-            Q(acudiente__apellidos__icontains=search) |
-            Q(institucion_educativa__icontains=search)
-        )
+        # Dividir la búsqueda en palabras para permitir buscar nombre y apellido por separado
+        search_words = search.strip().split()
+        
+        if len(search_words) > 1:
+            # Si hay múltiples palabras, buscar que contengan todas las palabras
+            jugador_query = Q()
+            for word in search_words:
+                jugador_query &= (
+                    Q(nombre__icontains=word) |
+                    Q(apellido__icontains=word) |
+                    Q(identificacion__icontains=word) |
+                    Q(acudiente__nombre__icontains=word) |
+                    Q(acudiente__apellidos__icontains=word) |
+                    Q(institucion_educativa__icontains=word)
+                )
+            jugadores = jugadores.filter(jugador_query)
+        else:
+            # Si es una sola palabra, usar el comportamiento original
+            jugadores = jugadores.filter(
+                Q(nombre__icontains=search) |
+                Q(apellido__icontains=search) |
+                Q(identificacion__icontains=search) |
+                Q(acudiente__nombre__icontains=search) |
+                Q(acudiente__apellidos__icontains=search) |
+                Q(institucion_educativa__icontains=search)
+            )
     
     if tipo_doc:
         jugadores = jugadores.filter(tipo_doc=tipo_doc)
@@ -123,17 +162,38 @@ def busqueda_avanzada(request): # Advanced search view
     acudientes = Acudiente.objects.all()
     
     if search:
-        acudientes = acudientes.filter(
-            Q(nombre__icontains=search) |
-            Q(apellidos__icontains=search) |
-            Q(identificacion__icontains=search) |
-            Q(correo__icontains=search) |
-            Q(ciudad__icontains=search) |
-            Q(telefono__icontains=search) |
-            Q(direccion__icontains=search) |
-            Q(tipo_regimen__icontains=search) |
-            Q(tipo_doc__icontains=search)
-        )
+        # Dividir la búsqueda en palabras para permitir buscar nombre y apellido por separado
+        search_words = search.strip().split()
+        
+        if len(search_words) > 1:
+            # Si hay múltiples palabras, buscar que contengan todas las palabras
+            acudiente_query = Q()
+            for word in search_words:
+                acudiente_query &= (
+                    Q(nombre__icontains=word) |
+                    Q(apellidos__icontains=word) |
+                    Q(identificacion__icontains=word) |
+                    Q(correo__icontains=word) |
+                    Q(ciudad__icontains=word) |
+                    Q(telefono__icontains=word) |
+                    Q(direccion__icontains=word) |
+                    Q(tipo_regimen__icontains=word) |
+                    Q(tipo_doc__icontains=word)
+                )
+            acudientes = acudientes.filter(acudiente_query)
+        else:
+            # Si es una sola palabra, usar el comportamiento original
+            acudientes = acudientes.filter(
+                Q(nombre__icontains=search) |
+                Q(apellidos__icontains=search) |
+                Q(identificacion__icontains=search) |
+                Q(correo__icontains=search) |
+                Q(ciudad__icontains=search) |
+                Q(telefono__icontains=search) |
+                Q(direccion__icontains=search) |
+                Q(tipo_regimen__icontains=search) |
+                Q(tipo_doc__icontains=search)
+            )
     
     if tipo_doc:
         acudientes = acudientes.filter(tipo_doc=tipo_doc)
@@ -167,14 +227,32 @@ def busqueda_avanzada(request): # Advanced search view
     jugadores = Jugador.objects.select_related('acudiente').all()
     
     if search:
-        jugadores = jugadores.filter(
-            Q(nombre__icontains=search) |
-            Q(apellido__icontains=search) |
-            Q(identificacion__icontains=search) |
-            Q(acudiente__nombre__icontains=search) |
-            Q(acudiente__apellidos__icontains=search) |
-            Q(institucion_educativa__icontains=search)
-        )
+        # Dividir la búsqueda en palabras para permitir buscar nombre y apellido por separado
+        search_words = search.strip().split()
+        
+        if len(search_words) > 1:
+            # Si hay múltiples palabras, buscar que contengan todas las palabras
+            jugador_query = Q()
+            for word in search_words:
+                jugador_query &= (
+                    Q(nombre__icontains=word) |
+                    Q(apellido__icontains=word) |
+                    Q(identificacion__icontains=word) |
+                    Q(acudiente__nombre__icontains=word) |
+                    Q(acudiente__apellidos__icontains=word) |
+                    Q(institucion_educativa__icontains=word)
+                )
+            jugadores = jugadores.filter(jugador_query)
+        else:
+            # Si es una sola palabra, usar el comportamiento original
+            jugadores = jugadores.filter(
+                Q(nombre__icontains=search) |
+                Q(apellido__icontains=search) |
+                Q(identificacion__icontains=search) |
+                Q(acudiente__nombre__icontains=search) |
+                Q(acudiente__apellidos__icontains=search) |
+                Q(institucion_educativa__icontains=search)
+            )
     
     if tipo_doc:
         jugadores = jugadores.filter(tipo_doc=tipo_doc)
