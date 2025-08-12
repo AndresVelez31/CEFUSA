@@ -69,12 +69,27 @@ def usersManagement(request):
     ciudades_jugadores = set(Jugador.objects.values_list('ciudad', flat=True).distinct())
     ciudades_disponibles = sorted(ciudades_acudientes.union(ciudades_jugadores))
     
-    
+    # Orden que queremos usar (desde el TextChoices)
+    orden_tipodoc = [opcion.label for opcion in Acudiente.TipoDocumento]
+
+    # Obtener tipos de documentos desde ambos modelos
+    tipos_acudientes = set(Acudiente.objects.values_list('tipo_doc', flat=True).distinct())
+    tipos_jugadores = set(Jugador.objects.values_list('tipo_doc', flat=True).distinct())
+
+    # Unir los tipos y pasarlos a lista
+    tipos_doc_en_bd = list(tipos_acudientes.union(tipos_jugadores))
+
+    # Crear mapa de índices para orden personalizado
+    index_map = {label: idx for idx, label in enumerate(orden_tipodoc)}
+
+    # Ordenar según el orden definido, dejando desconocidos al final
+    tipos_doc_en_bd.sort(key=lambda x: index_map.get(x, len(index_map)))
     
     context = {
         'acudientes': acudientes,
         'jugadores': jugadores,
         'ciudades_disponibles': ciudades_disponibles,
+        'tipos_doc_en_bd': tipos_doc_en_bd
     }
     return render(request, 'index.html', context)
 
@@ -95,8 +110,8 @@ def busqueda_avanzada(request):
     
     # Parámetros específicos de acudientes
     correo = request.GET.get('correo', '')
-    regimen = request.GET.get('regimen', '')
-    
+    tipo_regimen = request.GET.get('tipo_regimen', '')
+
     # Filtrar acudientes
     acudientes = Acudiente.objects.all()
     
@@ -105,20 +120,37 @@ def busqueda_avanzada(request):
             Q(nombre__icontains=search) |
             Q(apellidos__icontains=search) |
             Q(identificacion__icontains=search) |
-            Q(correo__icontains=search)
+            Q(correo__icontains=search) |
+            Q(ciudad__icontains=search) |
+            Q(telefono__icontains=search) |
+            Q(direccion__icontains=search) |
+            Q(tipo_regimen__icontains=search) |
+            Q(tipo_doc__icontains=search)
         )
     
     if tipo_doc:
         acudientes = acudientes.filter(tipo_doc=tipo_doc)
-    
+ 
     if ciudad:
         acudientes = acudientes.filter(ciudad=ciudad)
         
     if correo:
         acudientes = acudientes.filter(correo__icontains=correo)
         
-    if regimen:
-        acudientes = acudientes.filter(tipo_regimen=regimen)
+    if tipo_regimen:
+        acudientes = acudientes.filter(tipo_regimen=tipo_regimen)
+        
+    # Obtener orden definido en el TextChoices de tipo_regimen
+    orden_regimen = [opcion.label for opcion in Acudiente.TipoRegimen]
+
+    # Obtener valores únicos de tipo_regimen en la base (Acudientes)
+    tipo_regimenes_en_bd = list(Acudiente.objects.values_list('tipo_regimen', flat=True).distinct())
+
+    # Crear mapa para ordenar según orden_regimen
+    index_map_regimen = {label: idx for idx, label in enumerate(orden_regimen)}
+
+    # Ordenar los valores obtenidos de la BD según el orden definido
+    tipo_regimenes_en_bd.sort(key=lambda x: index_map_regimen.get(x, len(index_map_regimen)))
     
     # Si solo se quieren jugadores, vaciar acudientes
     if tipo_usuario == 'jugadores':
@@ -151,6 +183,24 @@ def busqueda_avanzada(request):
         
     if tiene_enfermedad:
         jugadores = jugadores.filter(tiene_enfermedad=(tiene_enfermedad == 'true'))
+    
+    
+    # Filtro por tipo de doc
+    # Orden que queremos usar (desde el TextChoices)
+    orden_tipodoc = [opcion.label for opcion in Acudiente.TipoDocumento]
+
+    # Obtener tipos de documentos desde ambos modelos
+    tipos_acudientes = set(Acudiente.objects.values_list('tipo_doc', flat=True).distinct())
+    tipos_jugadores = set(Jugador.objects.values_list('tipo_doc', flat=True).distinct())
+
+    # Unir los tipos y pasarlos a lista
+    tipos_doc_en_bd = list(tipos_acudientes.union(tipos_jugadores))
+
+    # Crear mapa de índices para orden personalizado
+    index_map = {label: idx for idx, label in enumerate(orden_tipodoc)}
+
+    # Ordenar según el orden definido, dejando desconocidos al final
+    tipos_doc_en_bd.sort(key=lambda x: index_map.get(x, len(index_map)))
     
     # Filtro por rango de edad
     if rango_edad:
@@ -186,6 +236,8 @@ def busqueda_avanzada(request):
         'acudientes': acudientes,
         'jugadores': jugadores,
         'ciudades_disponibles': ciudades_disponibles,
-        'total_resultados': total_resultados,
+        'tipos_doc_en_bd': tipos_doc_en_bd,
+        'tipo_regimenes_en_bd': tipo_regimenes_en_bd,
+        'total_resultados': total_resultados
     }
     return render(request, 'busqueda_avanzada.html', context)

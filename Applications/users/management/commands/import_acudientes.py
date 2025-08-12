@@ -1,3 +1,4 @@
+# Script used for import "old" users to the new database
 import csv
 from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError

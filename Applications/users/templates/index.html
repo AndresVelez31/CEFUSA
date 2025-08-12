@@ -31,9 +31,9 @@
                         <label class="form-label">Tipo de documento</label>
                         <select class="form-select" name="tipo_doc">
                             <option value="">Todos</option>
-                            {% for tipo in tipo_documentos %}
-                            <option value="{{ tipo }}" {% if request.GET.tipo_doc == tipo or request.GET.tipo_doc == get_tipo_doc_display %}selected{% endif %}>
-                                {{ get_tipo_doc_display }}
+                            {% for tipo in tipos_doc_en_bd %}
+                            <option value="{{ tipo }}" {% if request.GET.tipo_doc == tipo %}selected{% endif %}>
+                                {{ tipo }}
                             </option>
                             {% endfor %}
                         </select>
