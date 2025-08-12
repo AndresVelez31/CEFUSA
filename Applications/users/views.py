@@ -1,8 +1,6 @@
+# Logic behind users templates (real function)
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
-# Logic behind users templates (real function)
-from django.shortcuts import render
-from django.http import HttpResponse
 from django.db.models import Q
 from datetime import date, timedelta
 from .models import Acudiente, Jugador
@@ -327,8 +325,7 @@ def busqueda_avanzada(request): # Advanced search view
     }
     return render(request, 'busqueda_avanzada.html', context)
 
-
-def get_user_details(request, user_type, user_id):
+def get_user_details(request, user_type, user_id): #'Ver' Button logic
     """Vista AJAX para obtener detalles de un usuario"""
     if request.method != 'GET':
         return JsonResponse({'error': 'Método no permitido'}, status=405)

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Gestión de Pagos{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">Gestión de Pagos</h4>
+      <div class="btn-group" role="group">
+        <a href="?" class="btn btn-outline-secondary btn-sm">Limpiar</a>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <form method="GET" id="filtrosPagosForm" class="row g-3 mb-3">
+      <div class="col-md-3">
+        <label class="form-label">Búsqueda general</label>
+        <input type="text" class="form-control" name="search" value="{{ request.GET.search }}" placeholder="Nombre, referencia, motivo, responsable...">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Cuenta</label>
+        <select class="form-select" name="cuenta">
+          <option value="">Todas</option>
+          {% for c in cuentas %}
+          <option value="{{ c.0 }}" {% if request.GET.cuenta == c.0 %}selected{% endif %}>{{ c.1 }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Fecha</label>
+        <input type="date" class="form-control" name="fecha" value="{{ request.GET.fecha }}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Sucursal</label>
+        <input type="text" class="form-control" name="sucursal" value="{{ request.GET.sucursal }}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Referencia 1</label>
+        <input type="text" class="form-control" name="referencia1" value="{{ request.GET.referencia1 }}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Referencia 2</label>
+        <input type="text" class="form-control" name="referencia2" value="{{ request.GET.referencia2 }}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Nombre</label>
+        <input type="text" class="form-control" name="nombre" value="{{ request.GET.nombre }}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Motivo</label>
+        <input type="text" class="form-control" name="motivo" value="{{ request.GET.motivo }}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Responsable (ID)</label>
+        <input type="text" class="form-control" name="responsable" value="{{ request.GET.responsable }}">
+      </div>
+      <div class="col-md-2 align-self-end">
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+      </div>
+    </form>
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead class="table-info">
+          <tr>
+            <th>ID</th><th>Cuenta</th><th>Fecha</th><th>Nombre</th><th>Motivo</th><th>Valor</th><th>Referencia 1</th><th>Referencia 2</th><th>Responsable</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pago in pagos %}
+          <tr>
+            <td>{{ pago.id }}</td>
+            <td>{{ pago.cuenta }}</td>
+            <td>{{ pago.fecha }}</td>
+            <td>{{ pago.nombre }}</td>
+            <td>{{ pago.motivo }}</td>
+            <td>${{ pago.valor }}</td>
+            <td>{{ pago.referencia1 }}</td>
+            <td>{{ pago.referencia2 }}</td>
+            <td>{% if pago.responsable %}{{ pago.responsable.nombre }} {{ pago.responsable.apellidos }}{% else %}-{% endif %}</td>
+            <td><a href="#" class="btn btn-sm btn-outline-primary">Ver</a></td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="10" class="text-center">No hay pagos registrados</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

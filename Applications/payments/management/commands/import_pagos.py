@@ -100,7 +100,7 @@ class Command(BaseCommand):
                     # Completar sucursal y motivo con defaults si vienen vacíos
                     sucursal = _s(row.get("sucursal")) or sucursal_default
                     sucursal = sucursal[:45]
-                    motivo = _s(row.get("motivo")) or descripcion[:50]
+                    motivo = _s(row.get("motivo"))
 
                     # cuenta
                     cuenta = _s(row.get("cuenta"))
@@ -110,7 +110,7 @@ class Command(BaseCommand):
                     # valor
                     valor = parse_decimal(row.get("valor"), default=Decimal("0.00"))
 
-                    # FK responsable (opcional)
+                    motivo = _s(row.get("motivo"))
                     responsable_id = _s(row.get("responsable_id"))
                     responsable_id = int(responsable_id) if responsable_id.isdigit() else None
 
