@@ -28,7 +28,7 @@
                 </h2>
                 <div id="collapseFilters" class="accordion-collapse collapse show">
                     <div class="accordion-body">
-                        <form method="GET" class="row g-3">
+                        <form method="GET" id="filtrosForm" class="row g-3">
                             <!-- Filtros básicos -->
                             <div class="col-md-4">
                                 <label class="form-label">Búsqueda</label>
@@ -87,8 +87,8 @@
                                 <label class="form-label">Jornada</label>
                                 <select class="form-select" name="jornada">
                                     <option value="">Todas</option>
-                                    <option value="MANANA" {% if request.GET.jornada == 'MANANA' %}selected{% endif %}>Mañana</option>
-                                    <option value="TARDE" {% if request.GET.jornada == 'TARDE' %}selected{% endif %}>Tarde</option>
+                                    <option value="Mañana" {% if request.GET.jornada == "Mañana" %}selected{% endif %}>Mañana</option>
+                                    <option value="Tarde" {% if request.GET.jornada == "Tarde" %}selected{% endif %}>Tarde</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -142,12 +142,6 @@
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5>Resultados: {{ total_resultados }} usuario{{ total_resultados|pluralize }}</h5>
-                    <div class="btn-group btn-group-sm" role="group">
-                        <input type="radio" class="btn-check" name="vista" id="vista-tabla" checked>
-                        <label class="btn btn-outline-primary" for="vista-tabla">Tabla</label>
-                        <input type="radio" class="btn-check" name="vista" id="vista-tarjetas">
-                        <label class="btn btn-outline-primary" for="vista-tarjetas">Tarjetas</label>
-                    </div>
                 </div>
             </div>
         </div>
@@ -175,7 +169,10 @@
                                 <td><small>{{ acudiente.get_tipo_regimen_display }}</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="#" class="btn btn-outline-primary">Ver</a>
+                                        <button type="button" class="btn btn-outline-primary btn-ver-usuario" 
+                                                data-user-type="acudiente" data-user-id="{{ acudiente.id }}">
+                                            Ver
+                                        </button>
                                         <a href="#" class="btn btn-outline-warning">Editar</a>
                                     </div>
                                 </td>
@@ -208,7 +205,10 @@
                                 <td><small>{{ jugador.acudiente.nombre }}</small></td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="#" class="btn btn-outline-primary">Ver</a>
+                                        <button type="button" class="btn btn-outline-primary btn-ver-usuario" 
+                                                data-user-type="jugador" data-user-id="{{ jugador.id }}">
+                                            Ver
+                                        </button>
                                         <a href="#" class="btn btn-outline-warning">Editar</a>
                                     </div>
                                 </td>
@@ -230,6 +230,31 @@
     </div>
 </div>
 
+<!-- Modal para mostrar detalles del usuario -->
+<div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userDetailsModalLabel">
+                    <i class="bi bi-person-circle me-2"></i>
+                    Detalles del Usuario
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="userDetailsContent">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -243,6 +268,205 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('filtrosForm').submit();
         }, 1000); // Espera 1000ms después de que el usuario deje de escribir
     });
+
+    // Funcionalidad para el botón "Ver"
+    const verUsuarioBtns = document.querySelectorAll('.btn-ver-usuario');
+    const userDetailsModal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
+    const userDetailsContent = document.getElementById('userDetailsContent');
+    
+    verUsuarioBtns.forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const userType = this.dataset.userType;
+            const userId = this.dataset.userId;
+            
+            // Mostrar modal con spinner de carga
+            userDetailsContent.innerHTML = `
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
+            `;
+            userDetailsModal.show();
+            
+            try {
+                const response = await fetch(`{% url 'users:get_user_details' 'placeholder' 0 %}`.replace('placeholder/0', `${userType}/${userId}`));
+                
+                if (!response.ok) {
+                    throw new Error('Error al cargar los datos');
+                }
+                
+                const userData = await response.json();
+                displayUserDetails(userData);
+                
+            } catch (error) {
+                userDetailsContent.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Error al cargar los detalles del usuario: ${error.message}
+                    </div>
+                `;
+            }
+        });
+    });
+    
+    function displayUserDetails(userData) {
+        let content = '';
+        
+        if (userData.tipo === 'Acudiente') {
+            content = generateAcudienteDetails(userData);
+        } else if (userData.tipo === 'Jugador') {
+            content = generateJugadorDetails(userData);
+        }
+        
+        userDetailsContent.innerHTML = content;
+    }
+    
+    function generateAcudienteDetails(data) {
+        let jugadoresHtml = '';
+        if (data.jugadores && data.jugadores.length > 0) {
+            jugadoresHtml = `
+                <div class="mt-3">
+                    <h6 class="text-success">Jugadores Asociados (${data.total_jugadores})</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr><th>ID</th><th>Nombre</th><th>Identificación</th><th>Edad</th></tr>
+                            </thead>
+                            <tbody>
+                                ${data.jugadores.map(jugador => `
+                                    <tr>
+                                        <td>${jugador.id}</td>
+                                        <td>${jugador.nombre}</td>
+                                        <td>${jugador.identificacion}</td>
+                                        <td>${jugador.edad} años</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        } else {
+            jugadoresHtml = `
+                <div class="mt-3">
+                    <h6 class="text-muted">Sin jugadores asociados</h6>
+                </div>
+            `;
+        }
+        
+        return `
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="badge bg-primary me-2">Acudiente</span>
+                        <h5 class="mb-0">${data.nombre_completo}</h5>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Información Personal</h6>
+                    <table class="table table-sm table-borderless">
+                        <tr><th>ID:</th><td>${data.id}</td></tr>
+                        <tr><th>Tipo de Documento:</th><td>${data.tipo_documento}</td></tr>
+                        <tr><th>Identificación:</th><td>${data.identificacion}</td></tr>
+                        <tr><th>Ciudad:</th><td>${data.ciudad}</td></tr>
+                        <tr><th>Dirección:</th><td>${data.direccion}</td></tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h6>Información de Contacto</h6>
+                    <table class="table table-sm table-borderless">
+                        <tr><th>Teléfono:</th><td>${data.telefono}</td></tr>
+                        <tr><th>Correo:</th><td>${data.correo}</td></tr>
+                        <tr><th>Tipo Régimen:</th><td>${data.tipo_regimen}</td></tr>
+                    </table>
+                </div>
+            </div>
+            
+            ${jugadoresHtml}
+        `;
+    }
+    
+    function generateJugadorDetails(data) {
+        return `
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="badge bg-success me-2">Jugador</span>
+                        <h5 class="mb-0">${data.nombre_completo}</h5>
+                        <span class="badge bg-info ms-2">${data.edad} años</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Información Personal</h6>
+                    <table class="table table-sm table-borderless">
+                        <tr><th>ID:</th><td>${data.id}</td></tr>
+                        <tr><th>Tipo de Documento:</th><td>${data.tipo_documento}</td></tr>
+                        <tr><th>Identificación:</th><td>${data.identificacion}</td></tr>
+                        <tr><th>Fecha de Nacimiento:</th><td>${data.fecha_nacimiento}</td></tr>
+                        <tr><th>Ciudad:</th><td>${data.ciudad}</td></tr>
+                        <tr><th>Ciudad de Nacimiento:</th><td>${data.ciudad_nacimiento}</td></tr>
+                        <tr><th>Dirección:</th><td>${data.direccion}</td></tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h6>Información Académica</h6>
+                    <table class="table table-sm table-borderless">
+                        <tr><th>Institución Educativa:</th><td>${data.institucion_educativa}</td></tr>
+                        <tr><th>Jornada de Entreno:</th><td>${data.jornada_entreno}</td></tr>
+                    </table>
+                    
+                    <h6>Información Médica</h6>
+                    <table class="table table-sm table-borderless">
+                        <tr><th>Tiene Enfermedad:</th><td>${data.tiene_enfermedad}</td></tr>
+                        <tr><th>Tipo de Enfermedad:</th><td>${data.tipo_enfermedad}</td></tr>
+                        <tr><th>Contraindicaciones:</th><td>${data.tiene_contraindicacion}</td></tr>
+                        <tr><th>EPS:</th><td>${data.eps}</td></tr>
+                        <tr><th>Centro de Atención:</th><td>${data.centro_atencion}</td></tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col-12">
+                    <h6>Contacto de Emergencia</h6>
+                    <div class="card card-body bg-light">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Contacto:</strong> ${data.contacto_emergencia}<br>
+                                <strong>Teléfono:</strong> ${data.num_contacto}<br>
+                                <strong>Parentesco:</strong> ${data.parentesco}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col-12">
+                    <h6>Acudiente Responsable</h6>
+                    <div class="card card-body bg-primary bg-opacity-10">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Nombre:</strong> ${data.acudiente.nombre}<br>
+                                <strong>Identificación:</strong> ${data.acudiente.identificacion}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Teléfono:</strong> ${data.acudiente.telefono}<br>
+                                <strong>Correo:</strong> ${data.acudiente.correo}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 });
 </script>
 

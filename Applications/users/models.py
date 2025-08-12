@@ -64,8 +64,8 @@ class Jugador(models.Model):
         TE = "Tarjeta de extranjería", "Tarjeta de extranjería"
 
     class Jornada(models.TextChoices):
-        MANANA = "MANANA", "Mañana"
-        TARDE = "TARDE", "Tarde"
+        MANANA = "Mañana", "Mañana"
+        TARDE = "Tarde", "Tarde"
 
     nombre = models.CharField(max_length=45, db_column="nombre")
     apellido = models.CharField(max_length=45, db_column="apellido")

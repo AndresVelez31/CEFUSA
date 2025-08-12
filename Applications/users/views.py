@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 from datetime import date, timedelta
 from .models import Acudiente, Jugador
@@ -241,3 +241,81 @@ def busqueda_avanzada(request):
         'total_resultados': total_resultados
     }
     return render(request, 'busqueda_avanzada.html', context)
+
+
+def get_user_details(request, user_type, user_id):
+    """Vista AJAX para obtener detalles de un usuario"""
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+    
+    try:
+        if user_type == 'acudiente':
+            user = get_object_or_404(Acudiente, id=user_id)
+            
+            # Calcular total de jugadores asociados
+            total_jugadores = user.jugadores.count()
+            jugadores_list = []
+            for jugador in user.jugadores.all():
+                jugadores_list.append({
+                    'id': jugador.id,
+                    'nombre': f"{jugador.nombre} {jugador.apellido}",
+                    'identificacion': jugador.identificacion,
+                    'edad': (date.today() - jugador.fecha_nacimiento).days // 365
+                })
+            
+            data = {
+                'tipo': 'Acudiente',
+                'id': user.id,
+                'nombre_completo': f"{user.nombre} {user.apellidos}",
+                'tipo_documento': user.get_tipo_doc_display(),
+                'identificacion': user.identificacion,
+                'ciudad': user.ciudad,
+                'direccion': user.direccion,
+                'telefono': user.telefono,
+                'correo': user.correo,
+                'tipo_regimen': user.get_tipo_regimen_display(),
+                'total_jugadores': total_jugadores,
+                'jugadores': jugadores_list
+            }
+            
+        elif user_type == 'jugador':
+            user = get_object_or_404(Jugador, id=user_id)
+            edad = (date.today() - user.fecha_nacimiento).days // 365
+            
+            data = {
+                'tipo': 'Jugador',
+                'id': user.id,
+                'nombre_completo': f"{user.nombre} {user.apellido}",
+                'tipo_documento': user.get_tipo_doc_display(),
+                'identificacion': user.identificacion,
+                'edad': edad,
+                'fecha_nacimiento': user.fecha_nacimiento.strftime('%d/%m/%Y'),
+                'ciudad': user.ciudad,
+                'ciudad_nacimiento': user.ciudad_nacimiento,
+                'direccion': user.direccion,
+                'institucion_educativa': user.institucion_educativa,
+                'jornada_entreno': user.get_jornada_entreno_display(),
+                'tiene_enfermedad': 'Sí' if user.tiene_enfermedad else 'No',
+                'tipo_enfermedad': user.tipo_enfermedad if user.tipo_enfermedad else 'N/A',
+                'tiene_contraindicacion': 'Sí' if user.tiene_contraindicacion else 'No',
+                'contacto_emergencia': user.contacto_emergencia,
+                'num_contacto': user.num_contacto,
+                'eps': user.eps,
+                'parentesco': user.parentesco,
+                'centro_atencion': user.centro_atencion,
+                'acudiente': {
+                    'id': user.acudiente.id,
+                    'nombre': f"{user.acudiente.nombre} {user.acudiente.apellidos}",
+                    'identificacion': user.acudiente.identificacion,
+                    'telefono': user.acudiente.telefono,
+                    'correo': user.acudiente.correo
+                }
+            }
+            
+        else:
+            return JsonResponse({'error': 'Tipo de usuario no válido'}, status=400)
+            
+        return JsonResponse(data)
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
