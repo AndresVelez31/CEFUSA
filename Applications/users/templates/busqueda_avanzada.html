@@ -381,13 +381,41 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
 
-        // Click en "Guardar" -> por ahora sólo logueamos. En el PASO 3 hará POST al servidor.
-        btnSave.addEventListener('click', function () {
-            console.log('Guardar pulsado - aquí haremos el POST del formulario al servidor');
-            // En pasos siguientes: tomar el <form id="userEditForm"> dentro de userDetailsContent
-            // const form = userDetailsContent.querySelector('#userEditForm');
-            // enviar FormData(form) a la URL de update
-        });
+        // Click en "Guardar"
+        btnSave.addEventListener('click', async function () {
+        const userType = btnEdit.dataset.userType;
+        const userId = btnEdit.dataset.userId;
+        const form = userDetailsContent.querySelector('#userEditForm');
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(`/users/edit/update/${userType}/${userId}/`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                // Recarga los detalles del usuario actualizado
+                const detailsResponse = await fetch(`/api/user-details/${userType}/${userId}/`);
+                const userData = await detailsResponse.json();
+                displayUserDetails(userData); // función que ya tienes para mostrar los detalles
+                btnSave.classList.add('d-none');
+                btnEdit.classList.remove('d-none');
+            } else {
+                let errorHtml = '<div class="alert alert-danger">Corrige los errores:</div>';
+                for (const [field, errors] of Object.entries(result.errors)) {
+                    errorHtml += `<div><strong>${field}:</strong> ${errors.join(', ')}</div>`;
+                }
+                userDetailsContent.insertAdjacentHTML('afterbegin', errorHtml);
+            }
+        } catch (error) {
+            userDetailsContent.innerHTML = `<div class="alert alert-danger">Error al guardar: ${error.message}</div>`;
+        }
+            });
     }
     
     function generateAcudienteDetails(data) {

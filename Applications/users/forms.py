@@ -3,6 +3,17 @@ from django import forms
 from .models import Acudiente, Jugador
 
 class AcudienteForm(forms.ModelForm):
+
+ #We add the editable parameter, so in that way the forms could be editable
+    def __init__(self, *args, **kwargs):
+        editable = kwargs.pop('editable', False)
+        super().__init__(*args, **kwargs)
+        if editable:
+            for field in self.fields.values():
+                field.widget.attrs.pop('readonly', None)
+                field.widget.attrs.pop('disabled', None)
+
+
     class Meta:
         model = Acudiente
         fields = [
@@ -23,6 +34,15 @@ class AcudienteForm(forms.ModelForm):
         }
 
 class JugadorForm(forms.ModelForm):
+
+  #We add the editable parameter, so in that way the forms could be editable
+    def __init__(self, *args, **kwargs):
+        editable = kwargs.pop('editable', False)
+        super().__init__(*args, **kwargs)
+        if editable:
+            for field in self.fields.values():
+                field.widget.attrs.pop('readonly', None)
+                field.widget.attrs.pop('disabled', None)
     class Meta:
         model = Jugador
         fields = [

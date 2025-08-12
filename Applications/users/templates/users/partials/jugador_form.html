@@ -1,14 +1,12 @@
 <form id="userEditForm">
-  {% csrf_token %}
-  <div class="mb-3">
-    {{ form.as_p }}
-  </div>
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="mb-3">
+            {{ field.label_tag }}
+            {{ field.as_widget }}
+            {% if field.errors %}
+                <div class="text-danger small">{{ field.errors }}</div>
+            {% endif %}
+        </div>
+    {% endfor %}
 </form>
-<script>
-// Habilitar los campos para edición
-const fields = document.querySelectorAll('.usuario-field');
-fields.forEach(f => {
-  f.removeAttribute('readonly');
-  f.removeAttribute('disabled');
-});
-</script>

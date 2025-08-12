@@ -338,11 +338,11 @@ def get_user_edit_form(request, user_type, pk):
     """
     if user_type == 'acudiente':
         obj = get_object_or_404(Acudiente, pk=pk)
-        form = AcudienteForm(instance=obj)
+        form = AcudienteForm(instance=obj, editable=True)
         template = 'users/partials/acudiente_form.html'
     elif user_type == 'jugador':
         obj = get_object_or_404(Jugador, pk=pk)
-        form = JugadorForm(instance=obj)
+        form = JugadorForm(instance=obj, editable=True)
         template = 'users/partials/jugador_form.html'
     else:
         return HttpResponseBadRequest('Tipo de usuario inválido.')
@@ -369,5 +369,5 @@ def update_user(request, user_type, pk):
         form.save()
         return JsonResponse({'success': True, 'message': 'Usuario actualizado correctamente.'})
     else:
-        # devolvemos errores del formulario para mostrarlos en el modal
+        # Devolvemos errores del formulario para mostrarlos en el modal
         return JsonResponse({'success': False, 'errors': form.errors}, status=400)
