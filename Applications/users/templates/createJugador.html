@@ -4,41 +4,9 @@
 
 <div class="container mt-4">
     <h2>Crear Nuevo Jugador</h2>
-    <form method="post" class="p-4 rounded shadow bg-white">
-        {% csrf_token %}
-        <div class="row">
-            <div class="col-md-6">
-                <h6 class="mb-3">Datos Personales</h6>
-                <div class="mb-2">{{ form.nombre.label_tag }}{{ form.nombre }}</div>
-                <div class="mb-2">{{ form.apellido.label_tag }}{{ form.apellido }}</div>
-                <div class="mb-2">{{ form.tipo_doc.label_tag }}{{ form.tipo_doc }}</div>
-                <div class="mb-2">{{ form.identificacion.label_tag }}{{ form.identificacion }}</div>
-                <div class="mb-2">{{ form.fecha_nacimiento.label_tag }}{{ form.fecha_nacimiento }}</div>
-                <div class="mb-2">{{ form.ciudad_nacimiento.label_tag }}{{ form.ciudad_nacimiento }}</div>
-                <div class="mb-2">{{ form.ciudad.label_tag }}{{ form.ciudad }}</div>
-                <div class="mb-2">{{ form.direccion.label_tag }}{{ form.direccion }}</div>
-                <div class="mb-2">{{ form.institucion_educativa.label_tag }}{{ form.institucion_educativa }}</div>
-                <div class="mb-2">{{ form.jornada_entreno.label_tag }}{{ form.jornada_entreno }}</div>
-            </div>
-            <div class="col-md-6">
-                <h6 class="mb-3">Salud y Contacto</h6>
-                <div class="mb-2">{{ form.tiene_enfermedad.label_tag }}{{ form.tiene_enfermedad }}</div>
-                <div class="mb-2">{{ form.tipo_enfermedad.label_tag }}{{ form.tipo_enfermedad }}</div>
-                <div class="mb-2">{{ form.tiene_contraindicacion.label_tag }}{{ form.tiene_contraindicacion }}</div>
-                <div class="mb-2">{{ form.contacto_emergencia.label_tag }}{{ form.contacto_emergencia }}</div>
-                <div class="mb-2">{{ form.num_contacto.label_tag }}{{ form.num_contacto }}</div>
-                <div class="mb-2">{{ form.eps.label_tag }}{{ form.eps }}</div>
-                <div class="mb-2">{{ form.parentesco.label_tag }}{{ form.parentesco }}</div>
-                <div class="mb-2">{{ form.centro_atencion.label_tag }}{{ form.centro_atencion }}</div>
-                <div class="mb-2">{{ form.pdf_doc_id.label_tag }}{{ form.pdf_doc_id }}</div>
-                <div class="mb-2">{{ form.pdf_certificado_eps.label_tag }}{{ form.pdf_certificado_eps }}</div>
-                <div class="mb-2">{{ form.acudiente.label_tag }}{{ form.acudiente }}</div>
-            </div>
-        </div>
-        <div class="mt-4 d-flex justify-content-end gap-2">
-            <button type="submit" class="btn btn-success">Crear</button>
-            <a href="{% url 'users:index' %}" class="btn btn-secondary">Cancelar</a>
-        </div>
+    <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
     </form>
 </div>
 
