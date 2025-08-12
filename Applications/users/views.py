@@ -6,8 +6,39 @@ from django.http import HttpResponse
 from django.db.models import Q
 from datetime import date, timedelta
 from .models import Acudiente, Jugador
+from .forms import AcudienteForm, JugadorForm
 
 # Create your views here.
+
+def create_jugador(request):
+    form = JugadorForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': True})
+            return render(request, 'createJugador.html', {'form': JugadorForm(), 'success': True})
+        else:
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'errors': form.errors, 'form_html': form.as_p()})
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return HttpResponse(form.as_p())
+    return render(request, 'createJugador.html', {'form': form})
+
+def create_acudiente(request):
+    form = AcudienteForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': True})
+            return render(request, 'createAcudiente.html', {'form': AcudienteForm(), 'success': True})
+        else:
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'errors': form.errors, 'form_html': form.as_p()})
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return HttpResponse(form.as_p())
+    return render(request, 'createAcudiente.html', {'form': form})
 
 def usersManagement(request): # Basic research
     # Obtener parámetros de filtro

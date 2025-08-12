@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Crear Acudiente{% endblock %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2>Crear Nuevo Jugador</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Crear</button>
+        <a href="{% url 'users:index' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+{% endblock %}
