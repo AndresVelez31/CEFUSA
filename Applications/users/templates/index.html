@@ -25,35 +25,21 @@
                 <form id="formCrearAcudiente">
                     {% csrf_token %}
                     <div id="form-fields-acudiente"></div>
+                    <div class="d-flex justify-content-center gap-2 mt-3">
+                        <button type="submit" class="btn btn-success">Crear</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // ...existing code...
-
-    // Cargar campos del formulario vía AJAX al abrir el modal
-    var modalCrear = document.getElementById('modalCrearAcudiente');
-    modalCrear.addEventListener('show.bs.modal', function () {
-        fetch('{% url "users:create_acudiente" %}')
-            .then(response => response.text())
-            .then(html => {
-                // Extraer solo los campos del formulario
-                var parser = new DOMParser();
-                var doc = parser.parseFromString(html, 'text/html');
-                var formFields = doc.querySelector('form');
-                document.getElementById('form-fields-acudiente').innerHTML = formFields ? formFields.innerHTML : '';
-                beautifyFormFields();
-            });
-        document.getElementById('acudiente-success').classList.add('d-none');
-    });
-
-    // Enviar formulario por AJAX
-    document.getElementById('formCrearAcudiente').addEventListener('submit', function(e) {
+function bindAcudienteFormSubmit() {
+    var form = document.getElementById('formCrearAcudiente');
+    if (!form) return;
+    form.onsubmit = function(e) {
         e.preventDefault();
-        var form = e.target;
         var formData = new FormData(form);
         fetch('{% url "users:create_acudiente" %}', {
             method: 'POST',
@@ -67,11 +53,27 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 document.getElementById('acudiente-success').classList.remove('d-none');
                 form.reset();
+                bootstrap.Modal.getInstance(document.getElementById('modalCrearAcudiente')).hide();
             } else if (data.errors) {
                 document.getElementById('form-fields-acudiente').innerHTML = data.form_html;
-                beautifyFormFields();
+                bindAcudienteFormSubmit();
             }
         });
+    };
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var modalCrearAcudiente = document.getElementById('modalCrearAcudiente');
+    modalCrearAcudiente.addEventListener('show.bs.modal', function () {
+        fetch('{% url "users:create_acudiente" %}')
+            .then(response => response.text())
+            .then(html => {
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(html, 'text/html');
+                var formFields = doc.querySelector('form');
+                document.getElementById('form-fields-acudiente').innerHTML = formFields ? formFields.innerHTML : '';
+                bindAcudienteFormSubmit();
+            });
+        document.getElementById('acudiente-success').classList.add('d-none');
     });
 });
 
@@ -90,35 +92,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 <form id="formCrearJugador">
                     {% csrf_token %}
                     <div id="form-fields-jugador"></div>
+                    <div class="d-flex justify-content-center gap-2 mt-3">
+                        <button type="submit" class="btn btn-success">Crear</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // ...existing code...
-
-    // Cargar campos del formulario vía AJAX al abrir el modal
-    var modalCrear = document.getElementById('modalCrearJugador');
-    modalCrear.addEventListener('show.bs.modal', function () {
-        fetch('{% url "users:create_jugador" %}')
-            .then(response => response.text())
-            .then(html => {
-                // Extraer solo los campos del formulario
-                var parser = new DOMParser();
-                var doc = parser.parseFromString(html, 'text/html');
-                var formFields = doc.querySelector('form');
-                document.getElementById('form-fields-jugador').innerHTML = formFields ? formFields.innerHTML : '';
-                beautifyFormFields();
-            });
-        document.getElementById('acudiente-success').classList.add('d-none');
-    });
-
-    // Enviar formulario por AJAX
-    document.getElementById('formCrearJugador').addEventListener('submit', function(e) {
+function bindJugadorFormSubmit() {
+    var form = document.getElementById('formCrearJugador');
+    if (!form) return;
+    form.onsubmit = function(e) {
         e.preventDefault();
-        var form = e.target;
         var formData = new FormData(form);
         fetch('{% url "users:create_jugador" %}', {
             method: 'POST',
@@ -132,14 +120,29 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 document.getElementById('jugador-success').classList.remove('d-none');
                 form.reset();
+                bootstrap.Modal.getInstance(document.getElementById('modalCrearJugador')).hide();
             } else if (data.errors) {
                 document.getElementById('form-fields-jugador').innerHTML = data.form_html;
-                beautifyFormFields();
+                bindJugadorFormSubmit();
             }
         });
+    };
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var modalCrearJugador = document.getElementById('modalCrearJugador');
+    modalCrearJugador.addEventListener('show.bs.modal', function () {
+        fetch('{% url "users:create_jugador" %}')
+            .then(response => response.text())
+            .then(html => {
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(html, 'text/html');
+                var formFields = doc.querySelector('form');
+                document.getElementById('form-fields-jugador').innerHTML = formFields ? formFields.innerHTML : '';
+                bindJugadorFormSubmit();
+            });
+        document.getElementById('jugador-success').classList.add('d-none');
     });
 });
-
 </script>
 
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearJugador">+ Nuevo Jugador</button>
