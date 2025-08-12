@@ -356,25 +356,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 const userType = this.dataset.userType;
                 const userId = this.dataset.userId;
 
-                try {
-                     const url = `/users/${userType}/${userId}/edit/`;
+                    try {
+                        // Usamos la URL de Django para mayor robustez
+                        const url = `{% url 'users:get_user_edit_form' 'user_type' 0 %}`
+                            .replace('user_type', userType)
+                            .replace('/0/', `/${userId}/`);
 
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error('Error al cargar el formulario');
+                        const response = await fetch(url);
+                        if (!response.ok) throw new Error('Error al cargar el formulario');
 
-                    const formHtml = await response.text();
-                    userDetailsContent.innerHTML = formHtml;
+                        const formHtml = await response.text();
+                        userDetailsContent.innerHTML = formHtml;
 
-                    btnEdit.classList.add('d-none');
-                    btnSave.classList.remove('d-none');
+                        btnEdit.classList.add('d-none');
+                        btnSave.classList.remove('d-none');
 
-                } catch (error) {
-                    userDetailsContent.innerHTML = `
-                        <div class="alert alert-danger">
-                            No se pudo cargar el formulario de edición: ${error.message}
-                        </div>
-                    `;
-                }
+                    } catch (error) {
+                        userDetailsContent.innerHTML = `
+                            <div class="alert alert-danger">
+                                No se pudo cargar el formulario de edición: ${error.message}
+                            </div>
+                        `;
+                    }
             });
 
 
