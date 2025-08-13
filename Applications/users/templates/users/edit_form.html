@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Editar Usuario{% endblock %}
+
+{% block content %}
+<form id="userEditForm" method="post" novalidate>
+  {% csrf_token %}
+  {{ form.as_p }}
+</form>
+{% endblock %}

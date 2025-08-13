@@ -5,6 +5,11 @@ from django.db.models import Q
 from datetime import date, timedelta
 from .models import Acudiente, Jugador
 from .forms import AcudienteForm, JugadorForm
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
+from django.template import RequestContext
+
 
 # Create your views here.
 
@@ -435,3 +440,47 @@ def get_user_details(request, user_type, user_id): #'Ver' Button logic
 
 def edit_user(request):
     return HttpResponse("Aquí va la lógica para editar un usuario.")
+
+def get_user_edit_form(request, user_type, user_id):
+    if user_type == 'acudiente':
+        user = get_object_or_404(Acudiente, id=user_id)
+        form = AcudienteForm(instance=user, editable=True)
+    elif user_type == 'jugador':
+        user = get_object_or_404(Jugador, id=user_id)
+        form = JugadorForm(instance=user, editable=True)
+    else:
+        return JsonResponse({'error': 'Tipo de usuario no válido'}, status=400)
+    
+    # Corrección clave: Usar render_to_string con el request
+    html_content = render_to_string(
+        'users/edit_form.html', 
+        {'form': form},
+        request=request  # Importante para el CSRF token
+    )
+    return HttpResponse(html_content)
+
+def update_user(request, user_type, user_id):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+    
+    try:
+        if user_type == 'acudiente':
+            user = get_object_or_404(Acudiente, id=user_id)
+            form = AcudienteForm(request.POST, instance=user, editable=True)
+        elif user_type == 'jugador':
+            user = get_object_or_404(Jugador, id=user_id)
+            form = JugadorForm(request.POST, instance=user, editable=True)
+        else:
+            return JsonResponse({'error': 'Tipo de usuario no válido'}, status=400)
+        
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({
+                'success': False,
+                'errors': form.errors
+            })
+            
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
