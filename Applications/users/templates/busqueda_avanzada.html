@@ -10,8 +10,8 @@
             <h4 class="mb-0">Búsqueda Avanzada de Usuarios</h4>
             <div class="btn-group" role="group">
                 <a href="{% url 'users:index' %}" class="btn btn-outline-secondary btn-sm">Vista Simple</a>
-                <a href="#" class="btn btn-success btn-sm">+ Nuevo Acudiente</a>
-                <a href="#" class="btn btn-primary btn-sm">+ Nuevo Jugador</a>
+                <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearAcudiente">+ Nuevo Acudiente</a>
+                <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearJugador">+ Nuevo Jugador</a>
             </div>
         </div>
     </div>
@@ -255,6 +255,50 @@
     </div>
 </div>
 
+<!-- Modal para crear acudiente -->
+<div class="modal fade" id="modalCrearAcudiente" tabindex="-1" aria-labelledby="modalCrearAcudienteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCrearAcudienteLabel">Crear Nuevo Acudiente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="acudiente-success" class="alert alert-success d-none">¡Acudiente creado exitosamente!</div>
+                <form id="formCrearAcudiente">
+                    {% csrf_token %}
+                    <div id="form-fields-acudiente"></div>
+                    <div class="d-flex justify-content-center gap-2 mt-3">
+                        <button type="submit" class="btn btn-success">Crear</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal para crear jugador -->
+<div class="modal fade" id="modalCrearJugador" tabindex="-1" aria-labelledby="modalCrearJugadorLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCrearJugadorLabel">Crear Nuevo Jugador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="jugador-success" class="alert alert-success d-none">¡Jugador creado exitosamente!</div>
+                <form id="formCrearJugador">
+                    {% csrf_token %}
+                    <div id="form-fields-jugador"></div>
+                    <div class="d-flex justify-content-center gap-2 mt-3">
+                        <button type="submit" class="btn btn-success">Crear</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -467,6 +511,75 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
     }
+    
+    // Modal Acudiente
+    var modalCrearAcudiente = document.getElementById('modalCrearAcudiente');
+    modalCrearAcudiente.addEventListener('show.bs.modal', function () {
+        fetch('{% url "users:create_acudiente" %}')
+            .then(response => response.text())
+            .then(html => {
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(html, 'text/html');
+                var formFields = doc.querySelector('form');
+                document.getElementById('form-fields-acudiente').innerHTML = formFields ? formFields.innerHTML : '';
+            });
+        document.getElementById('acudiente-success').classList.add('d-none');
+    });
+    document.getElementById('formCrearAcudiente').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var form = e.target;
+        var formData = new FormData(form);
+        fetch('{% url "users:create_acudiente" %}', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('acudiente-success').classList.remove('d-none');
+                form.reset();
+            } else if (data.errors) {
+                document.getElementById('form-fields-acudiente').innerHTML = data.form_html;
+            }
+        });
+    });
+    // Modal Jugador
+    var modalCrearJugador = document.getElementById('modalCrearJugador');
+    modalCrearJugador.addEventListener('show.bs.modal', function () {
+        fetch('{% url "users:create_jugador" %}')
+            .then(response => response.text())
+            .then(html => {
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(html, 'text/html');
+                var formFields = doc.querySelector('form');
+                document.getElementById('form-fields-jugador').innerHTML = formFields ? formFields.innerHTML : '';
+            });
+        document.getElementById('jugador-success').classList.add('d-none');
+    });
+    document.getElementById('formCrearJugador').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var form = e.target;
+        var formData = new FormData(form);
+        fetch('{% url "users:create_jugador" %}', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('jugador-success').classList.remove('d-none');
+                form.reset();
+            } else if (data.errors) {
+                document.getElementById('form-fields-jugador').innerHTML = data.form_html;
+            }
+        });
+    });
 });
 </script>
 
