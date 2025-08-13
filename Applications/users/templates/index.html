@@ -236,7 +236,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <th scope="col">Correo</th>
                                 <th scope="col">Teléfono</th>
                                 <th scope="col">Régimen</th>
-                                <th scope="col">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -252,10 +251,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <td>{{ acudiente.correo }}</td>
                                 <td>{{ acudiente.telefono }}</td>
                                 <td>{{ acudiente.get_tipo_regimen_display }}</td>
-                                <td>
-                                    <a href="#" class="btn btn-sm btn-warning">Editar</a>
-                                    <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
-                                </td>
                             </tr>
                             {% empty %}
                             <tr>
@@ -282,7 +277,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <th scope="col">Ciudad</th>
                                 <th scope="col">Institución</th>
                                 <th scope="col">Acudiente</th>
-                                <th scope="col">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -297,10 +291,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <td>{{ jugador.ciudad }}</td>
                                 <td>{{ jugador.institucion_educativa }}</td>
                                 <td>{{ jugador.acudiente.nombre }} {{ jugador.acudiente.apellidos }}</td>
-                                <td>
-                                    <a href="#" class="btn btn-sm btn-warning">Editar</a>
-                                    <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
-                                </td>
                             </tr>
                             {% empty %}
                             <tr>

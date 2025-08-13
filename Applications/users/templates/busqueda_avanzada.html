@@ -298,7 +298,8 @@
 
 <script>
 
-let UserType, UserId;
+let currentUserType, currentUserId;
+let btnEdit, btnSave;
 
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -380,17 +381,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Botones de edición
-    const btnEdit = document.getElementById('btn-edit-user');
-    const btnSave = document.getElementById('btn-save-user');
+    btnEdit = document.getElementById('btn-edit-user');
+    btnSave = document.getElementById('btn-save-user');
 
+    // Configura los event listeners una sola vez
     if (btnEdit && btnSave) {
-        // Click en "Editar"
         btnEdit.addEventListener('click', async function() {
-            const userType = this.dataset.userType;
-            const userId = this.dataset.userId;
+            currentUserType = this.dataset.userType;
+            currentUserId = this.dataset.userId;
 
             try {
-                // Mostrar spinner
                 userDetailsContent.innerHTML = `
                     <div class="d-flex justify-content-center">
                         <div class="spinner-border text-primary" role="status">
@@ -399,17 +399,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 `;
 
-                // Obtener formulario de edición
-                const response = await fetch(`/users/edit/form/${userType}/${userId}/`);
+                const response = await fetch(`/users/edit/form/${currentUserType}/${currentUserId}/`);
                 
-                if (!response.ok) {
-                    throw new Error('Error al cargar el formulario');
-                }
+                if (!response.ok) throw new Error('Error al cargar el formulario');
                 
-                const formHtml = await response.text();
-                userDetailsContent.innerHTML = formHtml;
-                
-                // Cambiar visibilidad de botones
+                userDetailsContent.innerHTML = await response.text();
                 btnEdit.classList.add('d-none');
                 btnSave.classList.remove('d-none');
 
@@ -417,127 +411,69 @@ document.addEventListener('DOMContentLoaded', function() {
                 userDetailsContent.innerHTML = `
                     <div class="alert alert-danger">
                         <i class="bi bi-exclamation-triangle"></i>
-                        No se pudo cargar el formulario de edición: ${error.message}
+                        No se pudo cargar el formulario: ${error.message}
                     </div>
                 `;
             }
         });
 
-        // Click en "Guardar"
         btnSave.addEventListener('click', async function() {
-    const form = userDetailsContent.querySelector('#userEditForm');
-    
-    if (!form) {
-        userDetailsContent.innerHTML = `
-            <div class="alert alert-danger">
-                No se encontró el formulario de edición.
-            </div>
-        `;
-        return;
-    }
-    
-    // Verifica que el token CSRF existe
-    const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]');
-    if (!csrfToken) {
-        userDetailsContent.innerHTML = `
-            <div class="alert alert-danger">
-                Error de seguridad: falta el token CSRF.
-            </div>
-        `;
-        return;
-    }
-    
-    const formData = new FormData(form);
-    
-    try {
-        userDetailsContent.innerHTML = `
-            <div class="d-flex justify-content-center">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Guardando...</span>
-                </div>
-            </div>
-        `;
+            const form = document.querySelector('#userDetailsModal #userEditForm');
+            
+            if (!form) {
+                userDetailsContent.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Error: Formulario no encontrado
+                    </div>
+                `;
+                return;
+            }
 
-        const response = await fetch(`/users/edit/update/${userType}/${userId}/`, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': csrfToken.value,
-                'X-Requested-With': 'XMLHttpRequest'
+            userDetailsContent.innerHTML = `
+                <div class="d-flex justify-content-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Guardando...</span>
+                    </div>
+                </div>
+            `;
+
+            try {
+                const formData = new FormData(form);
+                const response = await fetch(`/users/edit/update/${currentUserType}/${currentUserId}/`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const detailsResponse = await fetch(`/users/get_user_details/${currentUserType}/${currentUserId}/`);
+                    displayUserDetails(await detailsResponse.json());
+                    
+                    userDetailsContent.insertAdjacentHTML('afterbegin', `
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <i class="bi bi-check-circle"></i> ¡Guardado correctamente!
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    `);
+                } else {
+                    throw new Error(data.errors || 'Error desconocido');
+                }
+            } catch (error) {
+                userDetailsContent.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Error: ${error.message}
+                    </div>
+                `;
             }
         });
-
-        // ... resto del código ...
-    } catch (error) {
-        userDetailsContent.innerHTML = `
-            <div class="alert alert-danger">
-                Error al guardar: ${error.message}
-            </div>
-        `;
     }
-});
-    }
-    
-    document.getElementById('btn-edit-user').addEventListener('click', function() {
-    userType = this.dataset.userType;
-    userId = this.dataset.userId;
-    });
-    document.getElementById('btn-save-user').addEventListener('click', async function() {
-    const form = document.querySelector('#userDetailsModal form'); // Busca cualquier formulario en el modal
-    
-    if (!form) {
-        userDetailsContent.innerHTML = `
-            <div class="alert alert-danger">
-                <i class="bi bi-exclamation-triangle"></i>
-                Recarga la página (F5) y vuelve a intentar.
-            </div>
-        `;
-        return;
-    }
-
-    const formData = new FormData(form);
-    
-    try {
-        // Muestra spinner de carga
-        userDetailsContent.innerHTML = `
-            <div class="d-flex justify-content-center py-4">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Guardando...</span>
-                </div>
-            </div>
-        `;
-
-        // Envía los datos
-        const response = await fetch(`/users/edit/update/${userType}/${userId}/`, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            }
-        });
-
-        // Recarga los datos si todo sale bien
-        const detailsResponse = await fetch(`/users/get_user_details/${userType}/${userId}/`);
-        const userData = await detailsResponse.json();
-        displayUserDetails(userData);
-        
-        // Muestra mensaje de éxito
-        userDetailsContent.insertAdjacentHTML('afterbegin', `
-            <div class="alert alert-success">
-                <i class="bi bi-check-circle"></i>
-                ¡Cambios guardados!
-            </div>
-        `);
-
-    } catch (error) {
-        userDetailsContent.innerHTML = `
-            <div class="alert alert-danger">
-                <i class="bi bi-exclamation-triangle"></i>
-                Error: ${error.message}
-            </div>
-        `;
-    }
-});
 
     function generateAcudienteDetails(data) {
         let jugadoresHtml = '';
@@ -686,46 +622,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Añade esta función para obtener el token CSRF de las cookies
-function getCSRFToken() {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, 10) === 'csrftoken=') {
-                cookieValue = decodeURIComponent(cookie.substring(10));
-                break;
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 10) === 'csrftoken=') {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
             }
         }
+        return cookieValue;
     }
-    return cookieValue;
-}
 
 // Modifica tu evento click del botón Guardar
-btnSave.addEventListener('click', async function() {
-    const form = document.getElementById('userEditForm');
-    if (!form) {
-        userDetailsContent.innerHTML = '<div class="alert alert-danger">Formulario no encontrado</div>';
-        return;
-    }
 
-    const formData = new FormData(form);
-    
-    try {
-        const response = await fetch(`/users/edit/update/${userType}/${userId}/`, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': getCSRFToken(),
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
-        
-        // Maneja la respuesta...
-    } catch (error) {
-        userDetailsContent.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
-    }
-});
 
     // Modal Acudiente (código existente)
     var modalCrearAcudiente = document.getElementById('modalCrearAcudiente');
