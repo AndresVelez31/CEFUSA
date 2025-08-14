@@ -59,3 +59,21 @@ def paymentsManagement(request):
         'cuentas': Pago.CuentaChoices.choices,
     }
     return render(request, 'paymentsManagement.html', context)
+
+from django.shortcuts import redirect, render
+from .models import Pago
+from datetime import datetime
+
+def crear_pago(request):
+    if request.method == "POST":
+        Pago.objects.create(
+            cuenta=request.POST.get("cuenta"),
+            fecha=request.POST.get("fecha"),
+            nombre=request.POST.get("nombre"),
+            motivo=request.POST.get("motivo"),
+            valor=request.POST.get("valor"),
+            referencia1=request.POST.get("referencia1"),
+            referencia2=request.POST.get("referencia2"),
+            responsable_id=request.POST.get("responsable") or None
+        )
+        return redirect('gestionar_pagos')  # Redirige a la lista de pagos

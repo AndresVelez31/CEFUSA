@@ -7,6 +7,9 @@
       <h4 class="mb-0">Gestión de Pagos</h4>
       <div class="btn-group" role="group">
         <a href="?" class="btn btn-outline-secondary btn-sm">Limpiar</a>
+         <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#crearPagoModal">
+        Crear Pago
+      </button>
       </div>
     </div>
   </div>
@@ -86,4 +89,61 @@
     </div>
   </div>
 </div>
+<!-- Modal Crear Pago -->
+<div class="modal fade" id="crearPagoModal" tabindex="-1" aria-labelledby="crearPagoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="crearPagoModalLabel">Crear Nuevo Pago</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <form method="POST" action="{% url 'crear_pago' %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Cuenta</label>
+            <select name="cuenta" class="form-select" required>
+              {% for c in cuentas %}
+              <option value="{{ c.0 }}">{{ c.1 }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Fecha</label>
+            <input type="date" name="fecha" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" name="nombre" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Motivo</label>
+            <input type="text" name="motivo" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Valor</label>
+            <input type="number" name="valor" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Referencia 1</label>
+            <input type="text" name="referencia1" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Referencia 2</label>
+            <input type="text" name="referencia2" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Responsable (ID)</label>
+            <input type="text" name="responsable" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
