@@ -1,5 +1,8 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, JsonResponse
+from django.template.loader import render_to_string
+from .models import Pago
+from .forms import PagoForm
 
 # Create your views here.
 
@@ -77,3 +80,34 @@ def crear_pago(request):
             responsable_id=request.POST.get("responsable") or None
         )
         return redirect('gestionar_pagos')  # Redirige a la lista de pagos
+
+def edit_pago(request, pago_id):
+    pago = get_object_or_404(Pago, id=pago_id)
+    form = PagoForm(instance=pago)
+    html = render_to_string('payments/partials/editar_pago_form.html', {'form': form, 'pago': pago}, request=request)
+    return HttpResponse(html)
+
+def update_pago(request, pago_id):
+    pago = get_object_or_404(Pago, id=pago_id)
+    if request.method == 'POST':
+        form = PagoForm(request.POST, instance=pago)
+        if form.is_valid():
+            form.save()
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': True})
+            else:
+                from django.urls import reverse
+                from django.shortcuts import redirect
+                return redirect(reverse('paymentsManagement'))
+        else:
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                html = render_to_string('payments/partials/editar_pago_form.html', {'form': form, 'pago': pago}, request=request)
+                return JsonResponse({'success': False, 'html': html})
+            else:
+                return render(request, 'payments/partials/editar_pago_form.html', {'form': form, 'pago': pago})
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'success': False, 'error': 'Método no permitido'})
+    else:
+        from django.urls import reverse
+        from django.shortcuts import redirect
+    return redirect(reverse('paymentsManagement'))

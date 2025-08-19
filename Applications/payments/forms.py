@@ -8,3 +8,7 @@ def crear_pago_form():
             fields = ['monto', 'descripcion', 'fecha']
     return CrearPagoForm
 
+class PagoForm(forms.ModelForm):
+    class Meta:
+        model = Pago
+        fields = '__all__'
