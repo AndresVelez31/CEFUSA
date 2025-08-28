@@ -440,22 +440,25 @@ def get_user_details(request, user_type, user_id): #'Ver' Button logic
         return JsonResponse({'error': str(e)}, status=500)
 
 def get_user_edit_form(request, user_type, user_id):
-    if user_type == 'acudiente':
-        user = get_object_or_404(Acudiente, id=user_id)
-        form = AcudienteForm(instance=user, editable=True)
-    elif user_type == 'jugador':
-        user = get_object_or_404(Jugador, id=user_id)
-        form = JugadorForm(instance=user, editable=True)
-    else:
-        return JsonResponse({'error': 'Tipo de usuario no válido'}, status=400)
-    
-    # Corrección clave: Usar render_to_string con el request
-    html_content = render_to_string(
-        'users/edit_form.html', 
-        {'form': form},
-        request=request  # Importante para el CSRF token
-    )
-    return HttpResponse(html_content)
+    try:
+        if user_type == 'acudiente':
+            user = get_object_or_404(Acudiente, id=user_id)
+            form = AcudienteForm(instance=user, editable=True)
+        elif user_type == 'jugador':
+            user = get_object_or_404(Jugador, id=user_id)
+            form = JugadorForm(instance=user, editable=True)
+        else:
+            return JsonResponse({'error': 'Tipo de usuario no válido'}, status=400)
+        html_content = render_to_string(
+            'users/edit_form.html', 
+            {'form': form},
+            request=request
+        )
+        return HttpResponse(html_content)
+    except Exception as e:
+        # Si hay error, mostrar mensaje claro en el formulario
+        error_html = f'<div class="alert alert-danger">Error al cargar el formulario: {str(e)}</div>'
+        return HttpResponse(error_html)
 
 def update_user(request, user_type, user_id):
     if request.method != 'POST':
@@ -482,3 +485,4 @@ def update_user(request, user_type, user_id):
             
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
