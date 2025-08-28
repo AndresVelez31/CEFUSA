@@ -8,7 +8,9 @@ from .forms import AcudienteForm, JugadorForm
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
-from django.template import RequestContext
+
+# Infinite scroll: acudientes
+from django.views.decorators.http import require_GET
 
 
 # Create your views here.
@@ -51,8 +53,8 @@ def usersManagement(request): # Basic research
     tipo_usuario = request.GET.get('tipo_usuario', '')
     
     # Filtrar acudientes
-    acudientes = Acudiente.objects.all() #Internal function of django that obtains all records from the Acudiente table
-
+    acudientes = Acudiente.objects.all()
+    
     #Filtro de Busqueda General
      # It works for all this parameter without taking into account MAY or MIN
     if search:
@@ -162,7 +164,7 @@ def usersManagement(request): # Basic research
 
     # Ordenar según el orden definido, dejando desconocidos al final
     tipos_doc_en_bd.sort(key=lambda x: index_map.get(x, len(index_map)))
-    
+
     context = {
         'acudientes': acudientes,
         'jugadores': jugadores,
@@ -172,7 +174,6 @@ def usersManagement(request): # Basic research
     return render(request, 'index.html', context)
 
 def busqueda_avanzada(request): # Advanced search view
-
 
     """Vista para búsqueda avanzada con filtros específicos"""
     
@@ -437,9 +438,6 @@ def get_user_details(request, user_type, user_id): #'Ver' Button logic
         
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-
-def edit_user(request):
-    return HttpResponse("Aquí va la lógica para editar un usuario.")
 
 def get_user_edit_form(request, user_type, user_id):
     if user_type == 'acudiente':

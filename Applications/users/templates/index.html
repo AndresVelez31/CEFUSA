@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </script>
 
-                <!-- Modal para crear jugador -->
+ <!-- Modal para crear jugador -->
 <div class="modal fade" id="modalCrearJugador" tabindex="-1" aria-labelledby="modalCrearJugadorLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="tab-content mt-3" id="userTabContent">
             <!-- Acudientes Tab -->
             <div class="tab-pane fade show active" id="acudientes" role="tabpanel">
-                <div class="table-responsive">
+                <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                     <table class="table table-primary">
                         <thead>
                             <tr>
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <th scope="col">Régimen</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="acudientes-body">
                             {% for acudiente in acudientes %}
                             <tr>
                                 <td>{{ acudiente.id }}</td>
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <!-- Jugadores Tab -->
             <div class="tab-pane fade" id="jugadores" role="tabpanel">
-                <div class="table-responsive">
+                <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                     <table class="table table-success">
                         <thead>
                             <tr>
@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <th scope="col">Acudiente</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="jugadores-body">
                             {% for jugador in jugadores %}
                             <tr>
                                 <td>{{ jugador.id }}</td>
@@ -305,6 +305,9 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     <div class="card-footer text-muted"></div>
 </div>
+
+</br>
+</br>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
