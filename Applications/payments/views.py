@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from .models import Pago
 from .forms import PagoForm
+from django.views.decorators.http import require_POST
 
 # Create your views here.
 
@@ -111,3 +112,14 @@ def update_pago(request, pago_id):
         from django.urls import reverse
         from django.shortcuts import redirect
     return redirect(reverse('paymentsManagement'))
+
+@require_POST
+def delete_pago(request, pago_id):
+    if request.headers.get('x-requested-with') != 'XMLHttpRequest':
+        return JsonResponse({'success': False, 'error': 'Petición inválida.'}, status=400)
+    pago = get_object_or_404(Pago, id=pago_id)
+    try:
+        pago.delete()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)

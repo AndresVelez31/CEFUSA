@@ -157,6 +157,7 @@
 
 <!-- Modal Editar Pagos -->
 <div class="modal fade" id="editarPagoModal" tabindex="-1" aria-labelledby="editarPagoModalLabel" aria-hidden="true">
+  
   <div class="modal-dialog">
     <div class="modal-content" id="editarPagoModalContent">
       <!-- Aquí se cargará el formulario por AJAX -->
@@ -185,6 +186,59 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+</script>
+<script>
+function bindEditarPagoForm() {
+  // Botón Eliminar Pago en el modal de edición
+  const btnDeletePago = document.getElementById('btn-delete-pago');
+  if (btnDeletePago) {
+    btnDeletePago.addEventListener('click', async function() {
+      const pagoId = this.getAttribute('data-id');
+      if (confirm('¿Estás seguro de que deseas eliminar este pago? Esta acción no se puede deshacer.')) {
+        try {
+          const response = await fetch(`/payments/pagos/${pagoId}/delete/`, {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': getCSRFToken(),
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          });
+          const data = await response.json();
+          if (data.success) {
+            bootstrap.Modal.getInstance(document.getElementById('editarPagoModal')).hide();
+            showNotification('Pago eliminado correctamente', 'success');
+            setTimeout(() => window.location.reload(), 1500);
+          } else {
+            throw new Error(data.error || 'Error al eliminar el pago');
+          }
+        } catch (error) {
+          showNotification(`Error: ${error.message}`, 'error');
+        }
+      }
+    });
+  }
+}
+
+// Función para obtener CSRF token (si no la tienes ya)
+function getCSRFToken() {
+  const cookieValue = document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)');
+  return cookieValue ? cookieValue.pop() : '';
+}
+
+// Función para mostrar notificaciones (si no la tienes ya)
+function showNotification(message, type = 'success') {
+  const notification = document.createElement('div');
+  notification.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show`;
+  notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+  notification.innerHTML = `
+    <strong>${type === 'error' ? 'Error' : 'Éxito'}:</strong> ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  `;
+  document.body.appendChild(notification);
+  setTimeout(() => {
+    if (notification.parentNode) notification.parentNode.removeChild(notification);
+  }, 4000);
+}
 </script>
 
 {% endblock %}
