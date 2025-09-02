@@ -5,13 +5,7 @@ from django.db.models import Q
 from datetime import date, timedelta
 from .models import Acudiente, Jugador
 from .forms import AcudienteForm, JugadorForm
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
-
-# Infinite scroll: acudientes
-from django.views.decorators.http import require_GET
-
 
 # Create your views here.
 

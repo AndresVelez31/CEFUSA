@@ -7,7 +7,7 @@
 <div class="card">
     <div class="card-header">
         <div class="d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Búsqueda Avanzada de Usuarios</h4>
+            <h4 class="mb-0"> Búsqueda Avanzada de Usuarios </h4>
             <div class="btn-group" role="group">
                 <a href="{% url 'users:index' %}" class="btn btn-outline-secondary btn-sm">Vista Simple</a>
                 <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearAcudiente">+ Nuevo Acudiente</a>
@@ -16,7 +16,7 @@
         </div>
     </div>
     
-    <div class="card-body">
+    <div class="card-body" style="max-height: 1200px; overflow-y: auto;">
         <!-- Filtros Avanzados -->
         <div class="accordion mb-3" id="filtrosAvanzados">
             <div class="accordion-item">
@@ -227,6 +227,8 @@
         </div>
     </div>
 </div>
+
+<br>
 
 <!-- Modal para mostrar detalles del usuario -->
 <div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
