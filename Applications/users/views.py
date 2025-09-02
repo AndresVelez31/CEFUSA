@@ -486,3 +486,27 @@ def update_user(request, user_type, user_id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+
+def delete_user(request, user_type, user_id):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+    try:
+        if user_type == 'acudiente':
+            user = get_object_or_404(Acudiente, id=user_id)
+            # Verificar si tiene jugadores asociados antes de eliminar
+            if user.jugadores.exists():
+                return JsonResponse({
+                    'error': 'No se puede eliminar este acudiente porque tiene jugadores asociados. '
+                             'Primero debe reassignar o eliminar los jugadores.'
+                }, status=400)
+        elif user_type == 'jugador':
+            user = get_object_or_404(Jugador, id=user_id)
+        else:
+            return JsonResponse({'error': 'Tipo de usuario no válido'}, status=400)
+
+        user.delete()
+        return JsonResponse({'success': True})
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

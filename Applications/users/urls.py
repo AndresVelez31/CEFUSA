@@ -15,4 +15,6 @@ urlpatterns = [
     path('get_user_details/<str:user_type>/<int:user_id>/', get_user_details, name='get_user_details'),
     path('edit/form/<str:user_type>/<int:user_id>/', get_user_edit_form, name='get_user_edit_form'),
     path('edit/update/<str:user_type>/<int:user_id>/', update_user, name='update_user'),
+
+    path('delete/<str:user_type>/<int:user_id>/', views.delete_user, name='delete_user'),
 ]

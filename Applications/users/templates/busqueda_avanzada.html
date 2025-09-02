@@ -245,6 +245,7 @@
             <div class="modal-footer">
                 <button type="button" id="btn-edit-user" class="btn btn-warning d-none">Editar</button>
                 <button type="button" id="btn-save-user" class="btn btn-success d-none">Guardar</button>
+                <button type="button" id="btn-delete-user" class="btn btn-danger d-none" data-user-type="" data-user-id="">Eliminar</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
@@ -297,6 +298,22 @@
 </div>
 
 <script>
+
+    // Añade esta función para obtener el token CSRF de las cookies
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 10) === 'csrftoken=') {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 
 let currentUserType, currentUserId;
 let btnEdit, btnSave;
@@ -370,6 +387,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const btnEdit = document.getElementById('btn-edit-user');
         const btnSave = document.getElementById('btn-save-user');
         
+        const btnDelete = document.getElementById('btn-delete-user');
+
+        if (btnDelete) {
+            btnDelete.dataset.userType = (userData.tipo || '').toLowerCase();
+            btnDelete.dataset.userId = userData.id || '';
+            btnDelete.classList.remove('d-none');
+        }
+
         if (btnEdit) {
             btnEdit.dataset.userType = (userData.tipo || '').toLowerCase();
             btnEdit.dataset.userId = userData.id || '';
@@ -620,25 +645,6 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
     }
-    
-    // Añade esta función para obtener el token CSRF de las cookies
-    function getCSRFToken() {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, 10) === 'csrftoken=') {
-                    cookieValue = decodeURIComponent(cookie.substring(10));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-// Modifica tu evento click del botón Guardar
-
 
     // Modal Acudiente (código existente)
     var modalCrearAcudiente = document.getElementById('modalCrearAcudiente');
@@ -709,8 +715,73 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Botón Eliminar Usuario
+    const btnDelete = document.getElementById('btn-delete-user');
+    if (btnDelete) {
+        btnDelete.addEventListener('click', function() {
+            const userType = this.dataset.userType;
+            const userId = this.dataset.userId;
+            
+            if (confirm(`¿Estás seguro de que deseas eliminar este ${userType}? Esta acción no se puede deshacer.`)) {
+                deleteUser(userType, userId);
+            }
+        });
+    }
 });
 
+async function deleteUser(userType, userId) {
+    try {
+        const response = await fetch(`/users/delete/${userType}/${userId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Cerrar el modal
+            bootstrap.Modal.getInstance(document.getElementById('userDetailsModal')).hide();
+            
+            // Mostrar mensaje de éxito
+            showNotification('Usuario eliminado correctamente', 'success');
+            
+            // Recargar la página después de un breve retraso
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            throw new Error(data.error || 'Error al eliminar el usuario');
+        }
+    } catch (error) {
+        showNotification(`Error: ${error.message}`, 'error');
+    }
+}
+
+// Función para mostrar notificaciones
+function showNotification(message, type = 'info') {
+    // Crear elemento de notificación
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show`;
+    notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        <strong>${type === 'error' ? 'Error' : 'Éxito'}:</strong> ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    // Agregar al documento
+    document.body.appendChild(notification);
+    
+    // Auto-eliminar después de 5 segundos
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 5000);
+}
 </script>
 
 {% endblock %}
