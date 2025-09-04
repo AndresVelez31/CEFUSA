@@ -33,6 +33,11 @@ The web application will have the following main features:
 - General club information.
 - Reporting and indicator module.
 
+### How to run the program
+- First, install python, pip and search requierments-txt where you can see the libraries needed for the code to run.
+- Second, create a file in yor PC and clone the repository
+- Then, open the powershell, CMD, Terminal or Zshell depending on the enviroment you have (only for Windows, Linux and Mac).
+
 ---
 
 ## 👨‍💻 Contributions
