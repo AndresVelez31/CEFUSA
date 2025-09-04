@@ -6,10 +6,10 @@ app_name = 'user'
 
 urlpatterns = [
     path('', views.display_user, name='index'),
-    path('users/', views.display_user, name='display_user'),
-    path('busqueda-avanzada/', views.advanced_search, name='advanced_search'),
-    path('acudiente/nuevo/', views.create_guardian, name='create_guardian'),
-    path('jugador/nuevo/', views.create_player, name='create_player'),
+    path('user/', views.display_user, name='display_user'),
+    path('busqueda-avanzada/', views.display_user_advanced, name='display_user_advanced'),
+    path('acudiente/nuevo/', views.create_acudiente, name='create_acudiente'),
+    path('jugador/nuevo/', views.create_jugador, name='create_jugador'),
     path('api/user-details/<str:user_type>/<int:user_id>/', views.get_user_details, name='get_user_details'),
 
     path('get_user_details/<str:user_type>/<int:user_id>/', get_user_details, name='get_user_details'),

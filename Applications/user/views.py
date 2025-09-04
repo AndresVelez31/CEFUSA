@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 from datetime import date, timedelta
-from .models import Acudiente, Jugador
+from .models import Attendant, Player
 from .forms import AcudienteForm, JugadorForm
 from django.template.loader import render_to_string
 
@@ -42,137 +42,128 @@ def create_guardian(request):
     return render(request, 'create_guardian.html', {'form': form})
 
 def display_user(request): # Basic research
-    # Obtener parámetros de filtro
+    # Get filter parameters
     search = request.GET.get('search', '')
-    tipo_doc = request.GET.get('tipo_doc', '')
-    ciudad = request.GET.get('ciudad', '')
-    tipo_usuario = request.GET.get('tipo_usuario', '')
-    
-    # Filtrar acudientes
-    acudientes = Acudiente.objects.all()
-    
-    #Filtro de Busqueda General
-     # It works for all this parameter without taking into account MAY or MIN
+    doc_type = request.GET.get('tipo_doc', '')
+    city = request.GET.get('ciudad', '')
+    user_type = request.GET.get('tipo_usuario', '')
+
+    # Filter attendants
+    attendants = Attendant.objects.all()
+
+    # General search filter
     if search:
-        # Dividir la búsqueda en palabras para permitir buscar nombre y apellido por separado
         search_words = search.strip().split()
-        
         if len(search_words) > 1:
-            # Si hay múltiples palabras, buscar que contengan todas las palabras
-            acudiente_query = Q()
+            attendant_query = Q()
             for word in search_words:
-                acudiente_query &= (
-                    Q(nombre__icontains=word) |
-                    Q(apellidos__icontains=word) |
-                    Q(identificacion__icontains=word) |
-                    Q(correo__icontains=word) |
-                    Q(ciudad__icontains=word) |
-                    Q(telefono__icontains=word) |
-                    Q(direccion__icontains=word) |
-                    Q(tipo_regimen__icontains=word) |
-                    Q(tipo_doc__icontains=word)
+                attendant_query &= (
+                    Q(first_name__icontains=word) |
+                    Q(last_name__icontains=word) |
+                    Q(identification__icontains=word) |
+                    Q(email__icontains=word) |
+                    Q(city__icontains=word) |
+                    Q(phone__icontains=word) |
+                    Q(address__icontains=word) |
+                    Q(regime_type__icontains=word) |
+                    Q(document_type__icontains=word)
                 )
-            acudientes = acudientes.filter(acudiente_query)
+            attendants = attendants.filter(attendant_query)
         else:
-            # Si es una sola palabra, usar el comportamiento original
-            acudientes = acudientes.filter(
-                Q(nombre__icontains=search) |
-                Q(apellidos__icontains=search) |
-                Q(identificacion__icontains=search) |
-                Q(correo__icontains=search) |
-                Q(ciudad__icontains=search) |
-                Q(telefono__icontains=search) |
-                Q(direccion__icontains=search) |
-                Q(tipo_regimen__icontains=search) |
-                Q(tipo_doc__icontains=search)
+            attendants = attendants.filter(
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(identification__icontains=search) |
+                Q(email__icontains=search) |
+                Q(city__icontains=search) |
+                Q(phone__icontains=search) |
+                Q(address__icontains=search) |
+                Q(regime_type__icontains=search) |
+                Q(document_type__icontains=search)
             )
 
-    #Filtro de Tipo de documento
-    if tipo_doc:
-        acudientes = acudientes.filter(tipo_doc=tipo_doc)
-    
-    #Filtro de Ciudad
-    if ciudad:
-        acudientes = acudientes.filter(ciudad=ciudad)
-    
-    # Si solo se quieren jugadores, vaciar acudientes
-    if tipo_usuario == 'jugadores':
-        acudientes = Acudiente.objects.none()
-    
-    # Filtrar jugadores
-    jugadores = Jugador.objects.select_related('acudiente').all()
-    
+    # Document type filter
+    if doc_type:
+        attendants = attendants.filter(document_type=doc_type)
+
+    # City filter
+    if city:
+        attendants = attendants.filter(city=city)
+
+    # If only players are wanted, empty attendants
+    if user_type == 'jugadores':
+        attendants = Attendant.objects.none()
+
+    # Filter players
+    players = Player.objects.select_related('attendant').all()
+
     if search:
-        # Dividir la búsqueda en palabras para permitir buscar nombre y apellido por separado
         search_words = search.strip().split()
-        
         if len(search_words) > 1:
-            # Si hay múltiples palabras, buscar que contengan todas las palabras
-            jugador_query = Q()
+            player_query = Q()
             for word in search_words:
-                jugador_query &= (
-                    Q(nombre__icontains=word) |
-                    Q(apellido__icontains=word) |
-                    Q(identificacion__icontains=word) |
-                    Q(acudiente__nombre__icontains=word) |
-                    Q(acudiente__apellidos__icontains=word) |
-                    Q(institucion_educativa__icontains=word)
+                player_query &= (
+                    Q(first_name__icontains=word) |
+                    Q(last_name__icontains=word) |
+                    Q(identification__icontains=word) |
+                    Q(attendant__first_name__icontains=word) |
+                    Q(attendant__last_name__icontains=word) |
+                    Q(educational_institution__icontains=word)
                 )
-            jugadores = jugadores.filter(jugador_query)
+            players = players.filter(player_query)
         else:
-            # Si es una sola palabra, usar el comportamiento original
-            jugadores = jugadores.filter(
-                Q(nombre__icontains=search) |
-                Q(apellido__icontains=search) |
-                Q(identificacion__icontains=search) |
-                Q(acudiente__nombre__icontains=search) |
-                Q(acudiente__apellidos__icontains=search) |
-                Q(institucion_educativa__icontains=search)
+            players = players.filter(
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(identification__icontains=search) |
+                Q(attendant__first_name__icontains=search) |
+                Q(attendant__last_name__icontains=search) |
+                Q(educational_institution__icontains=search)
             )
-    
-    if tipo_doc:
-        jugadores = jugadores.filter(tipo_doc=tipo_doc)
-    
-    if ciudad:
-        jugadores = jugadores.filter(ciudad=ciudad)
-    
-    # Si solo se quieren acudientes, vaciar jugadores
-    if tipo_usuario == 'acudientes':
-        jugadores = Jugador.objects.none()
-    
-    # Obtener ciudades disponibles para el filtro
-    ciudades_acudientes = set(Acudiente.objects.values_list('ciudad', flat=True).distinct())
-    ciudades_jugadores = set(Jugador.objects.values_list('ciudad', flat=True).distinct())
-    ciudades_disponibles = sorted(ciudades_acudientes.union(ciudades_jugadores))
-    
-    # Orden que queremos usar (desde el TextChoices)
-    orden_tipodoc = [opcion.label for opcion in Acudiente.TipoDocumento]
 
-    # Obtener tipos de documentos desde ambos modelos
-    tipos_acudientes = set(Acudiente.objects.values_list('tipo_doc', flat=True).distinct())
-    tipos_jugadores = set(Jugador.objects.values_list('tipo_doc', flat=True).distinct())
+    if doc_type:
+        players = players.filter(document_type=doc_type)
 
-    # Unir los tipos y pasarlos a lista
-    tipos_doc_en_bd = list(tipos_acudientes.union(tipos_jugadores))
+    if city:
+        players = players.filter(city=city)
 
-    # Crear mapa de índices para orden personalizado
-    index_map = {label: idx for idx, label in enumerate(orden_tipodoc)}
+    # If only attendants are wanted, empty players
+    if user_type == 'acudientes':
+        players = Player.objects.none()
 
-    # Ordenar según el orden definido, dejando desconocidos al final
-    tipos_doc_en_bd.sort(key=lambda x: index_map.get(x, len(index_map)))
+    # Get available cities for filter
+    attendant_cities = set(Attendant.objects.values_list('city', flat=True).distinct())
+    player_cities = set(Player.objects.values_list('city', flat=True).distinct())
+    available_cities = sorted(attendant_cities.union(player_cities))
+
+    # Order to use (from TextChoices)
+    doc_type_order = [option.label for option in Attendant.DocumentType]
+
+    # Get document types from both models
+    attendant_doc_types = set(Attendant.objects.values_list('document_type', flat=True).distinct())
+    player_doc_types = set(Player.objects.values_list('document_type', flat=True).distinct())
+
+    # Merge types and convert to list
+    doc_types_in_db = list(attendant_doc_types.union(player_doc_types))
+
+    # Create index map for custom order
+    index_map = {label: idx for idx, label in enumerate(doc_type_order)}
+
+    # Sort according to defined order, unknowns at the end
+    doc_types_in_db.sort(key=lambda x: index_map.get(x, len(index_map)))
 
     context = {
-        'acudientes': acudientes,
-        'jugadores': jugadores,
-        'ciudades_disponibles': ciudades_disponibles,
-        'tipos_doc_en_bd': tipos_doc_en_bd
+        'attendants': attendants,
+        'players': players,
+        'available_cities': available_cities,
+        'doc_types_in_db': doc_types_in_db
     }
     return render(request, 'index.html', context)
 
-def advanced_search(request): # Advanced search view
+def display_user_advanced(request): # Advanced search view
 
-    """Vista para búsqueda avanzada con filtros específicos"""
-    
+    # Vista para búsqueda avanzada con filtros específicos
+
     # Parámetros básicos
     search = request.GET.get('search', '')
     tipo_usuario = request.GET.get('tipo_usuario', '')
@@ -183,7 +174,6 @@ def advanced_search(request): # Advanced search view
     institucion = request.GET.get('institucion', '')
     jornada = request.GET.get('jornada', '')
     rango_edad = request.GET.get('rango_edad', '')
-    tiene_enfermedad = request.GET.get('tiene_enfermedad', '')
     
     # Parámetros específicos de acudientes
     correo = request.GET.get('correo', '')
@@ -191,11 +181,9 @@ def advanced_search(request): # Advanced search view
 
     # Filtrar acudientes
     acudientes = Acudiente.objects.all()
-    
     if search:
         # Dividir la búsqueda en palabras para permitir buscar nombre y apellido por separado
         search_words = search.strip().split()
-        
         if len(search_words) > 1:
             # Si hay múltiples palabras, buscar que contengan todas las palabras
             acudiente_query = Q()
@@ -359,7 +347,7 @@ def advanced_search(request): # Advanced search view
     return render(request, 'advanced_search.html', context)
 
 def get_user_details(request, user_type, user_id): #'Ver' Button logic
-    """Vista AJAX para obtener detalles de un usuario"""
+    # Vista AJAX para obtener detalles de un usuario
     if request.method != 'GET':
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     
