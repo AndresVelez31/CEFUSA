@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 from datetime import date, timedelta
-from .models import Attendant, Player
+from .models import Guardian, Player
 from .forms import AcudienteForm, JugadorForm
 from django.template.loader import render_to_string
 
@@ -43,21 +43,24 @@ def create_guardian(request):
 
 def display_user(request): # Basic research
     # Get filter parameters
-    search = request.GET.get('search', '')
-    doc_type = request.GET.get('tipo_doc', '')
-    city = request.GET.get('ciudad', '')
-    user_type = request.GET.get('tipo_usuario', '')
 
-    # Filter attendants
-    attendants = Attendant.objects.all()
+    #The 'variable' comes from the HTML, the input obtained from the GET request.
+
+    search = request.GET.get('search', '')
+    document_type = request.GET.get('document_type', '')  # Cambiado a 'document_type' para uniformidad con models
+    city = request.GET.get('city', '')  # Mantener 'ciudad' porque es el nombre esperado en la URL
+    user_type = request.GET.get('user_type', '')  # Mantener 'tipo_usuario' porque es el nombre esperado en la URL
+
+    # Filter guardians
+    guardians = Guardian.objects.all()
 
     # General search filter
     if search:
         search_words = search.strip().split()
         if len(search_words) > 1:
-            attendant_query = Q()
+            guardian_query = Q()
             for word in search_words:
-                attendant_query &= (
+                guardian_query &= (
                     Q(first_name__icontains=word) |
                     Q(last_name__icontains=word) |
                     Q(identification__icontains=word) |
@@ -68,9 +71,9 @@ def display_user(request): # Basic research
                     Q(regime_type__icontains=word) |
                     Q(document_type__icontains=word)
                 )
-            attendants = attendants.filter(attendant_query)
+            guardians = guardians.filter(guardian_query)
         else:
-            attendants = attendants.filter(
+            guardians = guardians.filter(
                 Q(first_name__icontains=search) |
                 Q(last_name__icontains=search) |
                 Q(identification__icontains=search) |
@@ -83,19 +86,20 @@ def display_user(request): # Basic research
             )
 
     # Document type filter
-    if doc_type:
-        attendants = attendants.filter(document_type=doc_type)
+    #In the comparison the left one is from the models, the right one from the GET parameter/HTML
+    if document_type:
+        guardians = guardians.filter(document_type=document_type)
 
     # City filter
     if city:
-        attendants = attendants.filter(city=city)
+        guardians = guardians.filter(city=city)
 
-    # If only players are wanted, empty attendants
-    if user_type == 'jugadores':
-        attendants = Attendant.objects.none()
+    # If only players are wanted, empty guardians
+    if user_type == 'players':
+        guardians = Guardian.objects.none()
 
     # Filter players
-    players = Player.objects.select_related('attendant').all()
+    players = Player.objects.select_related('guardian').all()
 
     if search:
         search_words = search.strip().split()
@@ -106,8 +110,8 @@ def display_user(request): # Basic research
                     Q(first_name__icontains=word) |
                     Q(last_name__icontains=word) |
                     Q(identification__icontains=word) |
-                    Q(attendant__first_name__icontains=word) |
-                    Q(attendant__last_name__icontains=word) |
+                    Q(guardian__first_name__icontains=word) |
+                    Q(guardian__last_name__icontains=word) |
                     Q(educational_institution__icontains=word)
                 )
             players = players.filter(player_query)
@@ -116,233 +120,202 @@ def display_user(request): # Basic research
                 Q(first_name__icontains=search) |
                 Q(last_name__icontains=search) |
                 Q(identification__icontains=search) |
-                Q(attendant__first_name__icontains=search) |
-                Q(attendant__last_name__icontains=search) |
+                Q(guardian__first_name__icontains=search) |
+                Q(guardian__last_name__icontains=search) |
                 Q(educational_institution__icontains=search)
             )
 
-    if doc_type:
-        players = players.filter(document_type=doc_type)
+    if document_type:
+        players = players.filter(document_type=document_type)
 
     if city:
         players = players.filter(city=city)
 
-    # If only attendants are wanted, empty players
-    if user_type == 'acudientes':
+    # If only guardians are wanted, empty players
+    if user_type == 'guardians':
         players = Player.objects.none()
 
     # Get available cities for filter
-    attendant_cities = set(Attendant.objects.values_list('city', flat=True).distinct())
+    guardian_cities = set(Guardian.objects.values_list('city', flat=True).distinct())
     player_cities = set(Player.objects.values_list('city', flat=True).distinct())
-    available_cities = sorted(attendant_cities.union(player_cities))
+    available_cities = sorted(guardian_cities.union(player_cities))
 
     # Order to use (from TextChoices)
-    doc_type_order = [option.label for option in Attendant.DocumentType]
+    document_type_order = [option.label for option in Guardian.DocumentType]
 
     # Get document types from both models
-    attendant_doc_types = set(Attendant.objects.values_list('document_type', flat=True).distinct())
-    player_doc_types = set(Player.objects.values_list('document_type', flat=True).distinct())
+    guardian_document_types = set(Guardian.objects.values_list('document_type', flat=True).distinct())
+    player_document_types = set(Player.objects.values_list('document_type', flat=True).distinct())
 
     # Merge types and convert to list
-    doc_types_in_db = list(attendant_doc_types.union(player_doc_types))
+    document_types_in_db = list(guardian_document_types.union(player_document_types))
 
     # Create index map for custom order
-    index_map = {label: idx for idx, label in enumerate(doc_type_order)}
+    index_map = {label: idx for idx, label in enumerate(document_type_order)}
 
     # Sort according to defined order, unknowns at the end
-    doc_types_in_db.sort(key=lambda x: index_map.get(x, len(index_map)))
+    document_types_in_db.sort(key=lambda x: index_map.get(x, len(index_map)))
 
     context = {
-        'attendants': attendants,
-        'players': players,
-        'available_cities': available_cities,
-        'doc_types_in_db': doc_types_in_db
+        'guardians': guardians,  # Mantener en inglés porque es código
+        'players': players,  # Mantener en inglés porque es código
+        'available_cities': available_cities,  # Mantener en inglés porque es código
+        'document_types_in_db': document_types_in_db  # Cambiado a 'document_types_in_db' para uniformidad
     }
     return render(request, 'index.html', context)
 
 def display_user_advanced(request): # Advanced search view
 
-    # Vista para búsqueda avanzada con filtros específicos
+    # View for advanced search with multiple filters
 
-    # Parámetros básicos
+    # Basic parameters
     search = request.GET.get('search', '')
-    tipo_usuario = request.GET.get('tipo_usuario', '')
-    ciudad = request.GET.get('ciudad', '')
-    tipo_doc = request.GET.get('tipo_doc', '')
+    user_type = request.GET.get('tipo_usuario', '')
+    city = request.GET.get('ciudad', '')
+    document_type = request.GET.get('tipo_doc', '')
     
-    # Parámetros específicos de jugadores
-    institucion = request.GET.get('institucion', '')
-    jornada = request.GET.get('jornada', '')
-    rango_edad = request.GET.get('rango_edad', '')
+    # Player-specific parameters
+    institution = request.GET.get('institucion', '')
+    session = request.GET.get('jornada', '')
+    age_range = request.GET.get('rango_edad', '')
     
-    # Parámetros específicos de acudientes
-    correo = request.GET.get('correo', '')
-    tipo_regimen = request.GET.get('tipo_regimen', '')
+    # Guardian-specific parameters
+    email = request.GET.get('correo', '')
+    regime_type = request.GET.get('tipo_regimen', '')
 
-    # Filtrar acudientes
-    acudientes = Acudiente.objects.all()
+    # Filter guardians
+    guardians = Guardian.objects.all()
     if search:
-        # Dividir la búsqueda en palabras para permitir buscar nombre y apellido por separado
         search_words = search.strip().split()
         if len(search_words) > 1:
-            # Si hay múltiples palabras, buscar que contengan todas las palabras
-            acudiente_query = Q()
+            guardian_query = Q()
             for word in search_words:
-                acudiente_query &= (
-                    Q(nombre__icontains=word) |
-                    Q(apellidos__icontains=word) |
-                    Q(identificacion__icontains=word) |
-                    Q(correo__icontains=word) |
-                    Q(ciudad__icontains=word) |
-                    Q(telefono__icontains=word) |
-                    Q(direccion__icontains=word) |
-                    Q(tipo_regimen__icontains=word) |
-                    Q(tipo_doc__icontains=word)
+                guardian_query &= (
+                    Q(first_name__icontains=word) |
+                    Q(last_name__icontains=word) |
+                    Q(identification__icontains=word) |
+                    Q(email__icontains=word) |
+                    Q(city__icontains=word) |
+                    Q(phone__icontains=word) |
+                    Q(address__icontains=word) |
+                    Q(regime_type__icontains=word) |
+                    Q(document_type__icontains=word)
                 )
-            acudientes = acudientes.filter(acudiente_query)
+            guardians = guardians.filter(guardian_query)
         else:
-            # Si es una sola palabra, usar el comportamiento original
-            acudientes = acudientes.filter(
-                Q(nombre__icontains=search) |
-                Q(apellidos__icontains=search) |
-                Q(identificacion__icontains=search) |
-                Q(correo__icontains=search) |
-                Q(ciudad__icontains=search) |
-                Q(telefono__icontains=search) |
-                Q(direccion__icontains=search) |
-                Q(tipo_regimen__icontains=search) |
-                Q(tipo_doc__icontains=search)
+            guardians = guardians.filter(
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(identification__icontains=search) |
+                Q(email__icontains=search) |
+                Q(city__icontains=search) |
+                Q(phone__icontains=search) |
+                Q(address__icontains=search) |
+                Q(regime_type__icontains=search) |
+                Q(document_type__icontains=search)
             )
+    if document_type:
+        guardians = guardians.filter(document_type=document_type)
     
-    if tipo_doc:
-        acudientes = acudientes.filter(tipo_doc=tipo_doc)
- 
-    if ciudad:
-        acudientes = acudientes.filter(ciudad=ciudad)
-        
-    if correo:
-        acudientes = acudientes.filter(correo__icontains=correo)
-        
-    if tipo_regimen:
-        acudientes = acudientes.filter(tipo_regimen=tipo_regimen)
-        
-    # Obtener orden definido en el TextChoices de tipo_regimen
-    orden_regimen = [opcion.label for opcion in Acudiente.TipoRegimen]
+    if city:
+        guardians = guardians.filter(city=city)
+    
+    if email:
+        guardians = guardians.filter(email__icontains=email)
+    
+    if regime_type:
+        guardians = guardians.filter(regime_type=regime_type)
 
-    # Obtener valores únicos de tipo_regimen en la base (Acudientes)
-    tipo_regimenes_en_bd = list(Acudiente.objects.values_list('tipo_regimen', flat=True).distinct())
+    # Order from TextChoices
+    regime_order = [option.label for option in Guardian.RegimeType]
+    regime_types_in_db = list(Guardian.objects.values_list('regime_type', flat=True).distinct())
+    index_map_regime = {label: idx for idx, label in enumerate(regime_order)}
+    regime_types_in_db.sort(key=lambda x: index_map_regime.get(x, len(index_map_regime)))
 
-    # Crear mapa para ordenar según orden_regimen
-    index_map_regimen = {label: idx for idx, label in enumerate(orden_regimen)}
+    # If only players are wanted, empty guardians
+    if user_type == 'jugadores':
+        guardians = Guardian.objects.none()
 
-    # Ordenar los valores obtenidos de la BD según el orden definido
-    tipo_regimenes_en_bd.sort(key=lambda x: index_map_regimen.get(x, len(index_map_regimen)))
-    
-    # Si solo se quieren jugadores, vaciar acudientes
-    if tipo_usuario == 'jugadores':
-        acudientes = Acudiente.objects.none()
-    
-    # Filtrar jugadores
-    jugadores = Jugador.objects.select_related('acudiente').all()
-    
+    # Filter players
+    players = Player.objects.select_related('guardian').all()
     if search:
-        # Dividir la búsqueda en palabras para permitir buscar nombre y apellido por separado
         search_words = search.strip().split()
-        
         if len(search_words) > 1:
-            # Si hay múltiples palabras, buscar que contengan todas las palabras
-            jugador_query = Q()
+            player_query = Q()
             for word in search_words:
-                jugador_query &= (
-                    Q(nombre__icontains=word) |
-                    Q(apellido__icontains=word) |
-                    Q(identificacion__icontains=word) |
-                    Q(acudiente__nombre__icontains=word) |
-                    Q(acudiente__apellidos__icontains=word) |
-                    Q(institucion_educativa__icontains=word)
+                player_query &= (
+                    Q(first_name__icontains=word) |
+                    Q(last_name__icontains=word) |
+                    Q(identification__icontains=word) |
+                    Q(guardian__first_name__icontains=word) |
+                    Q(guardian__last_name__icontains=word) |
+                    Q(educational_institution__icontains=word)
                 )
-            jugadores = jugadores.filter(jugador_query)
+            players = players.filter(player_query)
         else:
-            # Si es una sola palabra, usar el comportamiento original
-            jugadores = jugadores.filter(
-                Q(nombre__icontains=search) |
-                Q(apellido__icontains=search) |
-                Q(identificacion__icontains=search) |
-                Q(acudiente__nombre__icontains=search) |
-                Q(acudiente__apellidos__icontains=search) |
-                Q(institucion_educativa__icontains=search)
+            players = players.filter(
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(identification__icontains=search) |
+                Q(guardian__first_name__icontains=search) |
+                Q(guardian__last_name__icontains=search) |
+                Q(educational_institution__icontains=search)
             )
     
-    if tipo_doc:
-        jugadores = jugadores.filter(tipo_doc=tipo_doc)
+    if document_type:
+        players = players.filter(document_type=document_type)
     
-    if ciudad:
-        jugadores = jugadores.filter(ciudad=ciudad)
-        
-    if institucion:
-        jugadores = jugadores.filter(institucion_educativa__icontains=institucion)
-        
-    if jornada:
-        jugadores = jugadores.filter(jornada_entreno=jornada)
-        
-    if tiene_enfermedad:
-        jugadores = jugadores.filter(tiene_enfermedad=(tiene_enfermedad == 'true'))
+    if city:
+        players = players.filter(city=city)
     
+    if institution:
+        players = players.filter(educational_institution__icontains=institution)
     
-    # Filtro por tipo de doc
-    # Orden que queremos usar (desde el TextChoices)
-    orden_tipodoc = [opcion.label for opcion in Acudiente.TipoDocumento]
-
-    # Obtener tipos de documentos desde ambos modelos
-    tipos_acudientes = set(Acudiente.objects.values_list('tipo_doc', flat=True).distinct())
-    tipos_jugadores = set(Jugador.objects.values_list('tipo_doc', flat=True).distinct())
-
-    # Unir los tipos y pasarlos a lista
-    tipos_doc_en_bd = list(tipos_acudientes.union(tipos_jugadores))
-
-    # Crear mapa de índices para orden personalizado
-    index_map = {label: idx for idx, label in enumerate(orden_tipodoc)}
-
-    # Ordenar según el orden definido, dejando desconocidos al final
-    tipos_doc_en_bd.sort(key=lambda x: index_map.get(x, len(index_map)))
+    if session:
+        players = players.filter(training_session=session)
     
-    # Filtro por rango de edad
-    if rango_edad:
+    if age_range:
         today = date.today()
-        if rango_edad == '5-10':
+        if age_range == '5-10':
             start_date = today - timedelta(days=10*365)
             end_date = today - timedelta(days=5*365)
-        elif rango_edad == '11-15':
+        elif age_range == '11-15':
             start_date = today - timedelta(days=15*365)
             end_date = today - timedelta(days=11*365)
-        elif rango_edad == '16-20':
+        elif age_range == '16-20':
             start_date = today - timedelta(days=20*365)
             end_date = today - timedelta(days=16*365)
-        
-        jugadores = jugadores.filter(fecha_nacimiento__range=[start_date, end_date])
+        players = players.filter(birth_date__range=[start_date, end_date])
     
-    # Si solo se quieren acudientes, vaciar jugadores
-    if tipo_usuario == 'acudientes':
-        jugadores = Jugador.objects.none()
+    # If only guardians are wanted, empty players
+    if user_type == 'acudientes':
+        players = Player.objects.none()
     
-    # Agregar edad calculada a jugadores
-    for jugador in jugadores:
-        jugador.edad = (date.today() - jugador.fecha_nacimiento).days // 365
+    # Add calculated age to players
+    for player in players:
+        player.age = (date.today() - player.birth_date).days // 365
     
-    # Obtener ciudades disponibles
-    ciudades_acudientes = set(Acudiente.objects.values_list('ciudad', flat=True).distinct())
-    ciudades_jugadores = set(Jugador.objects.values_list('ciudad', flat=True).distinct())
-    ciudades_disponibles = sorted(ciudades_acudientes.union(ciudades_jugadores))
+    # Get available cities
+    guardian_cities = set(Guardian.objects.values_list('city', flat=True).distinct())
+    player_cities = set(Player.objects.values_list('city', flat=True).distinct())
+    available_cities = sorted(guardian_cities.union(player_cities))
     
-    total_resultados = acudientes.count() + jugadores.count()
+    # Document type order
+    document_type_order = [option.label for option in Guardian.DocumentType]
+    guardian_document_types = set(Guardian.objects.values_list('document_type', flat=True).distinct())
+    player_document_types = set(Player.objects.values_list('document_type', flat=True).distinct())
+    document_types_in_db = list(guardian_document_types.union(player_document_types))
+    index_map = {label: idx for idx, label in enumerate(document_type_order)}
+    document_types_in_db.sort(key=lambda x: index_map.get(x, len(index_map)))
+    total_results = guardians.count() + players.count()
     
     context = {
-        'acudientes': acudientes,
-        'jugadores': jugadores,
-        'ciudades_disponibles': ciudades_disponibles,
-        'tipos_doc_en_bd': tipos_doc_en_bd,
-        'tipo_regimenes_en_bd': tipo_regimenes_en_bd,
-        'total_resultados': total_resultados
+        'guardians': guardians,
+        'players': players,
+        'available_cities': available_cities,
+        'document_types_in_db': document_types_in_db,
+        'regime_types_in_db': regime_types_in_db,
+        'total_results': total_results
     }
     return render(request, 'advanced_search.html', context)
 

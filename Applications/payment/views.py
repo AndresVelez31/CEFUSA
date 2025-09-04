@@ -1,17 +1,16 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
-from .models import Pago
-from .forms import PagoForm
+from .models import Payment
+from .forms import PaymentForm
 from django.views.decorators.http import require_POST
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from datetime import datetime
 
 # Create your views here.
 
 def display_payment(request):
-    from django.db.models import Q
-    from .models import Pago
 
     search = request.GET.get('search', '')
     # Filtros avanzados
@@ -64,9 +63,10 @@ def display_payment(request):
         'pagos': pagos,
         'cuentas': Pago.CuentaChoices.choices,
     }
-    return render(request, 'display_payment.html', context)
+    return render(request, 'paymentsManagement.html', context)
 
-def create_payment(request):
+
+def crear_pago(request):
     if request.method == "POST":
         Pago.objects.create(
             cuenta=request.POST.get("cuenta"),

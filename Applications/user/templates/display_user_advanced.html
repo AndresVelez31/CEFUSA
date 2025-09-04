@@ -276,6 +276,7 @@
         </div>
     </div>
 </div>
+
 <!-- Modal para crear jugador -->
 <div class="modal fade" id="modalCrearJugador" tabindex="-1" aria-labelledby="modalCrearJugadorLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -300,7 +301,6 @@
 </div>
 
 <script>
-
     // Añade esta función para obtener el token CSRF de las cookies
     function getCSRFToken() {
         let cookieValue = null;
@@ -317,10 +317,10 @@
         return cookieValue;
     }
 
-let currentUserType, currentUserId;
-let btnEdit, btnSave;
+    let currentUserType, currentUserId;
+    let btnEdit, btnSave;
 
-document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
     
     // Auto-submit en tiempo real (opcional)
     const searchInput = document.querySelector('input[name="search"]');
@@ -388,7 +388,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Configurar botones de edición
         const btnEdit = document.getElementById('btn-edit-user');
         const btnSave = document.getElementById('btn-save-user');
-        
         const btnDelete = document.getElementById('btn-delete-user');
 
         if (btnDelete) {
@@ -396,7 +395,6 @@ document.addEventListener('DOMContentLoaded', function() {
             btnDelete.dataset.userId = userData.id || '';
             btnDelete.classList.remove('d-none');
         }
-
         if (btnEdit) {
             btnEdit.dataset.userType = (userData.tipo || '').toLowerCase();
             btnEdit.dataset.userId = userData.id || '';
@@ -413,7 +411,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Configura los event listeners una sola vez
     if (btnEdit && btnSave) {
+        
         btnEdit.addEventListener('click', async function() {
+
             currentUserType = this.dataset.userType;
             currentUserId = this.dataset.userId;
 
@@ -732,7 +732,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-async function deleteUser(userType, userId) {
+    async function deleteUser(userType, userId) {
     try {
         const response = await fetch(`/user/delete/${userType}/${userId}/`, {
             method: 'POST',
@@ -763,8 +763,8 @@ async function deleteUser(userType, userId) {
     }
 }
 
-// Función para mostrar notificaciones
-function showNotification(message, type = 'info') {
+    // Función para mostrar notificaciones
+    function showNotification(message, type = 'info') {
     // Crear elemento de notificación
     const notification = document.createElement('div');
     notification.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show`;

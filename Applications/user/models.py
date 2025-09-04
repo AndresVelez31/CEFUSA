@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator, MinLengthValidator
 
 
-class Attendant(models.Model):
+class Guardian(models.Model):
     id = models.AutoField(primary_key=True, db_column="idAcudiente")
 
     class DocumentType(models.TextChoices):
@@ -92,10 +92,10 @@ class Player(models.Model):
     pdf_doc_id = models.CharField(max_length=100, db_column="pdfDocId")
     pdf_eps_certificate = models.CharField(max_length=100, db_column="pdfCertificadoEPS")
 
-    attendant = models.ForeignKey(
-        Attendant,
+    guardian = models.ForeignKey(
+        Guardian,
         on_delete=models.PROTECT,
-        related_name="jugadores",
+        related_name="players",
         db_column="acudiente",
     )
 

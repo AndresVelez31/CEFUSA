@@ -1,6 +1,6 @@
 # users/forms.py
 from django import forms
-from .models import Attendant, Player
+from .models import Guardian, Player
 
 class AcudienteForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -25,7 +25,7 @@ class AcudienteForm(forms.ModelForm):
                     field.widget.attrs['readonly'] = True
 
     class Meta:
-        model = Attendant
+        model = Guardian
         fields = '__all__'
 
 class JugadorForm(forms.ModelForm):

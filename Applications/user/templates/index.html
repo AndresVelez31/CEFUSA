@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <!-- Filtros globales -->
         <div class="row mb-3">
             <div class="col-md-12">
-                <form method="GET" id="filtrosForm" class="row g-3">
+                <form method="GET" id="filters-form" class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label">Búsqueda general</label>
                         <input type="text" class="form-control" name="search" 
@@ -163,32 +163,32 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Tipo de documento</label>
-                        <select class="form-select" name="tipo_doc">
+                        <select class="form-select" name="document_type">
                             <option value="">Todos</option>
-                            {% for tipo in tipos_doc_en_bd %}
-                            <option value="{{ tipo }}" {% if request.GET.tipo_doc == tipo %}selected{% endif %}>
-                                {{ tipo }}
+                            {% for type in document_types_in_db %}
+                            <option value="{{ type }}" {% if request.GET.document_type == type %}selected{% endif %}>
+                                {{ type }}
                             </option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Ciudad</label>
-                        <select class="form-select" name="ciudad">
+                        <select class="form-select" name="city">
                             <option value="">Todas</option>
-                            {% for ciudad in ciudades_disponibles %}
-                            <option value="{{ ciudad }}" {% if request.GET.ciudad == ciudad %}selected{% endif %}>
-                                {{ ciudad }}
+                            {% for city in available_cities %}
+                            <option value="{{ city }}" {% if request.GET.city == city %}selected{% endif %}>
+                                {{ city }}
                             </option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Tipo de usuario</label>
-                        <select class="form-select" name="tipo_usuario" id="tipoUsuarioSelect">
+                        <select class="form-select" name="user_type" id="user-type-select">
                             <option value="">Ambos</option>
-                            <option value="acudientes" {% if request.GET.tipo_usuario == 'acudientes' %}selected{% endif %}>Solo Acudientes</option>
-                            <option value="jugadores" {% if request.GET.tipo_usuario == 'jugadores' %}selected{% endif %}>Solo Jugadores</option>
+                            <option value="guardians" {% if request.GET.user_type == 'guardians' %}selected{% endif %}>Solo Acudientes</option>
+                            <option value="players" {% if request.GET.user_type == 'players' %}selected{% endif %}>Solo Jugadores</option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -203,25 +203,25 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
 
         <!-- Nav tabs -->
-        <ul class="nav nav-tabs" id="userTabs" role="tablist">
+        <ul class="nav nav-tabs" id="user-tabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="acudientes-tab" data-bs-toggle="tab" 
-                        data-bs-target="#acudientes" type="button" role="tab">
-                    Acudientes ({{ acudientes.count }})
+                <button class="nav-link active" id="guardians-tab" data-bs-toggle="tab" 
+                        data-bs-target="#guardians" type="button" role="tab">
+                    Acudientes ({{ guardians.count }})
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="jugadores-tab" data-bs-toggle="tab" 
-                        data-bs-target="#jugadores" type="button" role="tab">
-                    Jugadores ({{ jugadores.count }})
+                <button class="nav-link" id="players-tab" data-bs-toggle="tab" 
+                        data-bs-target="#players" type="button" role="tab">
+                    Jugadores ({{ players.count }})
                 </button>
             </li>
         </ul>
 
         <!-- Tab content -->
-        <div class="tab-content mt-3" id="userTabContent">
+        <div class="tab-content mt-3" id="user-tab-content">
             <!-- Acudientes Tab -->
-            <div class="tab-pane fade show active" id="acudientes" role="tabpanel">
+            <div class="tab-pane fade show active" id="guardians" role="tabpanel">
                 <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                     <table class="table table-primary">
                         <thead>
@@ -238,19 +238,19 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <th scope="col">Régimen</th>
                             </tr>
                         </thead>
-                        <tbody id="acudientes-body">
-                            {% for acudiente in acudientes %}
+                        <tbody id="guardians-body">
+                            {% for guardian in guardians %}
                             <tr>
-                                <td>{{ acudiente.id }}</td>
-                                <td>{{ acudiente.get_tipo_doc_display }}</td>
-                                <td>{{ acudiente.identificacion }}</td>
-                                <td>{{ acudiente.nombre }}</td>
-                                <td>{{ acudiente.apellidos }}</td>
-                                <td>{{ acudiente.ciudad }}</td>
-                                <td>{{ acudiente.direccion }}</td>
-                                <td>{{ acudiente.correo }}</td>
-                                <td>{{ acudiente.telefono }}</td>
-                                <td>{{ acudiente.get_tipo_regimen_display }}</td>
+                                <td>{{ guardian.id }}</td>
+                                <td>{{ guardian.get_document_type_display }}</td>
+                                <td>{{ guardian.identification }}</td>
+                                <td>{{ guardian.first_name }}</td>
+                                <td>{{ guardian.last_name }}</td>
+                                <td>{{ guardian.city }}</td>
+                                <td>{{ guardian.address }}</td>
+                                <td>{{ guardian.email }}</td>
+                                <td>{{ guardian.phone }}</td>
+                                <td>{{ guardian.get_regime_type_display }}</td>
                             </tr>
                             {% empty %}
                             <tr>
@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
 
             <!-- Jugadores Tab -->
-            <div class="tab-pane fade" id="jugadores" role="tabpanel">
+            <div class="tab-pane fade" id="players" role="tabpanel">
                 <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                     <table class="table table-success">
                         <thead>
@@ -280,17 +280,17 @@ document.addEventListener('DOMContentLoaded', function() {
                             </tr>
                         </thead>
                         <tbody id="jugadores-body">
-                            {% for jugador in jugadores %}
+                            {% for player in players %}
                             <tr>
-                                <td>{{ jugador.id }}</td>
-                                <td>{{ jugador.get_tipo_doc_display }}</td>
-                                <td>{{ jugador.identificacion }}</td>
-                                <td>{{ jugador.nombre }}</td>
-                                <td>{{ jugador.apellido }}</td>
-                                <td>{{ jugador.fecha_nacimiento }}</td>
-                                <td>{{ jugador.ciudad }}</td>
-                                <td>{{ jugador.institucion_educativa }}</td>
-                                <td>{{ jugador.acudiente.nombre }} {{ jugador.acudiente.apellidos }}</td>
+                                <td>{{ player.id }}</td>
+                                <td>{{ player.get_document_type_display }}</td>
+                                <td>{{ player.identification }}</td>
+                                <td>{{ player.first_name }}</td>
+                                <td>{{ player.last_name }}</td>
+                                <td>{{ player.birth_date }}</td>
+                                <td>{{ player.city }}</td>
+                                <td>{{ player.educational_institution }}</td>
+                                <td>{{ player.guardian.first_name }} {{ player.guardian.last_name }}</td>
                             </tr>
                             {% empty %}
                             <tr>
@@ -312,15 +312,15 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Función para cambiar automáticamente de pestaña según el filtro
-    const tipoUsuarioSelect = document.getElementById('tipoUsuarioSelect');
-    const acudientesTab = document.getElementById('acudientes-tab');
-    const jugadoresTab = document.getElementById('jugadores-tab');
-    
-    tipoUsuarioSelect.addEventListener('change', function() {
-        if (this.value === 'acudientes') {
-            acudientesTab.click();
-        } else if (this.value === 'jugadores') {
-            jugadoresTab.click();
+    const userTypeSelect = document.getElementById('user-type-select');
+    const guardiansTab = document.getElementById('guardians-tab');
+    const playersTab = document.getElementById('players-tab');
+
+    userTypeSelect.addEventListener('change', function() {
+        if (this.value === 'guardians') {
+            guardiansTab.click();
+        } else if (this.value === 'players') {
+            playersTab.click();
         }
     });
     
@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.addEventListener('input', function() {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
-            document.getElementById('filtrosForm').submit();
+            document.getElementById('filters-form').submit();
         }, 1000); // Espera 1000ms después de que el usuario deje de escribir
     });
     
