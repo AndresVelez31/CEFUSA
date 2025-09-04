@@ -8,7 +8,7 @@ from .forms import AcudienteForm, JugadorForm
 from django.template.loader import render_to_string
 
 # Create your views here.
-
+# Requirement FR-6
 def create_jugador(request):
     form = JugadorForm(request.POST or None)
     if request.method == 'POST':
@@ -24,6 +24,7 @@ def create_jugador(request):
         return HttpResponse(form.as_p())
     return render(request, 'createJugador.html', {'form': form})
 
+# Requirement FR-21**
 def create_acudiente(request):
     form = AcudienteForm(request.POST or None)
     if request.method == 'POST':
