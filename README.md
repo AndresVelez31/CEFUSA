@@ -41,10 +41,11 @@ The web application will have the following main features:
     - python --version
     - pip --version
 
-2.Clome the repository
+2.Clone the repository
 - Create or open the folder where you want the project:
     - git clone https://github.com/AndresVelez31/CEFUSA.git
     - cd CEFUSA
+
 3.Install dependencies
 - Install all required libraries listed in requirements.txt:
     - pip install -r requirements.txt
