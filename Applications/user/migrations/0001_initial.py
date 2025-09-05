@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
                 ('centro_atencion', models.CharField(db_column='centroAtencion', max_length=45)),
                 ('pdf_doc_id', models.CharField(db_column='pdfDocId', max_length=100)),
                 ('pdf_certificado_eps', models.CharField(db_column='pdfCertificadoEPS', max_length=100)),
-                ('acudiente', models.ForeignKey(db_column='acudiente', on_delete=django.db.models.deletion.PROTECT, related_name='jugadores', to='users.acudiente')),
+                ('acudiente', models.ForeignKey(db_column='acudiente', on_delete=django.db.models.deletion.PROTECT, related_name='jugadores', to='user.acudiente')),
             ],
             options={
                 'db_table': 'Jugador',

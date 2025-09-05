@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('users', '0001_initial'),
+    ('user', '0001_initial'),
     ]
 
     operations = [
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('factura_venta', models.CharField(blank=True, db_column='facturaVenta', max_length=30, null=True)),
                 ('recibo_caja', models.CharField(blank=True, db_column='reciboCaja', max_length=20, null=True)),
                 ('comentario', models.CharField(blank=True, db_column='comentario', max_length=150, null=True)),
-                ('responsable', models.ForeignKey(db_column='responsable', on_delete=django.db.models.deletion.PROTECT, related_name='pagos', to='users.acudiente')),
+                ('responsable', models.ForeignKey(db_column='responsable', on_delete=django.db.models.deletion.PROTECT, related_name='pagos', to='user.acudiente')),
             ],
             options={
                 'db_table': 'Pago',

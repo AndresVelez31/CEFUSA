@@ -2,8 +2,8 @@ import os
 import csv
 from datetime import datetime
 from django.core.management.base import BaseCommand
-from Applications.payments.models import Pago
-from Applications.users.models import Acudiente  # Asegúrate de que esta importación sea correcta
+from Applications.payment.models import Pago
+from Applications.user.models import Acudiente  # Asegúrate de que esta importación sea correcta
 
 class Command(BaseCommand):
     help = 'Importa datos de pagos desde un archivo CSV a la base de datos'

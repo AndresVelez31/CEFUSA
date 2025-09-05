@@ -35,7 +35,7 @@ class Pago(models.Model):
     comentario = models.CharField(max_length=150, blank=True, null=True, db_column="comentario")
 
     responsable = models.ForeignKey(
-        "users.Acudiente",
+        "user.Acudiente",
         on_delete=models.PROTECT,
         related_name="pagos",
         db_column="responsable",

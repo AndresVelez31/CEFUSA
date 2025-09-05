@@ -2,7 +2,7 @@
 import csv
 from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
-from Applications.users.models import Acudiente
+from Applications.user.models import Acudiente
 
 class Command(BaseCommand):
     help = "Importa acudientes desde un CSV con encabezados: tipo_doc, identificacion, nombre, apellidos, ciudad, direccion, correo, telefono, tipo_regimen."

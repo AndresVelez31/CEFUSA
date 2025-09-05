@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from .views import get_user_details, get_user_edit_form, update_user
 
-app_name = 'users'
+app_name = 'user'
 
 urlpatterns = [
     path('', views.display_user, name='index'),

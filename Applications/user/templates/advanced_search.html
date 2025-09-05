@@ -9,7 +9,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="mb-0"> Búsqueda Avanzada de Usuarios </h4>
             <div class="btn-group" role="group">
-                <a href="{% url 'users:index' %}" class="btn btn-outline-secondary btn-sm">Vista Simple</a>
+                <a href="{% url 'user:index' %}" class="btn btn-outline-secondary btn-sm">Vista Simple</a>
                 <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearAcudiente">+ Nuevo Acudiente</a>
                 <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearJugador">+ Nuevo Jugador</a>
             </div>
@@ -354,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function() {
             userDetailsModal.show();
             
             try {
-                const response = await fetch(`{% url 'users:get_user_details' 'placeholder' 0 %}`.replace('placeholder/0', `${userType}/${userId}`));
+                const response = await fetch(`{% url 'user:get_user_details' 'placeholder' 0 %}`.replace('placeholder/0', `${userType}/${userId}`));
                 
                 if (!response.ok) {
                     throw new Error('Error al cargar los datos');
@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 `;
 
-                const response = await fetch(`/users/edit/form/${currentUserType}/${currentUserId}/`);
+                const response = await fetch(`/user/edit/form/${currentUserType}/${currentUserId}/`);
                 
                 if (!response.ok) throw new Error('Error al cargar el formulario');
                 
@@ -467,7 +467,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             try {
                 const formData = new FormData(form);
-                const response = await fetch(`/users/edit/update/${currentUserType}/${currentUserId}/`, {
+                const response = await fetch(`/user/edit/update/${currentUserType}/${currentUserId}/`, {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -479,7 +479,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
                 
                 if (data.success) {
-                    const detailsResponse = await fetch(`/users/get_user_details/${currentUserType}/${currentUserId}/`);
+                    const detailsResponse = await fetch(`/user/get_user_details/${currentUserType}/${currentUserId}/`);
                     displayUserDetails(await detailsResponse.json());
                     
                     userDetailsContent.insertAdjacentHTML('afterbegin', `
@@ -651,7 +651,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Modal Acudiente (código existente)
     var modalCrearAcudiente = document.getElementById('modalCrearAcudiente');
     modalCrearAcudiente.addEventListener('show.bs.modal', function () {
-        fetch('{% url "users:create_guardian" %}')
+        fetch('{% url "user:create_guardian" %}')
             .then(response => response.text())
             .then(html => {
                 var parser = new DOMParser();
@@ -665,7 +665,7 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         var form = e.target;
         var formData = new FormData(form);
-        fetch('{% url "users:create_guardian" %}', {
+        fetch('{% url "user:create_guardian" %}', {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -686,7 +686,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Modal Jugador (código existente)
     var modalCrearJugador = document.getElementById('modalCrearJugador');
     modalCrearJugador.addEventListener('show.bs.modal', function () {
-        fetch('{% url "users:create_player" %}')
+        fetch('{% url "user:create_player" %}')
             .then(response => response.text())
             .then(html => {
                 var parser = new DOMParser();
@@ -700,7 +700,7 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         var form = e.target;
         var formData = new FormData(form);
-        fetch('{% url "users:create_player" %}', {
+        fetch('{% url "user:create_player" %}', {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -734,7 +734,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function deleteUser(userType, userId) {
     try {
-        const response = await fetch(`/users/delete/${userType}/${userId}/`, {
+        const response = await fetch(`/user/delete/${userType}/${userId}/`, {
             method: 'POST',
             headers: {
                 'X-CSRFToken': getCSRFToken(),

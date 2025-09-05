@@ -1,7 +1,7 @@
 import csv
 from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
-from Applications.users.models import Acudiente, Jugador  # ajusta ruta a tu proyecto
+from Applications.user.models import Acudiente, Jugador  # ajusta ruta a tu proyecto
 
 def parse_bool(v):
     if v is None:

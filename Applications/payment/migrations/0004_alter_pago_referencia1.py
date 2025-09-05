@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payments', '0003_alter_pago_responsable'),
+        ('payment', '0003_alter_pago_responsable'),
     ]
 
     operations = [
