@@ -9,7 +9,7 @@ from datetime import datetime
 
 # Create your views here.
 
-def paymentsManagement(request):
+def display_payment(request):
     from django.db.models import Q
     from .models import Pago
 
@@ -64,9 +64,9 @@ def paymentsManagement(request):
         'pagos': pagos,
         'cuentas': Pago.CuentaChoices.choices,
     }
-    return render(request, 'paymentsManagement.html', context)
+    return render(request, 'display_payment.html', context)
 
-def crear_pago(request):
+def create_payment(request):
     if request.method == "POST":
         Pago.objects.create(
             cuenta=request.POST.get("cuenta"),
@@ -81,13 +81,13 @@ def crear_pago(request):
         return redirect('gestionar_pagos')  # Redirige a la lista de pagos
 
 ## cambiar a get_edit_form
-def edit_pago(request, pago_id):
+def get_payment_edit_form(request, pago_id):
     pago = get_object_or_404(Pago, id=pago_id)
     form = PagoForm(instance=pago)
-    html = render_to_string('payments/partials/editar_pago_form.html', {'form': form, 'pago': pago}, request=request)
+    html = render_to_string('get_payment_edit_form.html', {'form': form, 'pago': pago}, request=request)
     return HttpResponse(html)
 
-def update_pago(request, pago_id):
+def update_payment(request, pago_id):
     pago = get_object_or_404(Pago, id=pago_id)
     if request.method == 'POST':
         form = PagoForm(request.POST, instance=pago)
@@ -98,22 +98,22 @@ def update_pago(request, pago_id):
             else:
                 from django.urls import reverse
                 from django.shortcuts import redirect
-                return redirect(reverse('paymentsManagement'))
+                return redirect(reverse('display_payment'))
         else:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                html = render_to_string('payments/partials/editar_pago_form.html', {'form': form, 'pago': pago}, request=request)
+                html = render_to_string('get_payment_edit_form.html', {'form': form, 'pago': pago}, request=request)
                 return JsonResponse({'success': False, 'html': html})
             else:
-                return render(request, 'payments/partials/editar_pago_form.html', {'form': form, 'pago': pago})
+                return render(request, 'get_payment_edit_form.html', {'form': form, 'pago': pago})
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({'success': False, 'error': 'Método no permitido'})
     else:
         from django.urls import reverse
         from django.shortcuts import redirect
-    return redirect(reverse('paymentsManagement'))
+    return redirect(reverse('display_payment'))
 
 @require_POST
-def delete_pago(request, pago_id):
+def delete_payment(request, payment_id):
     if request.headers.get('x-requested-with') != 'XMLHttpRequest':
         return JsonResponse({'success': False, 'error': 'Petición inválida.'}, status=400)
     pago = get_object_or_404(Pago, id=pago_id)
