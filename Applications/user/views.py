@@ -446,7 +446,7 @@ def get_user_edit_form(request, user_type, user_id):
         else:
             return JsonResponse({'error': 'Tipo de usuario no válido'}, status=400)
         html_content = render_to_string(
-            'users/edit_form.html', 
+            'get_user_edit_form.html', 
             {'form': form},
             request=request
         )

@@ -78,7 +78,7 @@ def create_payment(request):
             referencia2=request.POST.get("referencia2"),
             responsable_id=request.POST.get("responsable") or None
         )
-        return redirect('gestionar_pagos')  # Redirige a la lista de pagos
+        return redirect('payment:display_payment')  # Redirige a la lista de pagos
 
 ## cambiar a get_edit_form
 def get_payment_edit_form(request, pago_id):
@@ -110,13 +110,13 @@ def update_payment(request, pago_id):
     else:
         from django.urls import reverse
         from django.shortcuts import redirect
-    return redirect(reverse('display_payment'))
+    return redirect(reverse('payment:display_payment'))
 
 @require_POST
 def delete_payment(request, payment_id):
     if request.headers.get('x-requested-with') != 'XMLHttpRequest':
         return JsonResponse({'success': False, 'error': 'Petición inválida.'}, status=400)
-    pago = get_object_or_404(Pago, id=pago_id)
+    pago = get_object_or_404(Pago, id=payment_id)
     try:
         pago.delete()
         return JsonResponse({'success': True})
