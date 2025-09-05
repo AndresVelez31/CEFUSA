@@ -37,21 +37,23 @@ The web application will have the following main features:
 1.Install Python and pip 
 - Make sure you have Python 3.10+ installed.
 - Verify installation with:
-    python --version
-    pip --version
+  
+    - python --version
+    - pip --version
+
 2.Clome the repository
 - Create or open the folder where you want the project:
-    git clone https://github.com/AndresVelez31/CEFUSA.git
-    cd CEFUSA
+    - git clone https://github.com/AndresVelez31/CEFUSA.git
+    - cd CEFUSA
 3.Install dependencies
 - Install all required libraries listed in requirements.txt:
-    pip install -r requirements.txt
+    - pip install -r requirements.txt
   
 4. Run and access to the application
 -  start the server with:
-    python manage.py
+    - python manage.py
 - Open your browser and go to
-    localhost:8000 (which is the page of CEFUSA)
+    - localhost:8000 (which is the page of CEFUSA)
   
 ---
 
