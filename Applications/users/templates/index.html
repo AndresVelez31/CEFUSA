@@ -9,7 +9,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="mb-0">Gestión de Usuarios</h4>
             <div class="btn-group" role="group">
-                <a href="{% url 'users:busqueda_avanzada' %}" class="btn btn-info btn-sm">🔍 Búsqueda Avanzada</a>
+                <a href="{% url 'users:advanced_search' %}" class="btn btn-info btn-sm">🔍 Búsqueda Avanzada</a>
                 <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearAcudiente">+ Nuevo Acudiente</button>
 
                 <!-- Modal para crear acudiente -->
@@ -41,7 +41,7 @@ function bindAcudienteFormSubmit() {
     form.onsubmit = function(e) {
         e.preventDefault();
         var formData = new FormData(form);
-        fetch('{% url "users:create_acudiente" %}', {
+        fetch('{% url "users:create_guardian" %}', {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -64,7 +64,7 @@ function bindAcudienteFormSubmit() {
 document.addEventListener('DOMContentLoaded', function() {
     var modalCrearAcudiente = document.getElementById('modalCrearAcudiente');
     modalCrearAcudiente.addEventListener('show.bs.modal', function () {
-        fetch('{% url "users:create_acudiente" %}')
+        fetch('{% url "users:create_guardian" %}')
             .then(response => response.text())
             .then(html => {
                 var parser = new DOMParser();
@@ -108,7 +108,7 @@ function bindJugadorFormSubmit() {
     form.onsubmit = function(e) {
         e.preventDefault();
         var formData = new FormData(form);
-        fetch('{% url "users:create_jugador" %}', {
+        fetch('{% url "users:create_player" %}', {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -131,7 +131,7 @@ function bindJugadorFormSubmit() {
 document.addEventListener('DOMContentLoaded', function() {
     var modalCrearJugador = document.getElementById('modalCrearJugador');
     modalCrearJugador.addEventListener('show.bs.modal', function () {
-        fetch('{% url "users:create_jugador" %}')
+        fetch('{% url "users:create_player" %}')
             .then(response => response.text())
             .then(html => {
                 var parser = new DOMParser();

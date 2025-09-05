@@ -4,6 +4,8 @@ from django.template.loader import render_to_string
 from .models import Pago
 from .forms import PagoForm
 from django.views.decorators.http import require_POST
+from django.shortcuts import redirect, render
+from datetime import datetime
 
 # Create your views here.
 
@@ -64,10 +66,6 @@ def paymentsManagement(request):
     }
     return render(request, 'paymentsManagement.html', context)
 
-from django.shortcuts import redirect, render
-from .models import Pago
-from datetime import datetime
-
 def crear_pago(request):
     if request.method == "POST":
         Pago.objects.create(
@@ -82,6 +80,7 @@ def crear_pago(request):
         )
         return redirect('gestionar_pagos')  # Redirige a la lista de pagos
 
+## cambiar a get_edit_form
 def edit_pago(request, pago_id):
     pago = get_object_or_404(Pago, id=pago_id)
     form = PagoForm(instance=pago)

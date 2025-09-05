@@ -8,8 +8,9 @@ from .forms import AcudienteForm, JugadorForm
 from django.template.loader import render_to_string
 
 # Create your views here.
-# Requirement FR-6
-def create_jugador(request):
+# Requirement FR-06
+
+def create_player(request):
     form = JugadorForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
@@ -22,10 +23,10 @@ def create_jugador(request):
                 return JsonResponse({'success': False, 'errors': form.errors, 'form_html': form.as_p()})
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return HttpResponse(form.as_p())
-    return render(request, 'createJugador.html', {'form': form})
+    return render(request, 'create_player.html', {'form': form})
 
-# Requirement FR-21**
-def create_acudiente(request):
+# Requirement FR-21
+def create_guardian(request):
     form = AcudienteForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
@@ -38,9 +39,9 @@ def create_acudiente(request):
                 return JsonResponse({'success': False, 'errors': form.errors, 'form_html': form.as_p()})
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return HttpResponse(form.as_p())
-    return render(request, 'createAcudiente.html', {'form': form})
+    return render(request, 'create_guardian.html', {'form': form})
 
-def usersManagement(request): # Basic research
+def display_user(request): # Basic research
     # Obtener parámetros de filtro
     search = request.GET.get('search', '')
     tipo_doc = request.GET.get('tipo_doc', '')
@@ -168,7 +169,7 @@ def usersManagement(request): # Basic research
     }
     return render(request, 'index.html', context)
 
-def busqueda_avanzada(request): # Advanced search view
+def advanced_search(request): # Advanced search view
 
     """Vista para búsqueda avanzada con filtros específicos"""
     
@@ -355,7 +356,7 @@ def busqueda_avanzada(request): # Advanced search view
         'tipo_regimenes_en_bd': tipo_regimenes_en_bd,
         'total_resultados': total_resultados
     }
-    return render(request, 'busqueda_avanzada.html', context)
+    return render(request, 'advanced_search.html', context)
 
 def get_user_details(request, user_type, user_id): #'Ver' Button logic
     """Vista AJAX para obtener detalles de un usuario"""
@@ -480,7 +481,6 @@ def update_user(request, user_type, user_id):
             
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-
 
 def delete_user(request, user_type, user_id):
     if request.method != 'POST':

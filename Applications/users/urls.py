@@ -5,11 +5,11 @@ from .views import get_user_details, get_user_edit_form, update_user
 app_name = 'users'
 
 urlpatterns = [
-    path('', views.usersManagement, name='index'),
-    path('users/', views.usersManagement, name='usersManagement'),
-    path('busqueda-avanzada/', views.busqueda_avanzada, name='busqueda_avanzada'),
-    path('acudiente/nuevo/', views.create_acudiente, name='create_acudiente'),
-    path('jugador/nuevo/', views.create_jugador, name='create_jugador'),
+    path('', views.display_user, name='index'),
+    path('users/', views.display_user, name='display_user'),
+    path('busqueda-avanzada/', views.advanced_search, name='advanced_search'),
+    path('acudiente/nuevo/', views.create_guardian, name='create_guardian'),
+    path('jugador/nuevo/', views.create_player, name='create_player'),
     path('api/user-details/<str:user_type>/<int:user_id>/', views.get_user_details, name='get_user_details'),
 
     path('get_user_details/<str:user_type>/<int:user_id>/', get_user_details, name='get_user_details'),
