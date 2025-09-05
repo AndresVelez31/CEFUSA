@@ -98,7 +98,7 @@ def update_payment(request, pago_id):
             else:
                 from django.urls import reverse
                 from django.shortcuts import redirect
-                return redirect(reverse('display_payment'))
+                return redirect(reverse('payment:display_payment'))
         else:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 html = render_to_string('get_payment_edit_form.html', {'form': form, 'pago': pago}, request=request)
