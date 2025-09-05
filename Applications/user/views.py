@@ -162,26 +162,28 @@ def display_user(request): # Basic research
         'available_cities': available_cities,  # Mantener en inglés porque es código
         'document_types_in_db': document_types_in_db  # Cambiado a 'document_types_in_db' para uniformidad
     }
-    return render(request, 'index.html', context)
+    return render(request, 'user_management.html', context)
 
 def display_user_advanced(request): # Advanced search view
 
     # View for advanced search with multiple filters
+    # The 'variable' comes from the HTML, the input obtained from the GET request.
 
     # Basic parameters
     search = request.GET.get('search', '')
-    user_type = request.GET.get('tipo_usuario', '')
-    city = request.GET.get('ciudad', '')
-    document_type = request.GET.get('tipo_doc', '')
-    
+    user_type = request.GET.get('user_type', '')
+    city = request.GET.get('city', '')
+    document_type = request.GET.get('document_type', '')
+
     # Player-specific parameters
-    institution = request.GET.get('institucion', '')
-    session = request.GET.get('jornada', '')
-    age_range = request.GET.get('rango_edad', '')
-    
+    educational_institution = request.GET.get('educational_institution', '')
+    training_session = request.GET.get('training_session', '')
+    age_range = request.GET.get('age_range', '')
+    has_disease = request.GET.get('has_disease', '')
+
     # Guardian-specific parameters
-    email = request.GET.get('correo', '')
-    regime_type = request.GET.get('tipo_regimen', '')
+    email = request.GET.get('email', '')
+    regime_type = request.GET.get('regime_type', '')  # Updated to English for consistency
 
     # Filter guardians
     guardians = Guardian.objects.all()
@@ -228,19 +230,30 @@ def display_user_advanced(request): # Advanced search view
 
     # Order from TextChoices
     regime_order = [option.label for option in Guardian.RegimeType]
+    
+    # Obtener valores únicos de tipo_regimen en la base (Acudientes)
     regime_types_in_db = list(Guardian.objects.values_list('regime_type', flat=True).distinct())
+    
+    # Crear mapa para ordenar según orden_regimen
     index_map_regime = {label: idx for idx, label in enumerate(regime_order)}
+    
+    # Ordenar los valores obtenidos de la BD según el orden definido
     regime_types_in_db.sort(key=lambda x: index_map_regime.get(x, len(index_map_regime)))
 
     # If only players are wanted, empty guardians
-    if user_type == 'jugadores':
+    if user_type == 'players':
         guardians = Guardian.objects.none()
 
     # Filter players
     players = Player.objects.select_related('guardian').all()
+    
     if search:
+        
+        # Dividir la búsqueda en palabras para permitir buscar nombre y apellido por separado
         search_words = search.strip().split()
+        
         if len(search_words) > 1:
+             # Si hay múltiples palabras, buscar que contengan todas las palabras
             player_query = Q()
             for word in search_words:
                 player_query &= (
@@ -253,6 +266,7 @@ def display_user_advanced(request): # Advanced search view
                 )
             players = players.filter(player_query)
         else:
+            # Si es una sola palabra, usar el comportamiento original
             players = players.filter(
                 Q(first_name__icontains=search) |
                 Q(last_name__icontains=search) |
@@ -268,12 +282,16 @@ def display_user_advanced(request): # Advanced search view
     if city:
         players = players.filter(city=city)
     
-    if institution:
-        players = players.filter(educational_institution__icontains=institution)
-    
-    if session:
-        players = players.filter(training_session=session)
-    
+    if educational_institution:
+        players = players.filter(educational_institution__icontains=educational_institution)
+
+    if training_session:
+        players = players.filter(training_session=training_session)
+
+    if has_disease:
+        players = players.filter(has_disease=(has_disease == 'true'))
+
+    # Filtro por rango de edad
     if age_range:
         today = date.today()
         if age_range == '5-10':
@@ -285,10 +303,13 @@ def display_user_advanced(request): # Advanced search view
         elif age_range == '16-20':
             start_date = today - timedelta(days=20*365)
             end_date = today - timedelta(days=16*365)
-        players = players.filter(birth_date__range=[start_date, end_date])
+        else:
+            start_date, end_date = None, None
+        if start_date and end_date:
+            players = players.filter(birth_date__range=[start_date, end_date])
     
     # If only guardians are wanted, empty players
-    if user_type == 'acudientes':
+    if user_type == 'guardians':
         players = Player.objects.none()
     
     # Add calculated age to players
@@ -307,6 +328,7 @@ def display_user_advanced(request): # Advanced search view
     document_types_in_db = list(guardian_document_types.union(player_document_types))
     index_map = {label: idx for idx, label in enumerate(document_type_order)}
     document_types_in_db.sort(key=lambda x: index_map.get(x, len(index_map)))
+    
     total_results = guardians.count() + players.count()
     
     context = {
@@ -317,7 +339,11 @@ def display_user_advanced(request): # Advanced search view
         'regime_types_in_db': regime_types_in_db,
         'total_results': total_results
     }
+<<<<<<< HEAD:Applications/user/views.py
     return render(request, 'advanced_search.html', context)
+=======
+    return render(request, 'user_management_advanced.html', context)
+>>>>>>> 41778c8 (Advanced display is working, but it has some minor bugs. The models.py for payments and my functionality are still missing.):Applications/users/views.py
 
 def get_user_details(request, user_type, user_id): #'Ver' Button logic
     # Vista AJAX para obtener detalles de un usuario
@@ -325,66 +351,66 @@ def get_user_details(request, user_type, user_id): #'Ver' Button logic
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     
     try:
-        if user_type == 'acudiente':
-            user = get_object_or_404(Acudiente, id=user_id)
-            
+        if user_type == 'guardian':
+            user = get_object_or_404(Guardian, id=user_id)
+
             # Calcular total de jugadores asociados
-            total_jugadores = user.jugadores.count()
-            jugadores_list = []
-            for jugador in user.jugadores.all():
-                jugadores_list.append({
-                    'id': jugador.id,
-                    'nombre': f"{jugador.nombre} {jugador.apellido}",
-                    'identificacion': jugador.identificacion,
-                    'edad': (date.today() - jugador.fecha_nacimiento).days // 365
+            total_players = user.players.count()
+            players_list = []
+            for player in user.players.all():
+                players_list.append({
+                    'id': player.id,
+                    'name': f"{player.first_name} {player.last_name}",
+                    'identification': player.identification,
+                    'age': (date.today() - player.birth_date).days // 365
                 })
             
             data = {
-                'tipo': 'Acudiente',
+                'type': 'Guardian',
                 'id': user.id,
-                'nombre_completo': f"{user.nombre} {user.apellidos}",
-                'tipo_documento': user.get_tipo_doc_display(),
-                'identificacion': user.identificacion,
-                'ciudad': user.ciudad,
-                'direccion': user.direccion,
-                'telefono': user.telefono,
-                'correo': user.correo,
-                'tipo_regimen': user.get_tipo_regimen_display(),
-                'total_jugadores': total_jugadores,
-                'jugadores': jugadores_list
+                'name': f"{user.first_name} {user.last_name}",
+                'document_type': user.get_document_type_display(),
+                'identification': user.identification,
+                'city': user.city,
+                'address': user.address,
+                'phone': user.phone,
+                'email': user.email,
+                'regime_type': user.get_regime_type_display(),
+                'total_players': total_players,
+                'players': players_list
             }
             
-        elif user_type == 'jugador':
-            user = get_object_or_404(Jugador, id=user_id)
-            edad = (date.today() - user.fecha_nacimiento).days // 365
-            
+        elif user_type == 'player':
+            user = get_object_or_404(Player, id=user_id)
+            age = (date.today() - user.birth_date).days // 365
+
             data = {
-                'tipo': 'Jugador',
+                'type': 'Player',
                 'id': user.id,
-                'nombre_completo': f"{user.nombre} {user.apellido}",
-                'tipo_documento': user.get_tipo_doc_display(),
-                'identificacion': user.identificacion,
-                'edad': edad,
-                'fecha_nacimiento': user.fecha_nacimiento.strftime('%d/%m/%Y'),
-                'ciudad': user.ciudad,
-                'ciudad_nacimiento': user.ciudad_nacimiento,
-                'direccion': user.direccion,
-                'institucion_educativa': user.institucion_educativa,
-                'jornada_entreno': user.get_jornada_entreno_display(),
-                'tiene_enfermedad': 'Sí' if user.tiene_enfermedad else 'No',
-                'tipo_enfermedad': user.tipo_enfermedad if user.tipo_enfermedad else 'N/A',
-                'tiene_contraindicacion': 'Sí' if user.tiene_contraindicacion else 'No',
-                'contacto_emergencia': user.contacto_emergencia,
-                'num_contacto': user.num_contacto,
+                'name': f"{user.first_name} {user.last_name}",
+                'document_type': user.get_document_type_display(),
+                'identification': user.identification,
+                'age': age,
+                'birth_date': user.birth_date.strftime('%d/%m/%Y'),
+                'city': user.city,
+                'birth_city': user.birth_city,
+                'address': user.address,
+                'educational_institution': user.educational_institution,  # Corregido para coincidir con el modelo
+                'training_session': user.get_training_session_display(),
+                'has_disease': 'Sí' if user.has_disease else 'No',
+                'disease_type': user.disease_type if user.disease_type else 'N/A',
+                'has_contraindication': 'Sí' if user.has_contraindication else 'No',
+                'emergency_contact': user.emergency_contact,
+                'emergency_contact_number': user.contact_number,  # Corregido para coincidir con el modelo
+                'care_center': user.care_center,
+                'relationship': user.relationship,
                 'eps': user.eps,
-                'parentesco': user.parentesco,
-                'centro_atencion': user.centro_atencion,
-                'acudiente': {
-                    'id': user.acudiente.id,
-                    'nombre': f"{user.acudiente.nombre} {user.acudiente.apellidos}",
-                    'identificacion': user.acudiente.identificacion,
-                    'telefono': user.acudiente.telefono,
-                    'correo': user.acudiente.correo
+                'guardian': {
+                    'id': user.guardian.id,
+                    'name': f"{user.guardian.first_name} {user.guardian.last_name}",
+                    'identification': user.guardian.identification,
+                    'phone': user.guardian.phone,
+                    'email': user.guardian.email
                 }
             }
             

@@ -6,8 +6,7 @@ app_name = 'user'
 
 urlpatterns = [
     path('', views.display_user, name='index'),
-    path('user/', views.display_user, name='display_user'),
-    path('busqueda-avanzada/', views.display_user_advanced, name='display_user_advanced'),
+    path('display-user-advanced/', views.display_user_advanced, name='display_user_advanced'),
     path('acudiente/nuevo/', views.create_acudiente, name='create_acudiente'),
     path('jugador/nuevo/', views.create_jugador, name='create_jugador'),
     path('api/user-details/<str:user_type>/<int:user_id>/', views.get_user_details, name='get_user_details'),
