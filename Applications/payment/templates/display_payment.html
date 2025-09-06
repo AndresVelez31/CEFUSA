@@ -54,7 +54,7 @@
         <input type="text" class="form-control" name="motivo" value="{{ request.GET.motivo }}">
       </div>
       <div class="col-md-2">
-        <label class="form-label">Responsable (ID)</label>
+        <label class="form-label">Responsable</label>
         <input type="text" class="form-control" name="responsable" value="{{ request.GET.responsable }}">
       </div>
       <div class="col-md-2 align-self-end">
@@ -119,16 +119,12 @@
             <input type="date" name="fecha" class="form-control" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Nombre</label>
-            <input type="text" name="nombre" class="form-control" required>
+            <label class="form-label">Descripción</label>
+            <input type="text" name="descripcion" class="form-control" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Motivo</label>
-            <input type="text" name="motivo" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Valor</label>
-            <input type="number" name="valor" class="form-control" required>
+            <label class="form-label">Sucursal</label>
+            <input type="text" name="sucursal" class="form-control" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Referencia 1</label>
@@ -139,8 +135,37 @@
             <input type="text" name="referencia2" class="form-control">
           </div>
           <div class="mb-3">
-            <label class="form-label">Responsable (ID)</label>
-            <input type="text" name="responsable" class="form-control">
+            <label class="form-label">Valor</label>
+            <input type="number" name="valor" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" name="nombre" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Motivo</label>
+            <input type="text" name="motivo" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Factura venta</label>
+            <input type="text" name="factura_venta" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Recibo caja</label>
+            <input type="text" name="recibo_caja" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Comentario</label>
+            <input type="text" name="comentario" class="form-control" required>
+          </div>
+        <div class="mb-3">
+            <label class="form-label">Responsable</label>
+            <select name="responsable" class="form-select" >
+              <option value="">Seleccione responsable</option>
+              {% for r in responsables %}
+              <option value="{{ r.id }}">{{ r.nombre }} {{ r.apellidos }}</option>
+              {% endfor %}
+            </select>
           </div>
         </div>
         <div class="modal-footer">

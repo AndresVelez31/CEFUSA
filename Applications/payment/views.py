@@ -6,12 +6,11 @@ from .forms import PagoForm
 from django.views.decorators.http import require_POST
 from django.shortcuts import redirect, render
 from datetime import datetime
-
+from ..user.models import Acudiente
 # Create your views here.
 
 def display_payment(request):
     from django.db.models import Q
-    from .models import Pago
 
     search = request.GET.get('search', '')
     # Filtros avanzados
@@ -60,9 +59,12 @@ def display_payment(request):
     if responsable:
         pagos = pagos.filter(responsable__id=responsable)
 
+    responsables = Acudiente.objects.all()
+
     context = {
         'pagos': pagos,
         'cuentas': Pago.CuentaChoices.choices,
+        'responsables': responsables,
     }
     return render(request, 'display_payment.html', context)
 
@@ -113,10 +115,10 @@ def update_payment(request, pago_id):
     return redirect(reverse('payment:display_payment'))
 
 @require_POST
-def delete_payment(request, payment_id):
+def delete_payment(request, pago_id):
     if request.headers.get('x-requested-with') != 'XMLHttpRequest':
         return JsonResponse({'success': False, 'error': 'Petición inválida.'}, status=400)
-    pago = get_object_or_404(Pago, id=payment_id)
+    pago = get_object_or_404(Pago, id=pago_id)
     try:
         pago.delete()
         return JsonResponse({'success': True})
