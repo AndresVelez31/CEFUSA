@@ -112,11 +112,11 @@ def update_payment(request, pago_id):
         from django.shortcuts import redirect
     return redirect(reverse('payment:display_payment'))
 
-@require_POST
-def delete_payment(request, payment_id):
+
+def delete_payment(request, pago_id):
     if request.headers.get('x-requested-with') != 'XMLHttpRequest':
         return JsonResponse({'success': False, 'error': 'Petición inválida.'}, status=400)
-    pago = get_object_or_404(Pago, id=payment_id)
+    pago = get_object_or_404(Pago, id=pago_id)
     try:
         pago.delete()
         return JsonResponse({'success': True})
