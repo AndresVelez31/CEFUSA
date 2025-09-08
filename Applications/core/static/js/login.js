@@ -41,7 +41,7 @@ class LoginForm {
         const username = this.usernameInput.value.trim();
         
         if (!username) {
-            this.showError('username', 'Username is required');
+            this.showError('username', 'El usuario es requerido');
             return false;
         }
         
@@ -54,7 +54,7 @@ class LoginForm {
         const password = this.passwordInput.value;
         
         if (!password) {
-            this.showError('password', 'Password is required');
+            this.showError('password', 'La contraseña es requerida');
             return false;
         }
         

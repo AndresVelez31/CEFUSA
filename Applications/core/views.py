@@ -24,7 +24,6 @@ def home_page(request):
     """
     return render(request, 'homePage.html')
 
-
 def login_view(request):
     """
     System authentication view.
@@ -106,7 +105,6 @@ def login_view(request):
     
     # Render login form for GET requests
     return render(request, 'login.html')
-
 
 def logout_view(request):
     """
