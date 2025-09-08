@@ -38,7 +38,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'CEFUSA.middleware.SessionExpiryMiddleware',
+    # 'CEFUSA.middleware.SessionExpiryMiddleware',  # Eliminado porque el módulo no existe
 ]
 
 ROOT_URLCONF = 'CEFUSA.urls'
