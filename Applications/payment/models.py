@@ -18,8 +18,8 @@ class Payment(models.Model):
     date = models.DateField(db_column="fecha")
     description = models.CharField(max_length=45, db_column="descripcion")
     branch = models.CharField(max_length=45, db_column="sucursal")
-    reference1 = models.CharField(max_length=45, blank=True, null=True, db_column="referencia1")
-    reference2 = models.CharField(max_length=45, blank=True, null=True, db_column="referencia2")
+    reference_1 = models.CharField(max_length=45, blank=True, null=True, db_column="referencia1")
+    reference_2 = models.CharField(max_length=45, blank=True, null=True, db_column="referencia2")
 
     amount = models.DecimalField(
         max_digits=12,  # up to billions with 2 decimals
@@ -28,14 +28,19 @@ class Payment(models.Model):
         db_column="valor"
     )
 
-    name = models.CharField(max_length=45, db_column="nombre")
+    player_name = models.CharField(max_length=45, db_column="nombre")
     reason = models.CharField(max_length=50, db_column="motivo")
     sales_invoice = models.CharField(max_length=30, blank=True, null=True, db_column="facturaVenta")
     receipt = models.CharField(max_length=20, blank=True, null=True, db_column="reciboCaja")
     comment = models.CharField(max_length=150, blank=True, null=True, db_column="comentario")
 
+<<<<<<< HEAD:Applications/payment/models.py
     responsible = models.ForeignKey(
         "user.Guardian",
+=======
+    fk_responsible = models.ForeignKey(
+        "users.Guardian",  # Updated to match the renamed model
+>>>>>>> 278d988 (Login working fully):Applications/payments/models.py
         on_delete=models.PROTECT,
         related_name="payment",
         db_column="responsable",

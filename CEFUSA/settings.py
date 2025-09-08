@@ -17,7 +17,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,6 +38,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'CEFUSA.middleware.SessionExpiryMiddleware',
 ]
 
 ROOT_URLCONF = 'CEFUSA.urls'
@@ -76,18 +76,10 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 
@@ -95,11 +87,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'America/Bogota'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
@@ -118,3 +107,30 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'Applications/core/static'),
     os.path.join(BASE_DIR, 'Applications/payments/static'),
 ]
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Authentication URLs
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/home/'
+LOGOUT_REDIRECT_URL = '/login/'
+
+# Session Configuration
+SESSION_COOKIE_AGE = 86400  # 24 horas por defecto (pero se anulará por set_expiry)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Por defecto expirar al cerrar navegador
+SESSION_SAVE_EVERY_REQUEST = True  # Actualizar en cada request para mantener activa
+SESSION_COOKIE_HTTPONLY = True  # Seguridad: no accesible por JavaScript
+SESSION_COOKIE_SECURE = False  # En producción cambiar a True (requiere HTTPS)
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Usar base de datos
+
+# Cache configuration
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'cefusa-cache',
+    }
+}

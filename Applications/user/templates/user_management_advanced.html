@@ -4,6 +4,13 @@
 
 {% block content %}
 
+<style>
+    .table-container {
+        max-height: 600px; /* Altura máxima de la tabla */
+        overflow-y: auto; /* Habilitar desplazamiento vertical */
+    }
+</style>
+
 <div class="card">
     <div class="card-header">
         <div class="d-flex justify-content-between align-items-center">
@@ -20,15 +27,18 @@
         <!-- Filtros Avanzados -->
         <div class="accordion mb-3" id="filtros-avanzados">
             <div class="accordion-item">
+
                 <h2 class="accordion-header">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" 
                             data-bs-target="#collapseFilters">
                         <i class="bi bi-funnel me-2"></i>Filtros de Búsqueda
                     </button>
                 </h2>
+
                 <div id="collapseFilters" class="accordion-collapse collapse show">
                     <div class="accordion-body">
                         <form method="GET" id="filtros-form" class="row g-3">
+
                             <!-- Filtros básicos -->
                             <div class="col-md-4">
                                 <label class="form-label">Búsqueda</label>
@@ -36,6 +46,7 @@
                                        value="{{ request.GET.search }}" 
                                        placeholder="Nombre, apellido, identificación...">
                             </div>
+
                             <div class="col-md-2">
                                 <label class="form-label">Tipo Usuario</label>
                                 <select class="form-select" name="user_type">
@@ -44,6 +55,7 @@
                                     <option value="players" {% if request.GET.user_type == 'players' %}selected{% endif %}>Jugadores</option>
                                 </select>
                             </div>
+
                             <div class="col-md-2">
                                 <label class="form-label">Ciudad</label>
                                 <select class="form-select" name="city">
@@ -53,6 +65,7 @@
                                     {% endfor %}
                                 </select>
                             </div>
+
                             <div class="col-md-2">
                                 <label class="form-label">Tipo de documento</label>
                                 <select class="form-select" name="document_type">
@@ -64,6 +77,7 @@
                                     {% endfor %}
                                 </select>
                             </div>
+
                             <div class="col-md-2">
                                 <label class="form-label">&nbsp;</label>
                                 <div class="d-flex gap-1">
@@ -77,12 +91,14 @@
                                 <hr>
                                 <h6>Filtros específicos para Jugadores:</h6>
                             </div>
+
                             <div class="col-md-3">
                                 <label class="form-label">Institución Educativa</label>
                                 <input type="text" class="form-control" name="educational_institution" 
                                        value="{{ request.GET.educational_institution }}" 
                                        placeholder="Nombre de la institución">
                             </div>
+
                             <div class="col-md-2">
                                 <label class="form-label">Jornada</label>
                                 <select class="form-select" name="training_session">
@@ -91,6 +107,7 @@
                                     <option value="Tarde" {% if request.GET.training_session == "Tarde" %}selected{% endif %}>Tarde</option>
                                 </select>
                             </div>
+
                             <div class="col-md-2">
                                 <label class="form-label">Edad</label>
                                 <select class="form-select" name="age_range">
@@ -100,6 +117,7 @@
                                     <option value="16-20" {% if request.GET.age_range == '16-20' %}selected{% endif %}>16-20 años</option>
                                 </select>
                             </div>
+
                             <div class="col-md-2">
                                 <label class="form-label">Tiene Enfermedad</label>
                                 <select class="form-select" name="has_disease">
@@ -114,12 +132,14 @@
                                 <hr>
                                 <h6>Filtros específicos para Acudientes:</h6>
                             </div>
+
                             <div class="col-md-3">
                                 <label class="form-label">Correo Electrónico</label>
                                 <input type="email" class="form-control" name="email" 
                                        value="{{ request.GET.email }}" 
                                        placeholder="email@ejemplo.com">
                             </div>
+
                             <div class="col-md-2">
                                 <label class="form-label">Régimen Tributario</label>
                                 <select class="form-select" name="regime_type">
@@ -131,6 +151,7 @@
                                     {% endfor %}
                                 </select>
                             </div>
+
                         </form>
                     </div>
                 </div>
@@ -141,89 +162,91 @@
         <div class="row">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5>Resultados: {{ total_resultados }} usuario{{ total_resultados|pluralize }}</h5>
+                    <h5>Resultados: {{ total_results }} usuario{{ total_results|pluralize }}</h5>
                 </div>
             </div>
         </div>
 
         <!-- Vista de tabla (por defecto) -->
         <div id="vista-tabla-content">
-            {% if guardians %}
-                <h6 class="text-primary">Acudientes ({{ guardians.count }})</h6>
-                <div class="table-responsive mb-4">
-                    <table class="table table-sm table-hover">
-                        <thead class="table-primary">
-                            <tr>
-                                <th>ID</th><th>Identificación</th><th>Nombre Completo</th>
-                                <th>Ciudad</th><th>Correo</th><th>Régimen</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for guardian in guardians %}
-                            <tr>
-                                <td>{{ guardian.id }}</td>
-                                <td>{{ guardian.identification }}</td>
-                                <td>{{ guardian.first_name }} {{ guardian.last_name }}</td>
-                                <td>{{ guardian.city }}</td>
-                                <td>{{ guardian.email }}</td>
-                                <td><small>{{ guardian.get_regime_type_display }}</small></td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <button type="button" class="btn btn-outline-primary btn-view-user" 
-                                                data-user-type="guardian" data-user-id="{{ guardian.id }}">
-                                            Ver
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
+            <div class="table-container">
+                {% if guardians %}
+                    <h6 class="text-primary">Acudientes ({{ guardians.count }})</h6>
+                    <div class="table-responsive mb-4">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>ID</th><th>Identificación</th><th>Nombre Completo</th>
+                                    <th>Ciudad</th><th>Correo</th><th>Régimen</th><th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for guardian in guardians %}
+                                <tr>
+                                    <td>{{ guardian.id }}</td>
+                                    <td>{{ guardian.identification }}</td>
+                                    <td>{{ guardian.first_name }} {{ guardian.last_name }}</td>
+                                    <td>{{ guardian.city }}</td>
+                                    <td>{{ guardian.email }}</td>
+                                    <td><small>{{ guardian.get_regime_type_display }}</small></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-outline-primary btn-view-user" 
+                                                    data-user-type="guardian" data-user-id="{{ guardian.id }}">
+                                                Ver
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
 
-            {% if players %}
-                <h6 class="text-success">Jugadores ({{ players.count }})</h6>
-                <div class="table-responsive">
-                    <table class="table table-sm table-hover">
-                        <thead class="table-success">
-                            <tr>
-                                <th>ID</th><th>Identificación</th><th>Nombre Completo</th>
-                                <th>Edad</th><th>Ciudad</th><th>Institución</th><th>Acudiente</th><th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for player in players %}
-                            <tr>
-                                <td>{{ player.id }}</td>
-                                <td>{{ player.identification }}</td>
-                                <td>{{ player.first_name }} {{ player.last_name }}</td>
-                                <td>{{ player.age }} años</td>
-                                <td>{{ player.city }}</td>
-                                <td><small>{{ player.educational_institution }}</small></td>
-                                <td><small>{{ player.guardian.first_name }} {{ player.guardian.last_name }}</small></td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <button type="button" class="btn btn-outline-primary btn-view-user" 
-                                                data-user-type="player" data-user-id="{{ player.id }}">
-                                            Ver
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
+                {% if players %}
+                    <h6 class="text-success">Jugadores ({{ players.count }})</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-success">
+                                <tr>
+                                    <th>ID</th><th>Identificación</th><th>Nombre Completo</th>
+                                    <th>Edad</th><th>Ciudad</th><th>Institución</th><th>Acudiente</th><th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for player in players %}
+                                <tr>
+                                    <td>{{ player.id }}</td>
+                                    <td>{{ player.identification }}</td>
+                                    <td>{{ player.first_name }} {{ player.last_name }}</td>
+                                    <td>{{ player.age }} años</td>
+                                    <td>{{ player.city }}</td>
+                                    <td><small>{{ player.educational_institution }}</small></td>
+                                    <td><small>{{ player.fk_guardian.first_name }} {{ player.fk_guardian.last_name }}</small></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-outline-primary btn-view-user" 
+                                                    data-user-type="player" data-user-id="{{ player.id }}">
+                                                Ver
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
 
-            {% if not guardians and not players %}
-                <div class="text-center py-5">
-                    <i class="bi bi-search fs-1 text-muted"></i>
-                    <h5 class="text-muted">No se encontraron resultados</h5>
-                    <p class="text-muted">Intenta ajustar los filtros de búsqueda</p>
-                </div>
-            {% endif %}
+                {% if not guardians and not players %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-search fs-1 text-muted"></i>
+                        <h5 class="text-muted">No se encontraron resultados</h5>
+                        <p class="text-muted">Intenta ajustar los filtros de búsqueda</p>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
@@ -301,6 +324,10 @@
 </div>
 
 <script>
+
+    let currentUserType, currentUserId;
+    let btnEdit, btnSave;
+
     // Añade esta función para obtener el token CSRF de las cookies
     function getCSRFToken() {
         let cookieValue = null;
@@ -317,9 +344,6 @@
         return cookieValue;
     }
 
-    let currentUserType, currentUserId;
-    let btnEdit, btnSave;
-
     document.addEventListener('DOMContentLoaded', function() {
     
     // Auto-submit en tiempo real (opcional)
@@ -334,11 +358,11 @@
     });
 
     // Funcionalidad para el botón "Ver"
-    const verUsuarioBtns = document.querySelectorAll('.btn-view-user');
+    const viewUserBtns = document.querySelectorAll('.btn-view-user');
     const userDetailsModal = new bootstrap.Modal(document.getElementById('user-details-modal'));
     const userDetailsContent = document.getElementById('user-details-content');
     
-    verUsuarioBtns.forEach(btn => {
+    viewUserBtns.forEach(btn => {
         btn.addEventListener('click', async function() {
             const userType = this.dataset.userType;
             const userId = this.dataset.userId;
@@ -405,6 +429,7 @@
         }
     }
 
+<<<<<<< HEAD:Applications/user/templates/user_management_advanced.html
     // Botones de edición
     btnEdit = document.getElementById('btn-edit-user');
     btnSave = document.getElementById('btn-save-user');
@@ -502,6 +527,8 @@
         });
     }
 
+=======
+>>>>>>> 278d988 (Login working fully):Applications/users/templates/user_management_advanced.html
     function generateGuardianDetails(data) {
         let playersHtml = '';
         if (data.players && data.players.length > 0) {
@@ -608,7 +635,7 @@
                         <tr><th>Tipo de Enfermedad:</th><td>${data.disease_type}</td></tr>
                         <tr><th>Contraindicaciones:</th><td>${data.has_contraindication}</td></tr>
                         <tr><th>EPS:</th><td>${data.eps}</td></tr>
-                        <tr><th>Centro de Atención:</th><td>${data.care_center}</td></tr>
+                        <tr><th>Centro de Atención:</th><td>${data.health_center}</td></tr>
                     </table>
                 </div>
             </div>
@@ -621,7 +648,7 @@
                             <div class="col-md-6">
                                 <strong>Contacto:</strong> ${data.emergency_contact}<br>
                                 <strong>Teléfono:</strong> ${data.emergency_contact_number}<br>
-                                <strong>Parentesco:</strong> ${data.relationship}
+                                <strong>Parentesco:</strong> ${data.kinship}
                             </div>
                         </div>
                     </div>
@@ -634,12 +661,12 @@
                     <div class="card card-body bg-primary bg-opacity-10">
                         <div class="row">
                             <div class="col-md-6">
-                                <strong>Nombre:</strong> ${data.guardian.name}<br>
-                                <strong>Identificación:</strong> ${data.guardian.identification}
+                                <strong>Nombre:</strong> ${data.fk_guardian.name}<br>
+                                <strong>Identificación:</strong> ${data.fk_guardian.identification}
                             </div>
                             <div class="col-md-6">
-                                <strong>Teléfono:</strong> ${data.guardian.phone}<br>
-                                <strong>Correo:</strong> ${data.guardian.email}
+                                <strong>Teléfono:</strong> ${data.fk_guardian.phone}<br>
+                                <strong>Correo:</strong> ${data.fk_guardian.email}
                             </div>
                         </div>
                     </div>
@@ -648,8 +675,106 @@
         `;
     }
 
+    // Functionalities of Edit and Save buttons
+    btnEdit = document.getElementById('btn-edit-user');
+    btnSave = document.getElementById('btn-save-user');
+
+    // Configura los event listeners una sola vez
+    if (btnEdit && btnSave) {
+        
+        btnEdit.addEventListener('click', async function() {
+
+            currentUserType = this.dataset.userType;
+            currentUserId = this.dataset.userId;
+
+            try {
+                userDetailsContent.innerHTML = `
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                    </div>
+                `;
+
+                const response = await fetch(`/users/edit/form/${currentUserType}/${currentUserId}/`);
+                
+                if (!response.ok) throw new Error('Error al cargar el formulario');
+                
+                userDetailsContent.innerHTML = await response.text();
+                btnEdit.classList.add('d-none');
+                btnSave.classList.remove('d-none');
+
+            } catch (error) {
+                userDetailsContent.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        No se pudo cargar el formulario: ${error.message}
+                    </div>
+                `;
+            }
+        });
+
+        btnSave.addEventListener('click', async function() {
+            const form = document.querySelector('#userDetailsModal #userEditForm');
+            
+            if (!form) {
+                userDetailsContent.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Error: Formulario no encontrado
+                    </div>
+                `;
+                return;
+            }
+
+            userDetailsContent.innerHTML = `
+                <div class="d-flex justify-content-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Guardando...</span>
+                    </div>
+                </div>
+            `;
+
+            try {
+                const formData = new FormData(form);
+                const response = await fetch(`/users/edit/update/${currentUserType}/${currentUserId}/`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const detailsResponse = await fetch(`/users/get_user_details/${currentUserType}/${currentUserId}/`);
+                    displayUserDetails(await detailsResponse.json());
+                    
+                    userDetailsContent.insertAdjacentHTML('afterbegin', `
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <i class="bi bi-check-circle"></i> ¡Guardado correctamente!
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    `);
+                } else {
+                    throw new Error(data.errors || 'Error desconocido');
+                }
+            } catch (error) {
+                userDetailsContent.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Error: ${error.message}
+                    </div>
+                `;
+            }
+        });
+    }
+
     // Modal Acudiente (código existente)
     var modalCrearAcudiente = document.getElementById('modalCrearAcudiente');
+
     modalCrearAcudiente.addEventListener('show.bs.modal', function () {
         fetch('{% url "user:create_guardian" %}')
             .then(response => response.text())
@@ -661,6 +786,7 @@
             });
         document.getElementById('acudiente-success').classList.add('d-none');
     });
+
     document.getElementById('formCrearAcudiente').addEventListener('submit', function(e) {
         e.preventDefault();
         var form = e.target;
@@ -685,6 +811,7 @@
     
     // Modal Jugador (código existente)
     var modalCrearJugador = document.getElementById('modalCrearJugador');
+
     modalCrearJugador.addEventListener('show.bs.modal', function () {
         fetch('{% url "user:create_player" %}')
             .then(response => response.text())
@@ -696,6 +823,7 @@
             });
         document.getElementById('jugador-success').classList.add('d-none');
     });
+
     document.getElementById('formCrearJugador').addEventListener('submit', function(e) {
         e.preventDefault();
         var form = e.target;
@@ -720,6 +848,7 @@
 
     // Botón Eliminar Usuario
     const btnDelete = document.getElementById('btn-delete-user');
+    
     if (btnDelete) {
         btnDelete.addEventListener('click', function() {
             const userType = this.dataset.userType;

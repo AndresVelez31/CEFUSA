@@ -99,7 +99,7 @@ def display_user(request): # Basic research
         guardians = Guardian.objects.none()
 
     # Filter players
-    players = Player.objects.select_related('guardian').all()
+    players = Player.objects.select_related('fk_guardian').all()
 
     if search:
         search_words = search.strip().split()
@@ -110,8 +110,8 @@ def display_user(request): # Basic research
                     Q(first_name__icontains=word) |
                     Q(last_name__icontains=word) |
                     Q(identification__icontains=word) |
-                    Q(guardian__first_name__icontains=word) |
-                    Q(guardian__last_name__icontains=word) |
+                    Q(fk_guardian__first_name__icontains=word) |
+                    Q(fk_guardian__last_name__icontains=word) |
                     Q(educational_institution__icontains=word)
                 )
             players = players.filter(player_query)
@@ -120,8 +120,8 @@ def display_user(request): # Basic research
                 Q(first_name__icontains=search) |
                 Q(last_name__icontains=search) |
                 Q(identification__icontains=search) |
-                Q(guardian__first_name__icontains=search) |
-                Q(guardian__last_name__icontains=search) |
+                Q(fk_guardian__first_name__icontains=search) |
+                Q(fk_guardian__last_name__icontains=search) |
                 Q(educational_institution__icontains=search)
             )
 
@@ -245,7 +245,7 @@ def display_user_advanced(request): # Advanced search view
         guardians = Guardian.objects.none()
 
     # Filter players
-    players = Player.objects.select_related('guardian').all()
+    players = Player.objects.select_related('fk_guardian').all()
     
     if search:
         
@@ -346,6 +346,7 @@ def display_user_advanced(request): # Advanced search view
 >>>>>>> 41778c8 (Advanced display is working, but it has some minor bugs. The models.py for payments and my functionality are still missing.):Applications/users/views.py
 
 def get_user_details(request, user_type, user_id): #'Ver' Button logic
+    
     # Vista AJAX para obtener detalles de un usuario
     if request.method != 'GET':
         return JsonResponse({'error': 'Método no permitido'}, status=405)
@@ -402,15 +403,15 @@ def get_user_details(request, user_type, user_id): #'Ver' Button logic
                 'has_contraindication': 'Sí' if user.has_contraindication else 'No',
                 'emergency_contact': user.emergency_contact,
                 'emergency_contact_number': user.contact_number,  # Corregido para coincidir con el modelo
-                'care_center': user.care_center,
-                'relationship': user.relationship,
+                'health_center': user.health_center,
+                'kinship': user.kinship,
                 'eps': user.eps,
-                'guardian': {
-                    'id': user.guardian.id,
-                    'name': f"{user.guardian.first_name} {user.guardian.last_name}",
-                    'identification': user.guardian.identification,
-                    'phone': user.guardian.phone,
-                    'email': user.guardian.email
+                'fk_guardian': {
+                    'id': user.fk_guardian.id,
+                    'name': f"{user.fk_guardian.first_name} {user.fk_guardian.last_name}",
+                    'identification': user.fk_guardian.identification,
+                    'phone': user.fk_guardian.phone,
+                    'email': user.fk_guardian.email
                 }
             }
             
