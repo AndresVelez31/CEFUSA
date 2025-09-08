@@ -68,17 +68,17 @@ def display_payment(request):
     }
     return render(request, 'payment_management.html', context)
 
-def crear_pago(request):
+def create_payment(request):
     if request.method == "POST":
-        Pago.objects.create(
-            cuenta=request.POST.get("cuenta"),
-            fecha=request.POST.get("fecha"),
-            nombre=request.POST.get("nombre"),
-            motivo=request.POST.get("motivo"),
-            valor=request.POST.get("valor"),
-            referencia1=request.POST.get("referencia1"),
-            referencia2=request.POST.get("referencia2"),
-            responsable_id=request.POST.get("responsable") or None
+        Payment.objects.create(
+            account=request.POST.get("account"),
+            date=request.POST.get("date"),
+            player_name=request.POST.get("player_name"),
+            reason=request.POST.get("reason"),
+            value=request.POST.get("value"),
+            reference_1=request.POST.get("reference_1"),
+            reference_2=request.POST.get("reference_2"),
+            responsible_id=request.POST.get("responsible") or None
         )
         return redirect('payment_management')  # Redirige a la lista de pagos
 

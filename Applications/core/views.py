@@ -22,7 +22,7 @@ def home_page(request):
     Decorators:
         @login_required: Requires user authentication
     """
-    return render(request, 'homePage.html')
+    return render(request, 'home.html')
 
 def login_view(request):
     """

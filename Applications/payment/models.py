@@ -34,10 +34,6 @@ class Payment(models.Model):
     receipt = models.CharField(max_length=20, blank=True, null=True, db_column="reciboCaja")
     comment = models.CharField(max_length=150, blank=True, null=True, db_column="comentario")
 
-<<<<<<< HEAD:Applications/payment/models.py
-    responsible = models.ForeignKey(
-        "user.Guardian",
-=======
     fk_responsible = models.ForeignKey(
         "user.Guardian",  # Updated to match the renamed model
         on_delete=models.PROTECT,

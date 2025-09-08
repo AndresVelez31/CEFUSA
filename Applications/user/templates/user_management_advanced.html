@@ -16,7 +16,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <h4 class="mb-0"> Búsqueda Avanzada de Usuarios </h4>
             <div class="btn-group" role="group">
-                <a href="{% url 'user:index' %}" class="btn btn-outline-secondary btn-sm">Vista Simple</a>
+                <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-sm">Vista Simple</a>
                 <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearAcudiente">+ Nuevo Acudiente</a>
                 <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearJugador">+ Nuevo Jugador</a>
             </div>
@@ -346,103 +346,28 @@
 
     document.addEventListener('DOMContentLoaded', function() {
     
-    // Auto-submit en tiempo real (opcional)
-    const searchInput = document.querySelector('input[name="search"]');
-    let searchTimeout;
-    
-    searchInput.addEventListener('input', function() {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            document.getElementById('filtros-form').submit();
-        }, 1000); // Espera 1000ms después de que el usuario deje de escribir
-    });
-
-    // Funcionalidad para el botón "Ver"
-    const viewUserBtns = document.querySelectorAll('.btn-view-user');
-    const userDetailsModal = new bootstrap.Modal(document.getElementById('user-details-modal'));
-    const userDetailsContent = document.getElementById('user-details-content');
-    
-    viewUserBtns.forEach(btn => {
-        btn.addEventListener('click', async function() {
-            const userType = this.dataset.userType;
-            const userId = this.dataset.userId;
-            
-            // Mostrar modal con spinner de carga
-            userDetailsContent.innerHTML = `
-                <div class="d-flex justify-content-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Cargando...</span>
-                    </div>
-                </div>
-            `;
-            userDetailsModal.show();
-            
-            try {
-                const response = await fetch(`{% url 'user:get_user_details' 'placeholder' 0 %}`.replace('placeholder/0', `${userType}/${userId}`));
-                
-                if (!response.ok) {
-                    throw new Error('Error al cargar los datos');
-                }
-                
-                const userData = await response.json();
-                displayUserDetails(userData);
-                
-            } catch (error) {
-                userDetailsContent.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        Error al cargar los detalles del usuario: ${error.message}
-                    </div>
-                `;
-            }
+        // Auto-submit en tiempo real (opcional)
+        const searchInput = document.querySelector('input[name="search"]');
+        let searchTimeout;
+        
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                document.getElementById('filtros-form').submit();
+            }, 1000); // Espera 1000ms después de que el usuario deje de escribir
         });
-    });
-    
-    function displayUserDetails(userData) {
-        let content = '';
+
+        // Funcionalidad para el botón "Ver"
+        const viewUserBtns = document.querySelectorAll('.btn-view-user');
+        const userDetailsModal = new bootstrap.Modal(document.getElementById('user-details-modal'));
+        const userDetailsContent = document.getElementById('user-details-content');
         
-        if (userData.type === 'Guardian') {
-            content = generateGuardianDetails(userData);
-        } else if (userData.type === 'Player') {
-            content = generatePlayerDetails(userData);
-        }
-        
-        userDetailsContent.innerHTML = content;
-
-        // Configurar botones de edición
-        const btnEdit = document.getElementById('btn-edit-user');
-        const btnSave = document.getElementById('btn-save-user');
-        const btnDelete = document.getElementById('btn-delete-user');
-
-        if (btnDelete) {
-            btnDelete.dataset.userType = (userData.tipo || '').toLowerCase();
-            btnDelete.dataset.userId = userData.id || '';
-            btnDelete.classList.remove('d-none');
-        }
-        if (btnEdit) {
-            btnEdit.dataset.userType = (userData.tipo || '').toLowerCase();
-            btnEdit.dataset.userId = userData.id || '';
-            btnEdit.classList.remove('d-none');
-        }
-        if (btnSave) {
-            btnSave.classList.add('d-none');
-        }
-    }
-
-<<<<<<< HEAD:Applications/user/templates/user_management_advanced.html
-    // Botones de edición
-    btnEdit = document.getElementById('btn-edit-user');
-    btnSave = document.getElementById('btn-save-user');
-
-    // Configura los event listeners una sola vez
-    if (btnEdit && btnSave) {
-        
-        btnEdit.addEventListener('click', async function() {
-
-            currentUserType = this.dataset.userType;
-            currentUserId = this.dataset.userId;
-
-            try {
+        viewUserBtns.forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const userType = this.dataset.userType;
+                const userId = this.dataset.userId;
+                
+                // Mostrar modal con spinner de carga
                 userDetailsContent.innerHTML = `
                     <div class="d-flex justify-content-center">
                         <div class="spinner-border text-primary" role="status">
@@ -450,469 +375,444 @@
                         </div>
                     </div>
                 `;
-
-                const response = await fetch(`/user/edit/form/${currentUserType}/${currentUserId}/`);
+                userDetailsModal.show();
                 
-                if (!response.ok) throw new Error('Error al cargar el formulario');
-                
-                userDetailsContent.innerHTML = await response.text();
-                btnEdit.classList.add('d-none');
-                btnSave.classList.remove('d-none');
-
-            } catch (error) {
-                userDetailsContent.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        No se pudo cargar el formulario: ${error.message}
-                    </div>
-                `;
-            }
+                try {
+                    const response = await fetch(`{% url 'get_user_details' 'placeholder' 0 %}`.replace('placeholder/0', `${userType}/${userId}`));
+                    
+                    if (!response.ok) {
+                        throw new Error('Error al cargar los datos');
+                    }
+                    
+                    const userData = await response.json();
+                    displayUserDetails(userData);
+                    
+                } catch (error) {
+                    userDetailsContent.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Error al cargar los detalles del usuario: ${error.message}
+                        </div>
+                    `;
+                }
+            });
         });
-
-        btnSave.addEventListener('click', async function() {
-            const form = document.querySelector('#userDetailsModal #userEditForm');
+        
+        function displayUserDetails(userData) {
+            let content = '';
             
-            if (!form) {
-                userDetailsContent.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        Error: Formulario no encontrado
+            if (userData.type === 'Guardian') {
+                content = generateGuardianDetails(userData);
+            } else if (userData.type === 'Player') {
+                content = generatePlayerDetails(userData);
+            }
+            
+            userDetailsContent.innerHTML = content;
+
+            // Configurar botones de edición
+            const btnEdit = document.getElementById('btn-edit-user');
+            const btnSave = document.getElementById('btn-save-user');
+            const btnDelete = document.getElementById('btn-delete-user');
+
+            if (btnDelete) {
+                btnDelete.dataset.userType = (userData.tipo || '').toLowerCase();
+                btnDelete.dataset.userId = userData.id || '';
+                btnDelete.classList.remove('d-none');
+            }
+            if (btnEdit) {
+                btnEdit.dataset.userType = (userData.tipo || '').toLowerCase();
+                btnEdit.dataset.userId = userData.id || '';
+                btnEdit.classList.remove('d-none');
+            }
+            if (btnSave) {
+                btnSave.classList.add('d-none');
+            }
+        }
+
+        function generateGuardianDetails(data) {
+            let playersHtml = '';
+            if (data.players && data.players.length > 0) {
+                playersHtml = `
+                    <div class="mt-3">
+                        <h6 class="text-success">Jugadores Asociados (${data.total_players})</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr><th>ID</th><th>Nombre</th><th>Identificación</th><th>Edad</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${data.players.map(player => `
+                                        <tr>
+                                            <td>${player.id}</td>
+                                            <td>${player.name}</td>
+                                            <td>${player.identification}</td>
+                                            <td>${player.age} años</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 `;
-                return;
+            } else {
+                playersHtml = `
+                    <div class="mt-3">
+                        <h6 class="text-muted">Sin jugadores asociados</h6>
+                    </div>
+                `;
             }
-
-            userDetailsContent.innerHTML = `
-                <div class="d-flex justify-content-center py-4">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Guardando...</span>
+            
+            return `
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-primary me-2">Acudiente</span>
+                            <h5 class="mb-0">${data.name}</h5>
+                        </div>
                     </div>
                 </div>
-            `;
-
-            try {
-                const formData = new FormData(form);
-                const response = await fetch(`/user/edit/update/${currentUserType}/${currentUserId}/`, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-
-                const data = await response.json();
                 
-                if (data.success) {
-                    const detailsResponse = await fetch(`/user/get_user_details/${currentUserType}/${currentUserId}/`);
-                    displayUserDetails(await detailsResponse.json());
-                    
-                    userDetailsContent.insertAdjacentHTML('afterbegin', `
-                        <div class="alert alert-success alert-dismissible fade show">
-                            <i class="bi bi-check-circle"></i> ¡Guardado correctamente!
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    `);
-                } else {
-                    throw new Error(data.errors || 'Error desconocido');
-                }
-            } catch (error) {
-                userDetailsContent.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        Error: ${error.message}
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Información Personal</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr><th>ID:</th><td>${data.id}</td></tr>
+                            <tr><th>Tipo de Documento:</th><td>${data.document_type}</td></tr>
+                            <tr><th>Identificación:</th><td>${data.identification}</td></tr>
+                            <tr><th>Ciudad:</th><td>${data.city}</td></tr>
+                            <tr><th>Dirección:</th><td>${data.address}</td></tr>
+                        </table>
                     </div>
-                `;
-            }
-        });
-    }
-
-=======
->>>>>>> 278d988 (Login working fully):Applications/users/templates/user_management_advanced.html
-    function generateGuardianDetails(data) {
-        let playersHtml = '';
-        if (data.players && data.players.length > 0) {
-            playersHtml = `
-                <div class="mt-3">
-                    <h6 class="text-success">Jugadores Asociados (${data.total_players})</h6>
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-                            <thead>
-                                <tr><th>ID</th><th>Nombre</th><th>Identificación</th><th>Edad</th></tr>
-                            </thead>
-                            <tbody>
-                                ${data.players.map(player => `
-                                    <tr>
-                                        <td>${player.id}</td>
-                                        <td>${player.name}</td>
-                                        <td>${player.identification}</td>
-                                        <td>${player.age} años</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
+                    <div class="col-md-6">
+                        <h6>Información de Contacto</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr><th>Teléfono:</th><td>${data.phone}</td></tr>
+                            <tr><th>Correo:</th><td>${data.email}</td></tr>
+                            <tr><th>Tipo Régimen:</th><td>${data.regime_type}</td></tr>
                         </table>
                     </div>
                 </div>
-            `;
-        } else {
-            playersHtml = `
-                <div class="mt-3">
-                    <h6 class="text-muted">Sin jugadores asociados</h6>
-                </div>
+                
+                ${playersHtml}
             `;
         }
         
-        return `
-            <div class="row">
-                <div class="col-12">
-                    <div class="d-flex align-items-center mb-3">
-                        <span class="badge bg-primary me-2">Acudiente</span>
-                        <h5 class="mb-0">${data.name}</h5>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-md-6">
-                    <h6>Información Personal</h6>
-                    <table class="table table-sm table-borderless">
-                        <tr><th>ID:</th><td>${data.id}</td></tr>
-                        <tr><th>Tipo de Documento:</th><td>${data.document_type}</td></tr>
-                        <tr><th>Identificación:</th><td>${data.identification}</td></tr>
-                        <tr><th>Ciudad:</th><td>${data.city}</td></tr>
-                        <tr><th>Dirección:</th><td>${data.address}</td></tr>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <h6>Información de Contacto</h6>
-                    <table class="table table-sm table-borderless">
-                        <tr><th>Teléfono:</th><td>${data.phone}</td></tr>
-                        <tr><th>Correo:</th><td>${data.email}</td></tr>
-                        <tr><th>Tipo Régimen:</th><td>${data.regime_type}</td></tr>
-                    </table>
-                </div>
-            </div>
-            
-            ${playersHtml}
-        `;
-    }
-    
-    function generatePlayerDetails(data) {
-        return `
-            <div class="row">
-                <div class="col-12">
-                    <div class="d-flex align-items-center mb-3">
-                        <span class="badge bg-success me-2">Jugador</span>
-                        <h5 class="mb-0">${data.name}</h5>
-                        <span class="badge bg-info ms-2">${data.age} años</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-md-6">
-                    <h6>Información Personal</h6>
-                    <table class="table table-sm table-borderless">
-                        <tr><th>ID:</th><td>${data.id}</td></tr>
-                        <tr><th>Tipo de Documento:</th><td>${data.document_type}</td></tr>
-                        <tr><th>Identificación:</th><td>${data.identification}</td></tr>
-                        <tr><th>Fecha de Nacimiento:</th><td>${data.birth_date}</td></tr>
-                        <tr><th>Ciudad:</th><td>${data.city}</td></tr>
-                        <tr><th>Ciudad de Nacimiento:</th><td>${data.birth_city}</td></tr>
-                        <tr><th>Dirección:</th><td>${data.address}</td></tr>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <h6>Información Académica</h6>
-                    <table class="table table-sm table-borderless">
-                        <tr><th>Institución Educativa:</th><td>${data.educational_institution}</td></tr>
-                        <tr><th>Jornada de Entreno:</th><td>${data.training_session}</td></tr>
-                    </table>
-                    
-                    <h6>Información Médica</h6>
-                    <table class="table table-sm table-borderless">
-                        <tr><th>Tiene Enfermedad:</th><td>${data.has_disease}</td></tr>
-                        <tr><th>Tipo de Enfermedad:</th><td>${data.disease_type}</td></tr>
-                        <tr><th>Contraindicaciones:</th><td>${data.has_contraindication}</td></tr>
-                        <tr><th>EPS:</th><td>${data.eps}</td></tr>
-                        <tr><th>Centro de Atención:</th><td>${data.health_center}</td></tr>
-                    </table>
-                </div>
-            </div>
-            
-            <div class="row mt-3">
-                <div class="col-12">
-                    <h6>Contacto de Emergencia</h6>
-                    <div class="card card-body bg-light">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>Contacto:</strong> ${data.emergency_contact}<br>
-                                <strong>Teléfono:</strong> ${data.emergency_contact_number}<br>
-                                <strong>Parentesco:</strong> ${data.kinship}
-                            </div>
+        function generatePlayerDetails(data) {
+            return `
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-success me-2">Jugador</span>
+                            <h5 class="mb-0">${data.name}</h5>
+                            <span class="badge bg-info ms-2">${data.age} años</span>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="row mt-3">
-                <div class="col-12">
-                    <h6>Acudiente Responsable</h6>
-                    <div class="card card-body bg-primary bg-opacity-10">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>Nombre:</strong> ${data.fk_guardian.name}<br>
-                                <strong>Identificación:</strong> ${data.fk_guardian.identification}
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Teléfono:</strong> ${data.fk_guardian.phone}<br>
-                                <strong>Correo:</strong> ${data.fk_guardian.email}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    // Functionalities of Edit and Save buttons
-    btnEdit = document.getElementById('btn-edit-user');
-    btnSave = document.getElementById('btn-save-user');
-
-    // Configura los event listeners una sola vez
-    if (btnEdit && btnSave) {
-        
-        btnEdit.addEventListener('click', async function() {
-
-            currentUserType = this.dataset.userType;
-            currentUserId = this.dataset.userId;
-
-            try {
-                userDetailsContent.innerHTML = `
-                    <div class="d-flex justify-content-center">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Cargando...</span>
-                        </div>
-                    </div>
-                `;
-
-                const response = await fetch(`/user/edit/form/${currentUserType}/${currentUserId}/`);
                 
-                if (!response.ok) throw new Error('Error al cargar el formulario');
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Información Personal</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr><th>ID:</th><td>${data.id}</td></tr>
+                            <tr><th>Tipo de Documento:</th><td>${data.document_type}</td></tr>
+                            <tr><th>Identificación:</th><td>${data.identification}</td></tr>
+                            <tr><th>Fecha de Nacimiento:</th><td>${data.birth_date}</td></tr>
+                            <tr><th>Ciudad:</th><td>${data.city}</td></tr>
+                            <tr><th>Ciudad de Nacimiento:</th><td>${data.birth_city}</td></tr>
+                            <tr><th>Dirección:</th><td>${data.address}</td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Información Académica</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr><th>Institución Educativa:</th><td>${data.educational_institution}</td></tr>
+                            <tr><th>Jornada de Entreno:</th><td>${data.training_session}</td></tr>
+                        </table>
+                        
+                        <h6>Información Médica</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr><th>Tiene Enfermedad:</th><td>${data.has_disease}</td></tr>
+                            <tr><th>Tipo de Enfermedad:</th><td>${data.disease_type}</td></tr>
+                            <tr><th>Contraindicaciones:</th><td>${data.has_contraindication}</td></tr>
+                            <tr><th>EPS:</th><td>${data.eps}</td></tr>
+                            <tr><th>Centro de Atención:</th><td>${data.health_center}</td></tr>
+                        </table>
+                    </div>
+                </div>
                 
-                userDetailsContent.innerHTML = await response.text();
-                btnEdit.classList.add('d-none');
-                btnSave.classList.remove('d-none');
-
-            } catch (error) {
-                userDetailsContent.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        No se pudo cargar el formulario: ${error.message}
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6>Contacto de Emergencia</h6>
+                        <div class="card card-body bg-light">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Contacto:</strong> ${data.emergency_contact}<br>
+                                    <strong>Teléfono:</strong> ${data.emergency_contact_number}<br>
+                                    <strong>Parentesco:</strong> ${data.kinship}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                `;
-            }
-        });
-
-        btnSave.addEventListener('click', async function() {
-            const form = document.querySelector('#userDetailsModal #userEditForm');
-            
-            if (!form) {
-                userDetailsContent.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        Error: Formulario no encontrado
-                    </div>
-                `;
-                return;
-            }
-
-            userDetailsContent.innerHTML = `
-                <div class="d-flex justify-content-center py-4">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Guardando...</span>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6>Acudiente Responsable</h6>
+                        <div class="card card-body bg-primary bg-opacity-10">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Nombre:</strong> ${data.fk_guardian.name}<br>
+                                    <strong>Identificación:</strong> ${data.fk_guardian.identification}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Teléfono:</strong> ${data.fk_guardian.phone}<br>
+                                    <strong>Correo:</strong> ${data.fk_guardian.email}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
+        }
 
-            try {
-                const formData = new FormData(form);
-                const response = await fetch(`/user/edit/update/${currentUserType}/${currentUserId}/`, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
+        // Functionalities of Edit and Save buttons
+        btnEdit = document.getElementById('btn-edit-user');
+        btnSave = document.getElementById('btn-save-user');
 
-                const data = await response.json();
-                
-                if (data.success) {
-                    const detailsResponse = await fetch(`/user/get_user_details/${currentUserType}/${currentUserId}/`);
-                    displayUserDetails(await detailsResponse.json());
-                    
-                    userDetailsContent.insertAdjacentHTML('afterbegin', `
-                        <div class="alert alert-success alert-dismissible fade show">
-                            <i class="bi bi-check-circle"></i> ¡Guardado correctamente!
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        // Configura los event listeners una sola vez
+        if (btnEdit && btnSave) {
+            
+            btnEdit.addEventListener('click', async function() {
+
+                currentUserType = this.dataset.userType;
+                currentUserId = this.dataset.userId;
+
+                try {
+                    userDetailsContent.innerHTML = `
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
                         </div>
-                    `);
-                } else {
-                    throw new Error(data.errors || 'Error desconocido');
+                    `;
+
+                    const response = await fetch(`/user/edit/form/${currentUserType}/${currentUserId}/`);
+                    
+                    if (!response.ok) throw new Error('Error al cargar el formulario');
+                    
+                    userDetailsContent.innerHTML = await response.text();
+                    btnEdit.classList.add('d-none');
+                    btnSave.classList.remove('d-none');
+
+                } catch (error) {
+                    userDetailsContent.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            No se pudo cargar el formulario: ${error.message}
+                        </div>
+                    `;
                 }
-            } catch (error) {
+            });
+
+            btnSave.addEventListener('click', async function() {
+                const form = document.querySelector('#userDetailsModal #userEditForm');
+                
+                if (!form) {
+                    userDetailsContent.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Error: Formulario no encontrado
+                        </div>
+                    `;
+                    return;
+                }
+
                 userDetailsContent.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        Error: ${error.message}
+                    <div class="d-flex justify-content-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Guardando...</span>
+                        </div>
                     </div>
                 `;
-            }
-        });
-    }
 
-    // Modal Acudiente (código existente)
-    var modalCrearAcudiente = document.getElementById('modalCrearAcudiente');
+                try {
+                    const formData = new FormData(form);
+                    const response = await fetch(`/user/edit/update/${currentUserType}/${currentUserId}/`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
 
-    modalCrearAcudiente.addEventListener('show.bs.modal', function () {
-        fetch('{% url "user:create_guardian" %}')
-            .then(response => response.text())
-            .then(html => {
-                var parser = new DOMParser();
-                var doc = parser.parseFromString(html, 'text/html');
-                var formFields = doc.querySelector('form');
-                document.getElementById('form-fields-acudiente').innerHTML = formFields ? formFields.innerHTML : '';
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const detailsResponse = await fetch(`/user/get_user_details/${currentUserType}/${currentUserId}/`);
+                        displayUserDetails(await detailsResponse.json());
+                        
+                        userDetailsContent.insertAdjacentHTML('afterbegin', `
+                            <div class="alert alert-success alert-dismissible fade show">
+                                <i class="bi bi-check-circle"></i> ¡Guardado correctamente!
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        `);
+                    } else {
+                        throw new Error(data.errors || 'Error desconocido');
+                    }
+                } catch (error) {
+                    userDetailsContent.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Error: ${error.message}
+                        </div>
+                    `;
+                }
             });
-        document.getElementById('acudiente-success').classList.add('d-none');
-    });
+        }
 
-    document.getElementById('formCrearAcudiente').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var form = e.target;
-        var formData = new FormData(form);
-        fetch('{% url "user:create_guardian" %}', {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('acudiente-success').classList.remove('d-none');
-                form.reset();
-            } else if (data.errors) {
-                document.getElementById('form-fields-acudiente').innerHTML = data.form_html;
-            }
+        // Modal Acudiente (código existente)
+        var modalCrearAcudiente = document.getElementById('modalCrearAcudiente');
+
+        modalCrearAcudiente.addEventListener('show.bs.modal', function () {
+            fetch('{% url "create_guardian" %}')
+                .then(response => response.text())
+                .then(html => {
+                    var parser = new DOMParser();
+                    var doc = parser.parseFromString(html, 'text/html');
+                    var formFields = doc.querySelector('form');
+                    document.getElementById('form-fields-acudiente').innerHTML = formFields ? formFields.innerHTML : '';
+                });
+            document.getElementById('acudiente-success').classList.add('d-none');
         });
-    });
-    
-    // Modal Jugador (código existente)
-    var modalCrearJugador = document.getElementById('modalCrearJugador');
 
-    modalCrearJugador.addEventListener('show.bs.modal', function () {
-        fetch('{% url "user:create_player" %}')
-            .then(response => response.text())
-            .then(html => {
-                var parser = new DOMParser();
-                var doc = parser.parseFromString(html, 'text/html');
-                var formFields = doc.querySelector('form');
-                document.getElementById('form-fields-jugador').innerHTML = formFields ? formFields.innerHTML : '';
+        document.getElementById('formCrearAcudiente').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var form = e.target;
+            var formData = new FormData(form);
+            fetch('{% url "create_guardian" %}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('acudiente-success').classList.remove('d-none');
+                    form.reset();
+                } else if (data.errors) {
+                    document.getElementById('form-fields-acudiente').innerHTML = data.form_html;
+                }
             });
-        document.getElementById('jugador-success').classList.add('d-none');
-    });
-
-    document.getElementById('formCrearJugador').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var form = e.target;
-        var formData = new FormData(form);
-        fetch('{% url "user:create_player" %}', {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('jugador-success').classList.remove('d-none');
-                form.reset();
-            } else if (data.errors) {
-                document.getElementById('form-fields-jugador').innerHTML = data.form_html;
-            }
         });
-    });
+        
+        // Modal Jugador (código existente)
+        var modalCrearJugador = document.getElementById('modalCrearJugador');
 
-    // Botón Eliminar Usuario
-    const btnDelete = document.getElementById('btn-delete-user');
-    
-    if (btnDelete) {
-        btnDelete.addEventListener('click', function() {
-            const userType = this.dataset.userType;
-            const userId = this.dataset.userId;
-            
-            if (confirm(`¿Estás seguro de que deseas eliminar este ${userType}? Esta acción no se puede deshacer.`)) {
-                deleteUser(userType, userId);
-            }
+        modalCrearJugador.addEventListener('show.bs.modal', function () {
+            fetch('{% url "create_player" %}')
+                .then(response => response.text())
+                .then(html => {
+                    var parser = new DOMParser();
+                    var doc = parser.parseFromString(html, 'text/html');
+                    var formFields = doc.querySelector('form');
+                    document.getElementById('form-fields-jugador').innerHTML = formFields ? formFields.innerHTML : '';
+                });
+            document.getElementById('jugador-success').classList.add('d-none');
         });
-    }
-});
+
+        document.getElementById('formCrearJugador').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var form = e.target;
+            var formData = new FormData(form);
+            fetch('{% url "create_player" %}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('jugador-success').classList.remove('d-none');
+                    form.reset();
+                } else if (data.errors) {
+                    document.getElementById('form-fields-jugador').innerHTML = data.form_html;
+                }
+            });
+        });
+
+        // Botón Eliminar Usuario
+        const btnDelete = document.getElementById('btn-delete-user');
+        
+        if (btnDelete) {
+            btnDelete.addEventListener('click', function() {
+                const userType = this.dataset.userType;
+                const userId = this.dataset.userId;
+                
+                if (confirm(`¿Estás seguro de que deseas eliminar este ${userType}? Esta acción no se puede deshacer.`)) {
+                    deleteUser(userType, userId);
+                }
+            });
+        }
+    });
 
     async function deleteUser(userType, userId) {
-    try {
-        const response = await fetch(`/user/delete/${userType}/${userId}/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCSRFToken(),
-                'X-Requested-With': 'XMLHttpRequest'
+        try {
+            const response = await fetch(`/user/delete/${userType}/${userId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Cerrar el modal
+                bootstrap.Modal.getInstance(document.getElementById('userDetailsModal')).hide();
+                
+                // Mostrar mensaje de éxito
+                showNotification('Usuario eliminado correctamente', 'success');
+                
+                // Recargar la página después de un breve retraso
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                throw new Error(data.error || 'Error al eliminar el usuario');
             }
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            // Cerrar el modal
-            bootstrap.Modal.getInstance(document.getElementById('userDetailsModal')).hide();
-            
-            // Mostrar mensaje de éxito
-            showNotification('Usuario eliminado correctamente', 'success');
-            
-            // Recargar la página después de un breve retraso
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        } else {
-            throw new Error(data.error || 'Error al eliminar el usuario');
+        } catch (error) {
+            showNotification(`Error: ${error.message}`, 'error');
         }
-    } catch (error) {
-        showNotification(`Error: ${error.message}`, 'error');
     }
-}
 
     // Función para mostrar notificaciones
     function showNotification(message, type = 'info') {
-    // Crear elemento de notificación
-    const notification = document.createElement('div');
-    notification.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show`;
-    notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-    notification.innerHTML = `
-        <strong>${type === 'error' ? 'Error' : 'Éxito'}:</strong> ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    
-    // Agregar al documento
-    document.body.appendChild(notification);
-    
-    // Auto-eliminar después de 5 segundos
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.parentNode.removeChild(notification);
-        }
-    }, 5000);
-}
+        // Crear elemento de notificación
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show`;
+        notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        notification.innerHTML = `
+            <strong>${type === 'error' ? 'Error' : 'Éxito'}:</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        // Agregar al documento
+        document.body.appendChild(notification);
+        
+        // Auto-eliminar después de 5 segundos
+        setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+    }
 </script>
 
 {% endblock %}

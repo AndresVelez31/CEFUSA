@@ -339,11 +339,8 @@ def display_user_advanced(request): # Advanced search view
         'regime_types_in_db': regime_types_in_db,
         'total_results': total_results
     }
-<<<<<<< HEAD:Applications/user/views.py
-    return render(request, 'advanced_search.html', context)
-=======
+    
     return render(request, 'user_management_advanced.html', context)
->>>>>>> 41778c8 (Advanced display is working, but it has some minor bugs. The models.py for payments and my functionality are still missing.):Applications/users/views.py
 
 def get_user_details(request, user_type, user_id): #'Ver' Button logic
     
