@@ -59,9 +59,12 @@ def display_payment(request):
     if responsible:
         payments = payments.filter(fk_responsible__id=responsible)
 
+    total_results = payments.count()
+
     context = {
         'payments': payments,
         'accounts': Payment.AccountChoices.choices,
+        'total_results': total_results,
     }
     return render(request, 'payment_management.html', context)
 

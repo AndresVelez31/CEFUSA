@@ -31,7 +31,11 @@
           <select class="form-select" name="account">
             <option value="">Todas</option>
             {% for account in accounts %}
-            <option value="{{ account.0 }}" {% if request.GET.account==account.0 %}selected{% endif %}>{{ account.1 }}</option>
+              {% if request.GET.account == account.0 %}
+                <option value="{{ account.0 }}" selected>{{ account.1 }}</option>
+              {% else %}
+                <option value="{{ account.0 }}">{{ account.1 }}</option>
+              {% endif %}
             {% endfor %}
           </select>
         </div>
@@ -76,6 +80,16 @@
         </div>
 
       </form>
+
+      <!-- Resultados -->
+      <div class="row">
+          <div class="col-12">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h5>Resultados: {{ total_results }} pago{{ total_results|pluralize }}</h5>
+              </div>
+          </div>
+      </div>
+
       <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
         <table class="table table-bordered table-hover">
           <thead class="table-info">
@@ -87,33 +101,32 @@
               <th>Motivo</th>
               <th>Valor</th>
               <th>Referencia 1</th>
-              <th>Referencia 2</th>
+              <th>Factura de Venta</th>
               <th>Responsable</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {% for payment in payments %}
-            <tr>
-              <td>{{ payment.id }}</td>
-              <td>{{ payment.account }}</td>
-              <td>{{ payment.date }}</td>
-              <td>{{ payment.player_name }}</td>
-              <td>{{ payment.reason }}</td>
-              <td>${{ payment.amount }}</td>
-              <td>{{ payment.reference_1 }}</td>
-              <td>{{ payment.reference_2 }}</td>
-              <td>{% if payment.fk_responsible %}{{ payment.fk_responsible.first_name }} {{ payment.fk_responsible.last_name }}{% else %}-{%
-                endif %}</td>
-              <td>
-                <a href="#" class="btn btn-sm btn-outline-primary">Ver</a>
-                <a href="#" class="btn btn-sm btn-outline-primary btn-editar-pago" data-id="{{ payment.id }}">Editar</a>
-              </td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="10" class="text-center">No hay pagos registrados</td>
-            </tr>
+              <tr>
+                <td>{{ payment.id }}</td>
+                <td>{{ payment.account }}</td>
+                <td>{{ payment.date }}</td>
+                <td>{{ payment.player_name }}</td>
+                <td>{{ payment.reason }}</td>
+                <td>${{ payment.amount }}</td>
+                <td>{{ payment.reference_1 }}</td>
+                <td>{{ payment.sales_invoice }}</td>
+                <td>{% if payment.fk_responsible %}{{ payment.fk_responsible.first_name }} {{ payment.fk_responsible.last_name }}{% else %}-{%endif %}</td>
+                <td>
+                  <a href="#" class="btn btn-sm btn-outline-primary">Ver</a>
+                  <a href="#" class="btn btn-sm btn-outline-primary btn-editar-pago" data-id="{{ payment.id }}">Editar</a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="10" class="text-center">No hay pagos registrados</td>
+              </tr>
             {% endfor %}
           </tbody>
         </table>
@@ -191,7 +204,8 @@
     </div>
   </div>
 
-  <script>
+<script>
+
     // Le agregamos funcionalidad al botón de editar pagos
     document.addEventListener('DOMContentLoaded', function () {
       // Abrir modal y cargar formulario de edición
@@ -212,8 +226,8 @@
         });
       });
     });
-  </script>
-  <script>
+
+    // Función para manejar el formulario de edición y eliminación
     function bindEditarPagoForm() {
       // Botón Eliminar Pago en el modal de edición
       const btnDeletePago = document.getElementById('btn-delete-pago');
@@ -257,14 +271,14 @@
       notification.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show`;
       notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
       notification.innerHTML = `
-    <strong>${type === 'error' ? 'Error' : 'Éxito'}:</strong> ${message}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  `;
+        <strong>${type === 'error' ? 'Error' : 'Éxito'}:</strong> ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
       document.body.appendChild(notification);
       setTimeout(() => {
         if (notification.parentNode) notification.parentNode.removeChild(notification);
       }, 4000);
     }
-  </script>
+</script>
 
-  {% endblock %}
+{% endblock %}
