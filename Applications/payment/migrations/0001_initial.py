@@ -9,7 +9,11 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+<<<<<<< HEAD
     ('user', '0001_initial'),
+=======
+        ('user', '0001_initial'),
+>>>>>>> 4922b32 (Renamed the apps to singular)
     ]
 
     operations = [

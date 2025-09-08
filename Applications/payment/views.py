@@ -80,7 +80,7 @@ def crear_pago(request):
             referencia2=request.POST.get("referencia2"),
             responsable_id=request.POST.get("responsable") or None
         )
-        return redirect('payment:display_payment')  # Redirige a la lista de pagos
+        return redirect('payment_management')  # Redirige a la lista de pagos
 
 ## cambiar a get_edit_form
 def get_payment_edit_form(request, pago_id):

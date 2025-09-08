@@ -103,9 +103,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'Applications/users/static'),
+    os.path.join(BASE_DIR, 'Applications/user/static'),
     os.path.join(BASE_DIR, 'Applications/core/static'),
-    os.path.join(BASE_DIR, 'Applications/payments/static'),
+    os.path.join(BASE_DIR, 'Applications/payment/static'),
 ]
 
 # Default primary key field type

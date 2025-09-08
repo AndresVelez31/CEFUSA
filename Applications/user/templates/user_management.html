@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function() {
         form.onsubmit = function(e) {
             e.preventDefault();
             var formData = new FormData(form);
-            fetch('{% url "users:create_acudiente" %}', {
+            fetch('{% url "user:create_acudiente" %}', {
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('DOMContentLoaded', function() {
         var modalCrearAcudiente = document.getElementById('modalCrearAcudiente');
         modalCrearAcudiente.addEventListener('show.bs.modal', function () {
-            fetch('{% url "users:create_acudiente" %}')
+            fetch('{% url "user:create_acudiente" %}')
                 .then(response => response.text())
                 .then(html => {
                     var parser = new DOMParser();
@@ -416,7 +416,7 @@ document.addEventListener('DOMContentLoaded', function() {
         form.onsubmit = function(e) {
             e.preventDefault();
             var formData = new FormData(form);
-            fetch('{% url "users:create_jugador" %}', {
+            fetch('{% url "user:create_jugador" %}', {
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
@@ -440,7 +440,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('DOMContentLoaded', function() {
         var modalCrearJugador = document.getElementById('modalCrearJugador');
         modalCrearJugador.addEventListener('show.bs.modal', function () {
-            fetch('{% url "users:create_jugador" %}')
+            fetch('{% url "user:create_jugador" %}')
                 .then(response => response.text())
                 .then(html => {
                     var parser = new DOMParser();

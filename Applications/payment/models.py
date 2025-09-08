@@ -39,8 +39,7 @@ class Payment(models.Model):
         "user.Guardian",
 =======
     fk_responsible = models.ForeignKey(
-        "users.Guardian",  # Updated to match the renamed model
->>>>>>> 278d988 (Login working fully):Applications/payments/models.py
+        "user.Guardian",  # Updated to match the renamed model
         on_delete=models.PROTECT,
         related_name="payment",
         db_column="responsable",

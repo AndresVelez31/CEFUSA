@@ -696,7 +696,7 @@
                     </div>
                 `;
 
-                const response = await fetch(`/users/edit/form/${currentUserType}/${currentUserId}/`);
+                const response = await fetch(`/user/edit/form/${currentUserType}/${currentUserId}/`);
                 
                 if (!response.ok) throw new Error('Error al cargar el formulario');
                 
@@ -737,7 +737,7 @@
 
             try {
                 const formData = new FormData(form);
-                const response = await fetch(`/users/edit/update/${currentUserType}/${currentUserId}/`, {
+                const response = await fetch(`/user/edit/update/${currentUserType}/${currentUserId}/`, {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -749,7 +749,7 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    const detailsResponse = await fetch(`/users/get_user_details/${currentUserType}/${currentUserId}/`);
+                    const detailsResponse = await fetch(`/user/get_user_details/${currentUserType}/${currentUserId}/`);
                     displayUserDetails(await detailsResponse.json());
                     
                     userDetailsContent.insertAdjacentHTML('afterbegin', `
