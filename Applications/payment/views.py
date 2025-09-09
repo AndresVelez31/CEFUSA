@@ -7,10 +7,11 @@ from django.views.decorators.http import require_POST
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from datetime import datetime
-
+from ..user.models import Guardian
 # Create your views here.
 
 def display_payment(request):
+
 
     search = request.GET.get('search', '')
     # Filtros avanzados
@@ -61,10 +62,12 @@ def display_payment(request):
 
     total_results = payments.count()
 
+    responsables = Guardian.objects.all()
+
     context = {
         'payments': payments,
         'accounts': Payment.AccountChoices.choices,
-        'total_results': total_results,
+        'responsables': responsables,
     }
     return render(request, 'payment_management.html', context)
 
@@ -75,12 +78,13 @@ def create_payment(request):
             date=request.POST.get("date"),
             player_name=request.POST.get("player_name"),
             reason=request.POST.get("reason"),
-            value=request.POST.get("value"),
-            reference_1=request.POST.get("reference_1"),
-            reference_2=request.POST.get("reference_2"),
-            responsible_id=request.POST.get("responsible") or None
+            amount=request.POST.get("amount"),
+            reference_1=request.POST.get("reference_1") or None,
+            sales_invoice=request.POST.get("sales_invoice") or None,
+            reference_2=request.POST.get("reference_2") or None,
+            fk_responsible_id=request.POST.get("responsible") or None
         )
-        return redirect('payment_management')  # Redirige a la lista de pagos
+        return redirect('display_payment')  # Redirige a la lista de pagos
 
 ## cambiar a get_edit_form
 def get_payment_edit_form(request, payment_id):
@@ -114,10 +118,11 @@ def update_payment(request, payment_id):
         from django.shortcuts import redirect
     return redirect(reverse('payment_management'))
 
-def delete_payment(request, pago_id):
+@require_POST
+def delete_payment(request, payment_id):
     if request.headers.get('x-requested-with') != 'XMLHttpRequest':
         return JsonResponse({'success': False, 'error': 'Petición inválida.'}, status=400)
-    pago = get_object_or_404(Pago, id=pago_id)
+    payment = get_object_or_404(Payment, id=payment_id)
     try:
         payment.delete()
         return JsonResponse({'success': True})
