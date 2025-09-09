@@ -349,7 +349,7 @@ def get_user_details(request, user_type, user_id): #'Ver' Button logic
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     
     try:
-        if user_type == 'guardian':
+        if user_type in ['guardian', 'acudiente']:
             user = get_object_or_404(Guardian, id=user_id)
 
             # Calcular total de jugadores asociados
@@ -378,7 +378,7 @@ def get_user_details(request, user_type, user_id): #'Ver' Button logic
                 'players': players_list
             }
             
-        elif user_type == 'player':
+        elif user_type in ['player', 'jugador']:
             user = get_object_or_404(Player, id=user_id)
             age = (date.today() - user.birth_date).days // 365
 
