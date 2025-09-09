@@ -65,12 +65,13 @@ def display_payment(request):
 
     total_results = payments.count()
 
-    responsables = Guardian.objects.all()
+    responsibles = Guardian.objects.all()
 
     context = {
         'payments': payments,
         'accounts': Payment.AccountChoices.choices,
-        'responsables': responsables,
+        'responsibles': responsibles,
+        'total_results': total_results,
     }
     return render(request, 'payment_management.html', context)
 

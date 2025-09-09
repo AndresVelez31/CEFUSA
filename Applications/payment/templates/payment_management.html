@@ -70,8 +70,15 @@
         </div>
 
         <div class="col-md-2">
-          <label class="form-label">Responsable (ID)</label>
-          <input type="text" class="form-control" name="fk_responsible" value="{{ request.GET.fk_responsible }}">
+          <label class="form-label">Responsable</label>
+          <select class="form-select" name="fk_responsible">
+            <option value="">Todos los responsables</option>
+            {% for responsible in responsibles %}
+              <option value="{{ responsible.id }}" {% if request.GET.fk_responsible == responsible.id|stringformat:"s" %}selected{% endif %}>
+                {{ responsible.first_name }} {{ responsible.last_name }}
+              </option>
+            {% endfor %}
+          </select>
         </div>
 
         <div class="col-md-2">
@@ -235,8 +242,8 @@
             <label class="form-label">Responsable</label>
             <select name="responsible" class="form-select" >
               <option value="">Seleccione responsable</option>
-              {% for r in responsables %}
-              <option value="{{ r.id }}">{{ r.first_name }} {{ r.last_name }}</option>
+              {% for responsible in responsibles %}
+              <option value="{{ responsible.id }}">{{ responsible.first_name }} {{ responsible.last_name }}</option>
               {% endfor %}
             </select>
           </div>
