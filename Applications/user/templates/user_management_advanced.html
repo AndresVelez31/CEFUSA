@@ -1,0 +1,818 @@
+{% extends "base.html" %}
+
+{% block title %} Usuarios - Búsqueda Avanzada {% endblock %}
+
+{% block content %}
+
+<style>
+    .table-container {
+        max-height: 600px; /* Altura máxima de la tabla */
+        overflow-y: auto; /* Habilitar desplazamiento vertical */
+    }
+</style>
+
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0"> Búsqueda Avanzada de Usuarios </h4>
+            <div class="btn-group" role="group">
+                <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-sm">Vista Simple</a>
+                <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearAcudiente">+ Nuevo Acudiente</a>
+                <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearJugador">+ Nuevo Jugador</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card-body" style="max-height: 1200px; overflow-y: auto;">
+        <!-- Filtros Avanzados -->
+        <div class="accordion mb-3" id="filtros-avanzados">
+            <div class="accordion-item">
+
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                            data-bs-target="#collapseFilters">
+                        <i class="bi bi-funnel me-2"></i>Filtros de Búsqueda
+                    </button>
+                </h2>
+
+                <div id="collapseFilters" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                        <form method="GET" id="filtros-form" class="row g-3">
+
+                            <!-- Filtros básicos -->
+                            <div class="col-md-4">
+                                <label class="form-label">Búsqueda</label>
+                                <input type="text" class="form-control" name="search" 
+                                       value="{{ request.GET.search }}" 
+                                       placeholder="Nombre, apellido, identificación...">
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">Tipo Usuario</label>
+                                <select class="form-select" name="user_type">
+                                    <option value="">Ambos</option>
+                                    <option value="guardians" {% if request.GET.user_type == 'guardians' %}selected{% endif %}>Acudientes</option>
+                                    <option value="players" {% if request.GET.user_type == 'players' %}selected{% endif %}>Jugadores</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">Ciudad</label>
+                                <select class="form-select" name="city">
+                                    <option value="">Todas</option>
+                                    {% for city in available_cities %}
+                                    <option value="{{ city }}" {% if request.GET.city == city %}selected{% endif %}>{{ city }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">Tipo de documento</label>
+                                <select class="form-select" name="document_type">
+                                    <option value="">Todos</option>
+                                    {% for type in document_types_in_db %}
+                                        <option value="{{ type }}" {% if request.GET.document_type == type %}selected{% endif %}>
+                                            {{ type }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <div class="d-flex gap-1">
+                                    <button type="submit" class="btn btn-primary">Buscar</button>
+                                    <a href="?" class="btn btn-outline-secondary">Limpiar</a>
+                                </div>
+                            </div>
+
+                            <!-- Filtros específicos para jugadores -->
+                            <div class="col-12">
+                                <hr>
+                                <h6>Filtros específicos para Jugadores:</h6>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Institución Educativa</label>
+                                <input type="text" class="form-control" name="educational_institution" 
+                                       value="{{ request.GET.educational_institution }}" 
+                                       placeholder="Nombre de la institución">
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">Jornada</label>
+                                <select class="form-select" name="training_session">
+                                    <option value="">Todas</option>
+                                    <option value="Mañana" {% if request.GET.training_session == "Mañana" %}selected{% endif %}>Mañana</option>
+                                    <option value="Tarde" {% if request.GET.training_session == "Tarde" %}selected{% endif %}>Tarde</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">Edad</label>
+                                <select class="form-select" name="age_range">
+                                    <option value="">Todas</option>
+                                    <option value="5-10" {% if request.GET.age_range == '5-10' %}selected{% endif %}>5-10 años</option>
+                                    <option value="11-15" {% if request.GET.age_range == '11-15' %}selected{% endif %}>11-15 años</option>
+                                    <option value="16-20" {% if request.GET.age_range == '16-20' %}selected{% endif %}>16-20 años</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">Tiene Enfermedad</label>
+                                <select class="form-select" name="has_disease">
+                                    <option value="">Todos</option>
+                                    <option value="true" {% if request.GET.has_disease == 'true' %}selected{% endif %}>Sí</option>
+                                    <option value="false" {% if request.GET.has_disease == 'false' %}selected{% endif %}>No</option>
+                                </select>
+                            </div>
+
+                            <!-- Filtros específicos para acudientes -->
+                            <div class="col-12">
+                                <hr>
+                                <h6>Filtros específicos para Acudientes:</h6>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Correo Electrónico</label>
+                                <input type="email" class="form-control" name="email" 
+                                       value="{{ request.GET.email }}" 
+                                       placeholder="email@ejemplo.com">
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">Régimen Tributario</label>
+                                <select class="form-select" name="regime_type">
+                                    <option value="">Todos</option>
+                                    {% for type in regime_types_in_db %}
+                                        <option value="{{ type }}" {% if request.GET.regime_type == type %}selected{% endif %}>
+                                            {{ type }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resultados -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>Resultados: {{ total_results }} usuario{{ total_results|pluralize }}</h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vista de tabla (por defecto) -->
+        <div id="vista-tabla-content">
+            <div class="table-container">
+                {% if guardians %}
+                    <h6 class="text-primary">Acudientes ({{ guardians.count }})</h6>
+                    <div class="table-responsive mb-4">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>ID</th><th>Identificación</th><th>Nombre Completo</th>
+                                    <th>Ciudad</th><th>Correo</th><th>Régimen</th><th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for guardian in guardians %}
+                                <tr>
+                                    <td>{{ guardian.id }}</td>
+                                    <td>{{ guardian.identification }}</td>
+                                    <td>{{ guardian.first_name }} {{ guardian.last_name }}</td>
+                                    <td>{{ guardian.city }}</td>
+                                    <td>{{ guardian.email }}</td>
+                                    <td><small>{{ guardian.get_regime_type_display }}</small></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-outline-primary btn-view-user" 
+                                                    data-user-type="guardian" data-user-id="{{ guardian.id }}">
+                                                Ver
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+
+                {% if players %}
+                    <h6 class="text-success">Jugadores ({{ players.count }})</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-success">
+                                <tr>
+                                    <th>ID</th><th>Identificación</th><th>Nombre Completo</th>
+                                    <th>Edad</th><th>Ciudad</th><th>Institución</th><th>Acudiente</th><th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for player in players %}
+                                <tr>
+                                    <td>{{ player.id }}</td>
+                                    <td>{{ player.identification }}</td>
+                                    <td>{{ player.first_name }} {{ player.last_name }}</td>
+                                    <td>{{ player.age }} años</td>
+                                    <td>{{ player.city }}</td>
+                                    <td><small>{{ player.educational_institution }}</small></td>
+                                    <td><small>{{ player.fk_guardian.first_name }} {{ player.fk_guardian.last_name }}</small></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-outline-primary btn-view-user" 
+                                                    data-user-type="player" data-user-id="{{ player.id }}">
+                                                Ver
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+
+                {% if not guardians and not players %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-search fs-1 text-muted"></i>
+                        <h5 class="text-muted">No se encontraron resultados</h5>
+                        <p class="text-muted">Intenta ajustar los filtros de búsqueda</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<!-- Modal para mostrar detalles del usuario -->
+<div class="modal fade" id="user-details-modal" tabindex="-1" aria-labelledby="user-details-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="user-details-modal-label">
+                    <i class="bi bi-person-circle me-2"></i>
+                    Detalles del Usuario
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="user-details-content">
+                <!-- Contenido dinámico -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-user" class="btn btn-warning d-none">Editar</button>
+                <button type="button" id="btn-save-user" class="btn btn-success d-none">Guardar</button>
+                <button type="button" id="btn-delete-user" class="btn btn-danger d-none">Eliminar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear acudiente -->
+<div class="modal fade" id="modalCrearAcudiente" tabindex="-1" aria-labelledby="modalCrearAcudienteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCrearAcudienteLabel">Crear Nuevo Acudiente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="acudiente-success" class="alert alert-success d-none">¡Acudiente creado exitosamente!</div>
+                <form id="formCrearAcudiente">
+                    {% csrf_token %}
+                    <div id="form-fields-acudiente"></div>
+                    <div class="d-flex justify-content-center gap-2 mt-3">
+                        <button type="submit" class="btn btn-success">Crear</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear jugador -->
+<div class="modal fade" id="modalCrearJugador" tabindex="-1" aria-labelledby="modalCrearJugadorLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCrearJugadorLabel">Crear Nuevo Jugador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="jugador-success" class="alert alert-success d-none">¡Jugador creado exitosamente!</div>
+                <form id="formCrearJugador">
+                    {% csrf_token %}
+                    <div id="form-fields-jugador"></div>
+                    <div class="d-flex justify-content-center gap-2 mt-3">
+                        <button type="submit" class="btn btn-success">Crear</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    let currentUserType, currentUserId;
+    let btnEdit, btnSave;
+
+    // Añade esta función para obtener el token CSRF de las cookies
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 10) === 'csrftoken=') {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    
+        // Auto-submit en tiempo real (opcional)
+        const searchInput = document.querySelector('input[name="search"]');
+        let searchTimeout;
+        
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                document.getElementById('filtros-form').submit();
+            }, 1000); // Espera 1000ms después de que el usuario deje de escribir
+        });
+
+        // Funcionalidad para el botón "Ver"
+        const viewUserBtns = document.querySelectorAll('.btn-view-user');
+        const userDetailsModal = new bootstrap.Modal(document.getElementById('user-details-modal'));
+        const userDetailsContent = document.getElementById('user-details-content');
+        
+        viewUserBtns.forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const userType = this.dataset.userType;
+                const userId = this.dataset.userId;
+                
+                // Mostrar modal con spinner de carga
+                userDetailsContent.innerHTML = `
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                    </div>
+                `;
+                userDetailsModal.show();
+                
+                try {
+                    const response = await fetch(`{% url 'get_user_details' 'placeholder' 0 %}`.replace('placeholder/0', `${userType}/${userId}`));
+                    
+                    if (!response.ok) {
+                        throw new Error('Error al cargar los datos');
+                    }
+                    
+                    const userData = await response.json();
+                    displayUserDetails(userData);
+                    
+                } catch (error) {
+                    userDetailsContent.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Error al cargar los detalles del usuario: ${error.message}
+                        </div>
+                    `;
+                }
+            });
+        });
+        
+        function displayUserDetails(userData) {
+            let content = '';
+            
+            if (userData.type === 'Guardian') {
+                content = generateGuardianDetails(userData);
+            } else if (userData.type === 'Player') {
+                content = generatePlayerDetails(userData);
+            }
+            
+            userDetailsContent.innerHTML = content;
+
+            // Configurar botones de edición
+            const btnEdit = document.getElementById('btn-edit-user');
+            const btnSave = document.getElementById('btn-save-user');
+            const btnDelete = document.getElementById('btn-delete-user');
+
+            if (btnDelete) {
+                btnDelete.dataset.userType = (userData.tipo || '').toLowerCase();
+                btnDelete.dataset.userId = userData.id || '';
+                btnDelete.classList.remove('d-none');
+            }
+            if (btnEdit) {
+                btnEdit.dataset.userType = (userData.tipo || '').toLowerCase();
+                btnEdit.dataset.userId = userData.id || '';
+                btnEdit.classList.remove('d-none');
+            }
+            if (btnSave) {
+                btnSave.classList.add('d-none');
+            }
+        }
+
+        function generateGuardianDetails(data) {
+            let playersHtml = '';
+            if (data.players && data.players.length > 0) {
+                playersHtml = `
+                    <div class="mt-3">
+                        <h6 class="text-success">Jugadores Asociados (${data.total_players})</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr><th>ID</th><th>Nombre</th><th>Identificación</th><th>Edad</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${data.players.map(player => `
+                                        <tr>
+                                            <td>${player.id}</td>
+                                            <td>${player.name}</td>
+                                            <td>${player.identification}</td>
+                                            <td>${player.age} años</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            } else {
+                playersHtml = `
+                    <div class="mt-3">
+                        <h6 class="text-muted">Sin jugadores asociados</h6>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-primary me-2">Acudiente</span>
+                            <h5 class="mb-0">${data.name}</h5>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Información Personal</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr><th>ID:</th><td>${data.id}</td></tr>
+                            <tr><th>Tipo de Documento:</th><td>${data.document_type}</td></tr>
+                            <tr><th>Identificación:</th><td>${data.identification}</td></tr>
+                            <tr><th>Ciudad:</th><td>${data.city}</td></tr>
+                            <tr><th>Dirección:</th><td>${data.address}</td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Información de Contacto</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr><th>Teléfono:</th><td>${data.phone}</td></tr>
+                            <tr><th>Correo:</th><td>${data.email}</td></tr>
+                            <tr><th>Tipo Régimen:</th><td>${data.regime_type}</td></tr>
+                        </table>
+                    </div>
+                </div>
+                
+                ${playersHtml}
+            `;
+        }
+        
+        function generatePlayerDetails(data) {
+            return `
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-success me-2">Jugador</span>
+                            <h5 class="mb-0">${data.name}</h5>
+                            <span class="badge bg-info ms-2">${data.age} años</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Información Personal</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr><th>ID:</th><td>${data.id}</td></tr>
+                            <tr><th>Tipo de Documento:</th><td>${data.document_type}</td></tr>
+                            <tr><th>Identificación:</th><td>${data.identification}</td></tr>
+                            <tr><th>Fecha de Nacimiento:</th><td>${data.birth_date}</td></tr>
+                            <tr><th>Ciudad:</th><td>${data.city}</td></tr>
+                            <tr><th>Ciudad de Nacimiento:</th><td>${data.birth_city}</td></tr>
+                            <tr><th>Dirección:</th><td>${data.address}</td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Información Académica</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr><th>Institución Educativa:</th><td>${data.educational_institution}</td></tr>
+                            <tr><th>Jornada de Entreno:</th><td>${data.training_session}</td></tr>
+                        </table>
+                        
+                        <h6>Información Médica</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr><th>Tiene Enfermedad:</th><td>${data.has_disease}</td></tr>
+                            <tr><th>Tipo de Enfermedad:</th><td>${data.disease_type}</td></tr>
+                            <tr><th>Contraindicaciones:</th><td>${data.has_contraindication}</td></tr>
+                            <tr><th>EPS:</th><td>${data.eps}</td></tr>
+                            <tr><th>Centro de Atención:</th><td>${data.health_center}</td></tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6>Contacto de Emergencia</h6>
+                        <div class="card card-body bg-light">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Contacto:</strong> ${data.emergency_contact}<br>
+                                    <strong>Teléfono:</strong> ${data.emergency_contact_number}<br>
+                                    <strong>Parentesco:</strong> ${data.kinship}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6>Acudiente Responsable</h6>
+                        <div class="card card-body bg-primary bg-opacity-10">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Nombre:</strong> ${data.fk_guardian.name}<br>
+                                    <strong>Identificación:</strong> ${data.fk_guardian.identification}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Teléfono:</strong> ${data.fk_guardian.phone}<br>
+                                    <strong>Correo:</strong> ${data.fk_guardian.email}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Functionalities of Edit and Save buttons
+        btnEdit = document.getElementById('btn-edit-user');
+        btnSave = document.getElementById('btn-save-user');
+
+        // Configura los event listeners una sola vez
+        if (btnEdit && btnSave) {
+            
+            btnEdit.addEventListener('click', async function() {
+
+                currentUserType = this.dataset.userType;
+                currentUserId = this.dataset.userId;
+
+                try {
+                    userDetailsContent.innerHTML = `
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                        </div>
+                    `;
+
+                    const response = await fetch(`/user/edit/form/${currentUserType}/${currentUserId}/`);
+                    
+                    if (!response.ok) throw new Error('Error al cargar el formulario');
+                    
+                    userDetailsContent.innerHTML = await response.text();
+                    btnEdit.classList.add('d-none');
+                    btnSave.classList.remove('d-none');
+
+                } catch (error) {
+                    userDetailsContent.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            No se pudo cargar el formulario: ${error.message}
+                        </div>
+                    `;
+                }
+            });
+
+            btnSave.addEventListener('click', async function() {
+                const form = document.querySelector('#userDetailsModal #userEditForm');
+                
+                if (!form) {
+                    userDetailsContent.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Error: Formulario no encontrado
+                        </div>
+                    `;
+                    return;
+                }
+
+                userDetailsContent.innerHTML = `
+                    <div class="d-flex justify-content-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Guardando...</span>
+                        </div>
+                    </div>
+                `;
+
+                try {
+                    const formData = new FormData(form);
+                    const response = await fetch(`/user/edit/update/${currentUserType}/${currentUserId}/`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const detailsResponse = await fetch(`/user/get_user_details/${currentUserType}/${currentUserId}/`);
+                        displayUserDetails(await detailsResponse.json());
+                        
+                        userDetailsContent.insertAdjacentHTML('afterbegin', `
+                            <div class="alert alert-success alert-dismissible fade show">
+                                <i class="bi bi-check-circle"></i> ¡Guardado correctamente!
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        `);
+                    } else {
+                        throw new Error(data.errors || 'Error desconocido');
+                    }
+                } catch (error) {
+                    userDetailsContent.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Error: ${error.message}
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        // Modal Acudiente (código existente)
+        var modalCrearAcudiente = document.getElementById('modalCrearAcudiente');
+
+        modalCrearAcudiente.addEventListener('show.bs.modal', function () {
+            fetch('{% url "create_guardian" %}')
+                .then(response => response.text())
+                .then(html => {
+                    var parser = new DOMParser();
+                    var doc = parser.parseFromString(html, 'text/html');
+                    var formFields = doc.querySelector('form');
+                    document.getElementById('form-fields-acudiente').innerHTML = formFields ? formFields.innerHTML : '';
+                });
+            document.getElementById('acudiente-success').classList.add('d-none');
+        });
+
+        document.getElementById('formCrearAcudiente').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var form = e.target;
+            var formData = new FormData(form);
+            fetch('{% url "create_guardian" %}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('acudiente-success').classList.remove('d-none');
+                    form.reset();
+                } else if (data.errors) {
+                    document.getElementById('form-fields-acudiente').innerHTML = data.form_html;
+                }
+            });
+        });
+        
+        // Modal Jugador (código existente)
+        var modalCrearJugador = document.getElementById('modalCrearJugador');
+
+        modalCrearJugador.addEventListener('show.bs.modal', function () {
+            fetch('{% url "create_player" %}')
+                .then(response => response.text())
+                .then(html => {
+                    var parser = new DOMParser();
+                    var doc = parser.parseFromString(html, 'text/html');
+                    var formFields = doc.querySelector('form');
+                    document.getElementById('form-fields-jugador').innerHTML = formFields ? formFields.innerHTML : '';
+                });
+            document.getElementById('jugador-success').classList.add('d-none');
+        });
+
+        document.getElementById('formCrearJugador').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var form = e.target;
+            var formData = new FormData(form);
+            fetch('{% url "create_player" %}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('jugador-success').classList.remove('d-none');
+                    form.reset();
+                } else if (data.errors) {
+                    document.getElementById('form-fields-jugador').innerHTML = data.form_html;
+                }
+            });
+        });
+
+        // Botón Eliminar Usuario
+        const btnDelete = document.getElementById('btn-delete-user');
+        
+        if (btnDelete) {
+            btnDelete.addEventListener('click', function() {
+                const userType = this.dataset.userType;
+                const userId = this.dataset.userId;
+                
+                if (confirm(`¿Estás seguro de que deseas eliminar este ${userType}? Esta acción no se puede deshacer.`)) {
+                    deleteUser(userType, userId);
+                }
+            });
+        }
+    });
+
+    async function deleteUser(userType, userId) {
+        try {
+            const response = await fetch(`/user/delete/${userType}/${userId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Cerrar el modal
+                bootstrap.Modal.getInstance(document.getElementById('userDetailsModal')).hide();
+                
+                // Mostrar mensaje de éxito
+                showNotification('Usuario eliminado correctamente', 'success');
+                
+                // Recargar la página después de un breve retraso
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                throw new Error(data.error || 'Error al eliminar el usuario');
+            }
+        } catch (error) {
+            showNotification(`Error: ${error.message}`, 'error');
+        }
+    }
+
+    // Función para mostrar notificaciones
+    function showNotification(message, type = 'info') {
+        // Crear elemento de notificación
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show`;
+        notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        notification.innerHTML = `
+            <strong>${type === 'error' ? 'Error' : 'Éxito'}:</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        // Agregar al documento
+        document.body.appendChild(notification);
+        
+        // Auto-eliminar después de 5 segundos
+        setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+    }
+</script>
+
+{% endblock %}

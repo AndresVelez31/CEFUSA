@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+{% block title %}Gestión de Pagos{% endblock %}
+{% block content %}
+<div id="main-payment">
+  <div class="card">
+
+    <div class="card-header">  
+      <div class="d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Gestión de Pagos</h4>
+        <div class="btn-group" role="group">
+          <a href="?" class="btn btn-outline-secondary btn-sm">Limpiar</a>
+          <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#crearPagoModal">
+            Crear Pago
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card-body">
+
+      <form method="GET" id="filtros-pagos-form" class="row g-3 mb-3">
+
+        <div class="col-md-3">
+          <label class="form-label">Búsqueda general</label>
+          <input type="text" class="form-control" name="search" value="{{ request.GET.search }}"
+            placeholder="Nombre, referencia, motivo, responsable...">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Cuenta</label>
+          <select class="form-select" name="account">
+            <option value="">Todas</option>
+            {% for account in accounts %}
+              {% if request.GET.account == account.0 %}
+                <option value="{{ account.0 }}" selected>{{ account.1 }}</option>
+              {% else %}
+                <option value="{{ account.0 }}">{{ account.1 }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Fecha</label>
+          <input type="date" class="form-control" name="date" value="{{ request.GET.date }}">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Sucursal</label>
+          <input type="text" class="form-control" name="branch" value="{{ request.GET.branch }}">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Referencia 1</label>
+          <input type="text" class="form-control" name="reference_1" value="{{ request.GET.reference_1 }}">
+        </div>
+        
+        <div class="col-md-2">
+          <label class="form-label">Referencia 2</label>
+          <input type="text" class="form-control" name="reference_2" value="{{ request.GET.reference_2 }}">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-control" name="player_name" value="{{ request.GET.player_name }}">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Motivo</label>
+          <input type="text" class="form-control" name="reason" value="{{ request.GET.reason }}">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Responsable (ID)</label>
+          <input type="text" class="form-control" name="fk_responsible" value="{{ request.GET.fk_responsiblek }}">
+        </div>
+
+        <div class="col-md-2 align-self-end">
+          <button type="submit" class="btn btn-primary">Filtrar</button>
+        </div>
+
+      </form>
+
+      <!-- Resultados -->
+      <div class="row">
+          <div class="col-12">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h5>Resultados: {{ total_results }} pago{{ total_results|pluralize }}</h5>
+              </div>
+          </div>
+      </div>
+
+      <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+        <table class="table table-bordered table-hover">
+          <thead class="table-info">
+            <tr>
+              <th>ID</th>
+              <th>Cuenta</th>
+              <th>Fecha</th>
+              <th>Nombre</th>
+              <th>Motivo</th>
+              <th>Valor</th>
+              <th>Referencia 1</th>
+              <th>Factura de Venta</th>
+              <th>Responsable</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for payment in payments %}
+              <tr>
+                <td>{{ payment.id }}</td>
+                <td>{{ payment.account }}</td>
+                <td>{{ payment.date }}</td>
+                <td>{{ payment.player_name }}</td>
+                <td>{{ payment.reason }}</td>
+                <td>${{ payment.amount }}</td>
+                <td>{{ payment.reference_1 }}</td>
+                <td>{{ payment.sales_invoice }}</td>
+                <td>{% if payment.fk_responsible %}{{ payment.fk_responsible.first_name }} {{ payment.fk_responsible.last_name }}{% else %}-{%endif %}</td>
+                <td>
+                  <a href="#" class="btn btn-sm btn-outline-primary">Ver</a>
+                  <a href="#" class="btn btn-sm btn-outline-primary btn-editar-pago" data-id="{{ payment.id }}">Editar</a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="10" class="text-center">No hay pagos registrados</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Crear Pago -->
+  <div class="modal fade" id="crearPagoModal" tabindex="-1" aria-labelledby="crearPagoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="crearPagoModalLabel">Crear Nuevo Pago</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <form method="POST" action="{% url 'create_payment' %}">
+          {% csrf_token %}
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Cuenta</label>
+              <select name="cuenta" class="form-select" required>
+                {% for c in cuentas %}
+                <option value="{{ c.0 }}">{{ c.1 }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Fecha</label>
+              <input type="date" name="fecha" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Nombre</label>
+              <input type="text" name="nombre" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Motivo</label>
+              <input type="text" name="motivo" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Valor</label>
+              <input type="number" name="valor" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Referencia 1</label>
+              <input type="text" name="referencia1" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Referencia 2</label>
+              <input type="text" name="referencia2" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Responsable (ID)</label>
+              <input type="text" name="responsable" class="form-control">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-success">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <br>
+  <br>
+
+  <!-- Modal Editar Pagos -->
+  <div class="modal fade" id="editarPagoModal" tabindex="-1" aria-labelledby="editarPagoModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog">
+      <div class="modal-content" id="editarPagoModalContent">
+        <!-- Aquí se cargará el formulario por AJAX -->
+      </div>
+    </div>
+  </div>
+
+<script>
+
+    // Le agregamos funcionalidad al botón de editar pagos
+    document.addEventListener('DOMContentLoaded', function () {
+      // Abrir modal y cargar formulario de edición
+      document.querySelectorAll('.btn-editar-pago').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          const pagoId = btn.getAttribute('data-id');
+          fetch(`/payment/pagos/${pagoId}/edit/`)
+            .then(response => response.text())
+            .then(html => {
+              document.getElementById('editarPagoModalContent').innerHTML = html;
+
+              document.getElementById('editarPagoModalContent').innerHTML = html;
+              var modal = new bootstrap.Modal(document.getElementById('editarPagoModal'));
+              modal.show();
+              bindEditarPagoForm(); // Re-asocia el evento del formulario
+            });
+        });
+      });
+    });
+
+    // Función para manejar el formulario de edición y eliminación
+    function bindEditarPagoForm() {
+      // Botón Eliminar Pago en el modal de edición
+      const btnDeletePago = document.getElementById('btn-delete-pago');
+      if (btnDeletePago) {
+        btnDeletePago.addEventListener('click', async function () {
+          const pagoId = this.getAttribute('data-id');
+          if (confirm('¿Estás seguro de que deseas eliminar este pago? Esta acción no se puede deshacer.')) {
+            try {
+              const response = await fetch(`/payment/pagos/${pagoId}/delete/`, {
+                method: 'POST',
+                headers: {
+                  'X-CSRFToken': getCSRFToken(),
+                  'X-Requested-With': 'XMLHttpRequest'
+                }
+              });
+              const data = await response.json();
+              if (data.success) {
+                bootstrap.Modal.getInstance(document.getElementById('editarPagoModal')).hide();
+                showNotification('Pago eliminado correctamente', 'success');
+                setTimeout(() => window.location.reload(), 1500);
+              } else {
+                throw new Error(data.error || 'Error al eliminar el pago');
+              }
+            } catch (error) {
+              showNotification(`Error: ${error.message}`, 'error');
+            }
+          }
+        });
+      }
+    }
+
+    // Función para obtener CSRF token (si no la tienes ya)
+    function getCSRFToken() {
+      const cookieValue = document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)');
+      return cookieValue ? cookieValue.pop() : '';
+    }
+
+    // Función para mostrar notificaciones (si no la tienes ya)
+    function showNotification(message, type = 'success') {
+      const notification = document.createElement('div');
+      notification.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show`;
+      notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+      notification.innerHTML = `
+        <strong>${type === 'error' ? 'Error' : 'Éxito'}:</strong> ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        if (notification.parentNode) notification.parentNode.removeChild(notification);
+      }, 4000);
+    }
+</script>
+
+{% endblock %}

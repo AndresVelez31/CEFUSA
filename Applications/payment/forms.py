@@ -1,14 +1,14 @@
 from django import forms
-from .models import Pago
+from .models import Payment
 
-def crear_pago_form():
-    class CrearPagoForm(forms.ModelForm):
+def create_payment_form():
+    class CreatePaymentForm(forms.ModelForm):
         class Meta:
-            model = Pago
-            fields = ['monto', 'descripcion', 'fecha']
-    return CrearPagoForm
+            model = Payment
+            fields = ['amount', 'description', 'date']
+    return CreatePaymentForm
 
-class PagoForm(forms.ModelForm):
+class PaymentForm(forms.ModelForm):
     class Meta:
-        model = Pago
+        model = Payment
         fields = '__all__'
