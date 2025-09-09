@@ -4,20 +4,20 @@ from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 from datetime import date, timedelta
 from .models import Guardian, Player
-from .forms import AcudienteForm, JugadorForm
+from .forms import  GuardianForm, PlayerForm
 from django.template.loader import render_to_string
 
 # Create your views here.
 # Requirement FR-06
 
 def create_player(request):
-    form = JugadorForm(request.POST or None)
+    form = PlayerForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
             form.save()
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': True})
-            return render(request, 'createJugador.html', {'form': JugadorForm(), 'success': True})
+            return render(request, 'create_player.html', {'form': PlayerForm(), 'success': True})
         else:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'errors': form.errors, 'form_html': form.as_p()})
@@ -27,13 +27,13 @@ def create_player(request):
 
 # Requirement FR-21
 def create_guardian(request):
-    form = AcudienteForm(request.POST or None)
+    form = GuardianForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
             form.save()
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': True})
-            return render(request, 'createAcudiente.html', {'form': AcudienteForm(), 'success': True})
+            return render(request, 'create_guardian.html', {'form': GuardianForm(), 'success': True})
         else:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'errors': form.errors, 'form_html': form.as_p()})
@@ -422,12 +422,12 @@ def get_user_details(request, user_type, user_id): #'Ver' Button logic
 
 def get_user_edit_form(request, user_type, user_id):
     try:
-        if user_type == 'acudiente':
-            user = get_object_or_404(Acudiente, id=user_id)
-            form = AcudienteForm(instance=user, editable=True)
-        elif user_type == 'jugador':
-            user = get_object_or_404(Jugador, id=user_id)
-            form = JugadorForm(instance=user, editable=True)
+        if user_type == 'guardian':
+            user = get_object_or_404(Guardian, id=user_id)
+            form = GuardianForm(instance=user, editable=True)
+        elif user_type == 'player':
+            user = get_object_or_404(Player, id=user_id)
+            form = PlayerForm(instance=user, editable=True)
         else:
             return JsonResponse({'error': 'Tipo de usuario no válido'}, status=400)
         html_content = render_to_string(
@@ -446,12 +446,12 @@ def update_user(request, user_type, user_id):
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     
     try:
-        if user_type == 'acudiente':
-            user = get_object_or_404(Acudiente, id=user_id)
-            form = AcudienteForm(request.POST, instance=user, editable=True)
-        elif user_type == 'jugador':
-            user = get_object_or_404(Jugador, id=user_id)
-            form = JugadorForm(request.POST, instance=user, editable=True)
+        if user_type == 'guardian':
+            user = get_object_or_404(Guardian, id=user_id)
+            form = GuardianForm(request.POST, instance=user, editable=True)
+        elif user_type == 'player':
+            user = get_object_or_404(Player, id=user_id)
+            form = PlayerForm(request.POST, instance=user, editable=True)
         else:
             return JsonResponse({'error': 'Tipo de usuario no válido'}, status=400)
         
@@ -472,16 +472,16 @@ def delete_user(request, user_type, user_id):
         return JsonResponse({'error': 'Método no permitido'}, status=405)
 
     try:
-        if user_type == 'acudiente':
-            user = get_object_or_404(Acudiente, id=user_id)
+        if user_type == 'guardian':
+            user = get_object_or_404(Guardian, id=user_id)
             # Verificar si tiene jugadores asociados antes de eliminar
-            if user.jugadores.exists():
+            if user.players.exists():
                 return JsonResponse({
-                    'error': 'No se puede eliminar este acudiente porque tiene jugadores asociados. '
+                    'error': 'No se puede eliminar este guardián porque tiene jugadores asociados. '
                              'Primero debe reassignar o eliminar los jugadores.'
                 }, status=400)
-        elif user_type == 'jugador':
-            user = get_object_or_404(Jugador, id=user_id)
+        elif user_type == 'player':
+            user = get_object_or_404(Player, id=user_id)
         else:
             return JsonResponse({'error': 'Tipo de usuario no válido'}, status=400)
 

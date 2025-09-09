@@ -2,7 +2,7 @@
 from django import forms
 from .models import Guardian, Player
 
-class AcudienteForm(forms.ModelForm):
+class GuardianForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.editable = kwargs.pop('editable', False)
         super().__init__(*args, **kwargs)
@@ -28,7 +28,7 @@ class AcudienteForm(forms.ModelForm):
         model = Guardian
         fields = '__all__'
 
-class JugadorForm(forms.ModelForm):
+class PlayerForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.editable = kwargs.pop('editable', False)
         super().__init__(*args, **kwargs)

@@ -138,49 +138,74 @@
   <div class="modal fade" id="crearPagoModal" tabindex="-1" aria-labelledby="crearPagoModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header bg-success text-white">
-          <h5 class="modal-title" id="crearPagoModalLabel">Crear Nuevo Pago</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
         <form method="POST" action="{% url 'create_payment' %}">
           {% csrf_token %}
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title" id="crearPagoModalLabel">Crear Nuevo Pago</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+
           <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label">Cuenta</label>
-              <select name="cuenta" class="form-select" required>
-                {% for c in cuentas %}
-                <option value="{{ c.0 }}">{{ c.1 }}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Fecha</label>
-              <input type="date" name="fecha" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Nombre</label>
-              <input type="text" name="nombre" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Motivo</label>
-              <input type="text" name="motivo" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Valor</label>
-              <input type="number" name="valor" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Referencia 1</label>
-              <input type="text" name="referencia1" class="form-control">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Referencia 2</label>
-              <input type="text" name="referencia2" class="form-control">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Responsable (ID)</label>
-              <input type="text" name="responsable" class="form-control">
-            </div>
+  <div class="mb-3">
+    <label class="form-label">Cuenta</label>
+    <select name="account" class="form-select" required>
+      {% for c in accounts %}
+      <option value="{{ c.0 }}">{{ c.1 }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Fecha</label>
+    <input type="date" name="date" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Descripción</label>
+    <input type="text" name="description" class="form-control" required>
+  </div>
+          <div class="mb-3">
+            <label class="form-label">Sucursal</label>
+            <input type="text" name="branch" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Referencia 1</label>
+            <input type="text" name="reference_1" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Referencia 2</label>
+            <input type="text" name="reference_2" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Valor</label>
+            <input type="number" name="amount" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" name="player_name" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Motivo</label>
+            <input type="text" name="reason" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Factura venta</label>
+            <input type="text" name="sales_invoice" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Recibo caja</label>
+            <input type="text" name="receipt" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Comentario</label>
+            <input type="text" name="comment" class="form-control" required>
+          </div>
+        <div class="mb-3">
+            <label class="form-label">Responsable</label>
+            <select name="responsible" class="form-select" >
+              <option value="">Seleccione responsable</option>
+              {% for r in responsables %}
+              <option value="{{ r.id }}">{{ r.first_name }} {{ r.last_name }}</option>
+              {% endfor %}
+            </select>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
