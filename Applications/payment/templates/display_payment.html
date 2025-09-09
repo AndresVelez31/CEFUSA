@@ -70,20 +70,20 @@
           </tr>
         </thead>
         <tbody>
-          {% for pago in pagos %}
+          {% for payment in payments %}
           <tr>
-            <td>{{ pago.id }}</td>
-            <td>{{ pago.cuenta }}</td>
-            <td>{{ pago.fecha }}</td>
-            <td>{{ pago.nombre }}</td>
-            <td>{{ pago.motivo }}</td>
-            <td>${{ pago.valor }}</td>
-            <td>{{ pago.referencia1 }}</td>
-            <td>{{ pago.referencia2 }}</td>
-            <td>{% if pago.responsable %}{{ pago.responsable.nombre }} {{ pago.responsable.apellidos }}{% else %}-{% endif %}</td>
+            <td>{{ payment.id }}</td>
+            <td>{{ payment.cuenta }}</td>
+            <td>{{ payment.fecha }}</td>
+            <td>{{ payment.nombre }}</td>
+            <td>{{ payment.motivo }}</td>
+            <td>${{ payment.valor }}</td>
+            <td>{{ payment.referencia1 }}</td>
+            <td>{{ payment.referencia2 }}</td>
+            <td>{% if payment.responsable %}{{ payment.responsable.nombre }} {{ payment.responsable.apellidos }}{% else %}-{% endif %}</td>
             <td>
               <a href="#" class="btn btn-sm btn-outline-primary">Ver</a>
-              <a href="#" class="btn btn-sm btn-outline-primary btn-editar-pago" data-id="{{ pago.id }}">Editar</a>
+              <a href="#" class="btn btn-sm btn-outline-primary btn-editar-pago" data-id="{{ payment.id }}">Editar</a>
             </td>
           </tr>
           {% empty %}
@@ -108,62 +108,62 @@
         <div class="modal-body">
           <div class="mb-3">
             <label class="form-label">Cuenta</label>
-            <select name="cuenta" class="form-select" required>
-              {% for c in cuentas %}
+            <select name="account" class="form-select" required>
+              {% for c in accounts %}
               <option value="{{ c.0 }}">{{ c.1 }}</option>
               {% endfor %}
             </select>
           </div>
           <div class="mb-3">
             <label class="form-label">Fecha</label>
-            <input type="date" name="fecha" class="form-control" required>
+            <input type="date" name="date" class="form-control" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Descripción</label>
-            <input type="text" name="descripción" class="form-control" required>
+            <input type="text" name="description" class="form-control" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Sucursal</label>
-            <input type="text" name="sucursal" class="form-control" required>
+            <input type="text" name="branch" class="form-control" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Referencia 1</label>
-            <input type="text" name="referencia1" class="form-control">
+            <input type="text" name="reference_1" class="form-control">
           </div>
           <div class="mb-3">
             <label class="form-label">Referencia 2</label>
-            <input type="text" name="referencia2" class="form-control">
+            <input type="text" name="reference_2" class="form-control">
           </div>
           <div class="mb-3">
             <label class="form-label">Valor</label>
-            <input type="number" name="valor" class="form-control" required>
+            <input type="number" name="amount" class="form-control" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Nombre</label>
-            <input type="text" name="nombre" class="form-control" required>
+            <input type="text" name="player_name" class="form-control" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Motivo</label>
-            <input type="text" name="motivo" class="form-control" required>
+            <input type="text" name="reason" class="form-control" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Factura venta</label>
-            <input type="text" name="factura_venta" class="form-control" required>
+            <input type="text" name="sales_invoice" class="form-control" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Recibo caja</label>
-            <input type="text" name="recibo_caja" class="form-control" required>
+            <input type="text" name="receipt" class="form-control" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Comentario</label>
-            <input type="text" name="comentario" class="form-control" required>
+            <input type="text" name="comment" class="form-control" required>
           </div>
         <div class="mb-3">
             <label class="form-label">Responsable</label>
-            <select name="responsable" class="form-select" required>
+            <select name="responsible" class="form-select" required>
               <option value="">Seleccione responsable</option>
               {% for r in responsables %}
-              <option value="{{ r.id }}">{{ r.nombre }} {{ r.apellidos }}</option>
+              <option value="{{ r.id }}">{{ r.first_name }} {{ r.last_name }}</option>
               {% endfor %}
             </select>
           </div>

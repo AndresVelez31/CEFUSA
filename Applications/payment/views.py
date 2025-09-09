@@ -78,12 +78,13 @@ def create_payment(request):
             date=request.POST.get("date"),
             player_name=request.POST.get("player_name"),
             reason=request.POST.get("reason"),
-            value=request.POST.get("value"),
-            reference_1=request.POST.get("reference_1"),
-            reference_2=request.POST.get("reference_2"),
-            responsible_id=request.POST.get("responsible") or None
+            amount=request.POST.get("amount"),
+            reference_1=request.POST.get("reference_1") or None,
+            sales_invoice=request.POST.get("sales_invoice") or None,
+            reference_2=request.POST.get("reference_2") or None,
+            fk_responsible_id=request.POST.get("responsible") or None
         )
-        return redirect('payment_management')  # Redirige a la lista de pagos
+        return redirect('display_payment')  # Redirige a la lista de pagos
 
 ## cambiar a get_edit_form
 def get_payment_edit_form(request, payment_id):
