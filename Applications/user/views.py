@@ -4,20 +4,20 @@ from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 from datetime import date, timedelta
 from .models import Guardian, Player
-from .forms import AcudienteForm, JugadorForm
+from .forms import  GuardianForm, PlayerForm
 from django.template.loader import render_to_string
 
 # Create your views here.
 # Requirement FR-06
 
 def create_player(request):
-    form = JugadorForm(request.POST or None)
+    form = PlayerForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
             form.save()
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': True})
-            return render(request, 'createJugador.html', {'form': JugadorForm(), 'success': True})
+            return render(request, 'create_player.html', {'form': PlayerForm(), 'success': True})
         else:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'errors': form.errors, 'form_html': form.as_p()})
@@ -27,13 +27,13 @@ def create_player(request):
 
 # Requirement FR-21
 def create_guardian(request):
-    form = AcudienteForm(request.POST or None)
+    form = GuardianForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
             form.save()
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': True})
-            return render(request, 'createAcudiente.html', {'form': AcudienteForm(), 'success': True})
+            return render(request, 'create_guardian.html', {'form': GuardianForm(), 'success': True})
         else:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': False, 'errors': form.errors, 'form_html': form.as_p()})

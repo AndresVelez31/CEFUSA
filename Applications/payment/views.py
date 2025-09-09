@@ -11,8 +11,7 @@ from ..user.models import Guardian
 # Create your views here.
 
 def display_payment(request):
-    from django.db.models import Q
-    from .models import Pago
+
 
     search = request.GET.get('search', '')
     # Filtros avanzados
@@ -63,11 +62,12 @@ def display_payment(request):
 
     total_results = payments.count()
 
-    responsables = Acudiente.objects.all()
+    responsables = Guardian.objects.all()
 
     context = {
         'payments': payments,
         'accounts': Payment.AccountChoices.choices,
+        'responsables': responsables,
     }
     return render(request, 'payment_management.html', context)
 
