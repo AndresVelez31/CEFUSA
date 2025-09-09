@@ -415,7 +415,7 @@
             const btnDelete = document.getElementById('btn-delete-user');
 
             if (btnDelete) {
-                btnDelete.dataset.userType = (userData.tipo || '').toLowerCase();
+                btnDelete.dataset.userType = (userData.type || '').toLowerCase();
                 btnDelete.dataset.userId = userData.id || '';
                 btnDelete.classList.remove('d-none');
             }
@@ -751,9 +751,11 @@
         
         if (btnDelete) {
             btnDelete.addEventListener('click', function() {
-                const userType = this.dataset.userType;
+                let userType = this.dataset.userType;
                 const userId = this.dataset.userId;
-                
+                // Traducción para el backend
+                if (userType === 'guardian') userType = 'acudiente';
+                if (userType === 'player') userType = 'jugador';
                 if (confirm(`¿Estás seguro de que deseas eliminar este ${userType}? Esta acción no se puede deshacer.`)) {
                     deleteUser(userType, userId);
                 }
@@ -775,7 +777,7 @@
             
             if (data.success) {
                 // Cerrar el modal
-                bootstrap.Modal.getInstance(document.getElementById('userDetailsModal')).hide();
+                bootstrap.Modal.getInstance(document.getElementById('user-details-modal')).hide();
                 
                 // Mostrar mensaje de éxito
                 showNotification('Usuario eliminado correctamente', 'success');

@@ -475,7 +475,7 @@ def delete_user(request, user_type, user_id):
         if user_type == 'acudiente':
             user = get_object_or_404(Guardian, id=user_id)
             # Verificar si tiene jugadores asociados antes de eliminar
-            if user.jugadores.exists():
+            if user.players.exists():
                 return JsonResponse({
                     'error': 'No se puede eliminar este acudiente porque tiene jugadores asociados. '
                              'Primero debe reassignar o eliminar los jugadores.'
