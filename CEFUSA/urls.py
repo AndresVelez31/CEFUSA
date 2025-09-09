@@ -7,4 +7,5 @@ urlpatterns = [
     path('', include('Applications.core.urls')),
     path('user/', include('Applications.user.urls')),
     path('payment/', include('Applications.payment.urls')),
+    path('dashboard/', include('Applications.dashboard.urls')),
 ]
