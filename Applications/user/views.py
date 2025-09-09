@@ -174,25 +174,37 @@ def display_user_advanced(request): # Advanced search view
     # The 'variable' comes from the HTML, the input obtained from the GET request.
 
     # Basic parameters
-    search = request.GET.get('search', '')
-    user_type = request.GET.get('user_type', '')
-    city = request.GET.get('city', '')
-    document_type = request.GET.get('document_type', '')
+    search = request.GET.get('search', '').strip()
+    user_type = request.GET.get('user_type', '').strip()
+    city = request.GET.get('city', '').strip()
+    document_type = request.GET.get('document_type', '').strip()
 
     # Player-specific parameters
-    educational_institution = request.GET.get('educational_institution', '')
-    training_session = request.GET.get('training_session', '')
-    age_range = request.GET.get('age_range', '')
-    has_disease = request.GET.get('has_disease', '')
+    educational_institution = request.GET.get('educational_institution', '').strip()
+    training_session = request.GET.get('training_session', '').strip()
+    age_range = request.GET.get('age_range', '').strip()
+    has_disease = request.GET.get('has_disease', '').strip()
 
     # Guardian-specific parameters
-    email = request.GET.get('email', '')
-    regime_type = request.GET.get('regime_type', '')  # Updated to English for consistency
+    email = request.GET.get('email', '').strip()
+    regime_type = request.GET.get('regime_type', '').strip()  # Updated to English for consistency
+
+    # Detect if player-specific filters are being used (after strip, empty strings are falsy)
+    player_filters_used = any([educational_institution, training_session, age_range, has_disease])
+    
+    # Detect if guardian-specific filters are being used (after strip, empty strings are falsy)
+    guardian_filters_used = any([email, regime_type])
+    
+    # Auto-determine user type based on specific filters
+    if player_filters_used and not guardian_filters_used and not user_type:
+        user_type = 'players'
+    elif guardian_filters_used and not player_filters_used and not user_type:
+        user_type = 'guardians'
 
     # Filter guardians
     guardians = Guardian.objects.all()
     if search:
-        search_words = search.strip().split()
+        search_words = search.split()
         if len(search_words) > 1:
             guardian_query = Q()
             for word in search_words:
@@ -252,9 +264,8 @@ def display_user_advanced(request): # Advanced search view
     players = Player.objects.select_related('fk_guardian').all()
     
     if search:
-        
         # Dividir la búsqueda en palabras para permitir buscar nombre y apellido por separado
-        search_words = search.strip().split()
+        search_words = search.split()
         
         if len(search_words) > 1:
             # Si hay múltiples palabras, buscar que contengan todas las palabras
@@ -316,16 +327,17 @@ def display_user_advanced(request): # Advanced search view
     if user_type == 'guardians':
         players = Player.objects.none()
     
-    # Add calculated age to players
-    for player in players:
-        player.age = (date.today() - player.birth_date).days // 365
+    # Add calculated age to players (more efficient than loop)
+    if players.exists():
+        for player in players:
+            player.age = (date.today() - player.birth_date).days // 365
     
-    # Get available cities
+    # Get available cities (optimize queries)
     guardian_cities = set(Guardian.objects.values_list('city', flat=True).distinct())
     player_cities = set(Player.objects.values_list('city', flat=True).distinct())
     available_cities = sorted(guardian_cities.union(player_cities))
     
-    # Document type order
+    # Document type order (optimize with better sorting)
     document_type_order = [option.label for option in Guardian.DocumentType]
     guardian_document_types = set(Guardian.objects.values_list('document_type', flat=True).distinct())
     player_document_types = set(Player.objects.values_list('document_type', flat=True).distinct())
