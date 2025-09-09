@@ -12,11 +12,13 @@ from django.template.loader import render_to_string
 
 def create_player(request):
     form = PlayerForm(request.POST or None)
+    form = PlayerForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
             form.save()
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': True})
+            return render(request, 'create_player.html', {'form': PlayerForm(), 'success': True})
             return render(request, 'create_player.html', {'form': PlayerForm(), 'success': True})
         else:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -28,11 +30,13 @@ def create_player(request):
 # Requirement FR-21
 def create_guardian(request):
     form = GuardianForm(request.POST or None)
+    form = GuardianForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
             form.save()
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': True})
+            return render(request, 'create_guardian.html', {'form': GuardianForm(), 'success': True})
             return render(request, 'create_guardian.html', {'form': GuardianForm(), 'success': True})
         else:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -477,7 +481,7 @@ def delete_user(request, user_type, user_id):
             # Verificar si tiene jugadores asociados antes de eliminar
             if user.players.exists():
                 return JsonResponse({
-                    'error': 'No se puede eliminar este acudiente porque tiene jugadores asociados. '
+                    'error': 'No se puede eliminar este guardián porque tiene jugadores asociados. '
                              'Primero debe reassignar o eliminar los jugadores.'
                 }, status=400)
         elif user_type == 'jugador':
