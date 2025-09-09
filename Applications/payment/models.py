@@ -1,13 +1,13 @@
 from django.db import models
 
-class Pago(models.Model):
+class Payment(models.Model):
     id = models.AutoField(primary_key=True, db_column="idPago")
 
-    class CuentaChoices(models.TextChoices):
-        CUENTA_5031 = "5031", "5031"
-        CUENTA_5032 = "5032", "5032"
+    class AccountChoices(models.TextChoices):
+        ACCOUNT_5031 = "5031", "5031"
+        ACCOUNT_5032 = "5032", "5032"
 
-    cuenta = models.CharField(
+    account = models.CharField(
         max_length=4,
         db_column="cuenta",
         choices=[("5031", "5031"), ("5032", "5032")],
@@ -15,29 +15,29 @@ class Pago(models.Model):
     )
 
 
-    fecha = models.DateField(db_column="fecha")
-    descripcion = models.CharField(max_length=45, db_column="descripcion")
-    sucursal = models.CharField(max_length=45, db_column="sucursal")
-    referencia1 = models.CharField(max_length=45, blank=True, null=True, db_column="referencia1")
-    referencia2 = models.CharField(max_length=45, blank=True, null=True, db_column="referencia2")
+    date = models.DateField(db_column="fecha")
+    description = models.CharField(max_length=45, db_column="descripcion")
+    branch = models.CharField(max_length=45, db_column="sucursal")
+    reference_1 = models.CharField(max_length=45, blank=True, null=True, db_column="referencia1")
+    reference_2 = models.CharField(max_length=45, blank=True, null=True, db_column="referencia2")
 
-    valor = models.DecimalField(
-        max_digits=12,  # hasta billones con 2 decimales
+    amount = models.DecimalField(
+        max_digits=12,  # up to billions with 2 decimals
         decimal_places=2,
         default=0.00,
         db_column="valor"
     )
 
-    nombre = models.CharField(max_length=45, db_column="nombre")
-    motivo = models.CharField(max_length=50, db_column="motivo")
-    factura_venta = models.CharField(max_length=30, blank=True, null=True, db_column="facturaVenta")
-    recibo_caja = models.CharField(max_length=20, blank=True, null=True, db_column="reciboCaja")
-    comentario = models.CharField(max_length=150, blank=True, null=True, db_column="comentario")
+    player_name = models.CharField(max_length=45, db_column="nombre")
+    reason = models.CharField(max_length=50, db_column="motivo")
+    sales_invoice = models.CharField(max_length=30, blank=True, null=True, db_column="facturaVenta")
+    receipt = models.CharField(max_length=20, blank=True, null=True, db_column="reciboCaja")
+    comment = models.CharField(max_length=150, blank=True, null=True, db_column="comentario")
 
-    responsable = models.ForeignKey(
-        "user.Acudiente",
+    fk_responsible = models.ForeignKey(
+        "user.Guardian",  # Updated to match the renamed model
         on_delete=models.PROTECT,
-        related_name="pagos",
+        related_name="payment",
         db_column="responsable",
         blank=True,
         null=True
@@ -47,4 +47,4 @@ class Pago(models.Model):
         db_table = "Pago"
 
     def __str__(self):
-        return f"Pago {self.id} - {self.fecha}"
+        return f"Payment {self.id} - {self.date}"

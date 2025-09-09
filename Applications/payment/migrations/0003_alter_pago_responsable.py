@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='pago',
             name='responsable',
-            field=models.ForeignKey(blank=True, db_column='responsable', null=True, on_delete=django.db.models.deletion.PROTECT, related_name='pagos', to='users.acudiente'),
+            field=models.ForeignKey(blank=True, db_column='responsable', null=True, on_delete=django.db.models.deletion.PROTECT, related_name='pagos', to='user.acudiente'),
         ),
     ]
