@@ -83,16 +83,16 @@ def create_payment(request):
         return redirect('payment_management')  # Redirige a la lista de pagos
 
 ## cambiar a get_edit_form
-def get_payment_edit_form(request, pago_id):
-    pago = get_object_or_404(Pago, id=pago_id)
-    form = PagoForm(instance=pago)
-    html = render_to_string('get_payment_edit_form.html', {'form': form, 'pago': pago}, request=request)
+def get_payment_edit_form(request, payment_id):
+    payment = get_object_or_404(Payment, id=payment_id)
+    form = PaymentForm(instance=payment)
+    html = render_to_string('get_payment_edit_form.html', {'form': form, 'payment': payment}, request=request)
     return HttpResponse(html)
 
-def update_payment(request, pago_id):
-    pago = get_object_or_404(Pago, id=pago_id)
+def update_payment(request, payment_id):
+    payment = get_object_or_404(Payment, id=payment_id)
     if request.method == 'POST':
-        form = PagoForm(request.POST, instance=pago)
+        form = PaymentForm(request.POST, instance=payment)
         if form.is_valid():
             form.save()
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -103,10 +103,10 @@ def update_payment(request, pago_id):
                 return redirect(reverse('payment_management'))
         else:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                html = render_to_string('get_payment_edit_form.html', {'form': form, 'pago': pago}, request=request)
+                html = render_to_string('get_payment_edit_form.html', {'form': form, 'payment': payment}, request=request)
                 return JsonResponse({'success': False, 'html': html})
             else:
-                return render(request, 'get_payment_edit_form.html', {'form': form, 'pago': pago})
+                return render(request, 'get_payment_edit_form.html', {'form': form, 'payment': payment})
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({'success': False, 'error': 'Método no permitido'})
     else:
@@ -119,7 +119,7 @@ def delete_payment(request, pago_id):
         return JsonResponse({'success': False, 'error': 'Petición inválida.'}, status=400)
     pago = get_object_or_404(Pago, id=pago_id)
     try:
-        pago.delete()
+        payment.delete()
         return JsonResponse({'success': True})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
