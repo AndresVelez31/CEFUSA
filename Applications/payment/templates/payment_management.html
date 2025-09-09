@@ -8,7 +8,6 @@
       <div class="d-flex justify-content-between align-items-center">
         <h4 class="mb-0">Gestión de Pagos</h4>
         <div class="btn-group" role="group">
-          <a href="?" class="btn btn-outline-secondary btn-sm">Limpiar</a>
           <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#crearPagoModal">
             Crear Pago
           </button>
@@ -72,11 +71,17 @@
 
         <div class="col-md-2">
           <label class="form-label">Responsable (ID)</label>
-          <input type="text" class="form-control" name="fk_responsible" value="{{ request.GET.fk_responsiblek }}">
+          <input type="text" class="form-control" name="fk_responsible" value="{{ request.GET.fk_responsible }}">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Factura de Venta</label>
+          <input type="text" class="form-control" name="sales_invoice" value="{{ request.GET.sales_invoice }}">
         </div>
 
         <div class="col-md-2 align-self-end">
-          <button type="submit" class="btn btn-primary">Filtrar</button>
+          <button type="submit" class="btn btn-primary me-2">Filtrar</button>
+          <a href="?" class="btn btn-outline-secondary">Limpiar</a>
         </div>
 
       </form>
@@ -119,8 +124,12 @@
                 <td>{{ payment.sales_invoice }}</td>
                 <td>{% if payment.fk_responsible %}{{ payment.fk_responsible.first_name }} {{ payment.fk_responsible.last_name }}{% else %}-{%endif %}</td>
                 <td>
-                  <a href="#" class="btn btn-sm btn-outline-primary">Ver</a>
-                  <a href="#" class="btn btn-sm btn-outline-primary btn-editar-pago" data-id="{{ payment.id }}">Editar</a>
+                  <div class="btn-group btn-group-sm">
+                      <button type="button" class="btn btn-outline-primary btn-view-payment" 
+                              data-payment-id="{{ payment.id }}">
+                          Ver
+                      </button>
+                  </div>
                 </td>
               </tr>
               {% empty %}
@@ -133,6 +142,30 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal para mostrar detalles del pago -->
+<div class="modal fade" id="payment-details-modal" tabindex="-1" aria-labelledby="payment-details-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="payment-details-modal-label">
+                    <i class="bi bi-cash-coin me-2"></i>
+                    Detalles del Pago
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="payment-details-content">
+                <!-- Contenido dinámico -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-edit-payment" class="btn btn-warning d-none">Editar</button>
+                <button type="button" id="btn-save-payment" class="btn btn-success d-none">Guardar</button>
+                <button type="button" id="btn-delete-payment" class="btn btn-danger d-none">Eliminar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
   <!-- Modal Crear Pago -->
   <div class="modal fade" id="crearPagoModal" tabindex="-1" aria-labelledby="crearPagoModalLabel" aria-hidden="true">
@@ -208,23 +241,250 @@
 
     // Le agregamos funcionalidad al botón de editar pagos
     document.addEventListener('DOMContentLoaded', function () {
-      // Abrir modal y cargar formulario de edición
-      document.querySelectorAll('.btn-editar-pago').forEach(function (btn) {
-        btn.addEventListener('click', function (e) {
-          e.preventDefault();
-          const pagoId = btn.getAttribute('data-id');
-          fetch(`/payment/pagos/${pagoId}/edit/`)
-            .then(response => response.text())
-            .then(html => {
-              document.getElementById('editarPagoModalContent').innerHTML = html;
 
-              document.getElementById('editarPagoModalContent').innerHTML = html;
-              var modal = new bootstrap.Modal(document.getElementById('editarPagoModal'));
-              modal.show();
-              bindEditarPagoForm(); // Re-asocia el evento del formulario
+      // Funcionalidad para el botón "Ver"
+        const viewPaymentBtns = document.querySelectorAll('.btn-view-payment');
+        const paymentDetailsModal = new bootstrap.Modal(document.getElementById('payment-details-modal'));
+        const paymentDetailsContent = document.getElementById('payment-details-content');
+
+        viewPaymentBtns.forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const paymentId = this.dataset.paymentId;
+
+                // Mostrar modal con spinner de carga
+                paymentDetailsContent.innerHTML = `
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                    </div>
+                `;
+                paymentDetailsModal.show();
+
+                try {
+                    const response = await fetch(`/payment/pagos/${paymentId}/details/`, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Content-Type': 'application/json',
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
+                    }
+
+                    const paymentData = await response.json();
+                    
+                    if (paymentData.success === false) {
+                        throw new Error(paymentData.error || 'Error desconocido');
+                    }
+                    
+                    displayPaymentDetails(paymentData);
+
+                } catch (error) {
+                    console.error('Error loading payment details:', error);
+                    paymentDetailsContent.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Error al cargar los detalles del pago: ${error.message}
+                        </div>
+                    `;
+                }
             });
         });
-      });
+
+        function displayPaymentDetails(paymentData) {
+            const content = `
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card border-primary">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Información Básica</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <strong>ID:</strong><br>
+                                        <span class="text-muted">${paymentData.id}</span>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Cuenta:</strong><br>
+                                        <span class="text-muted">${paymentData.account}</span>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Fecha:</strong><br>
+                                        <span class="text-muted">${paymentData.date}</span>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Sucursal:</strong><br>
+                                        <span class="text-muted">${paymentData.branch || 'No especificada'}</span>
+                                    </div>
+                                    <div class="col-12">
+                                        <strong>Descripción:</strong><br>
+                                        <span class="text-muted">${paymentData.description || 'Sin descripción'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card border-success">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0"><i class="bi bi-person-fill me-2"></i>Información del Jugador</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2">
+                                    <div class="col-12">
+                                        <strong>Nombre:</strong><br>
+                                        <span class="text-muted">${paymentData.player_name}</span>
+                                    </div>
+                                    <div class="col-12">
+                                        <strong>Motivo:</strong><br>
+                                        <span class="text-muted">${paymentData.reason}</span>
+                                    </div>
+                                    <div class="col-12">
+                                        <strong>Responsable:</strong><br>
+                                        <span class="text-muted">${paymentData.responsible.name}</span>
+                                        ${paymentData.responsible.id ? `<small class="text-secondary">(ID: ${paymentData.responsible.id})</small>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card border-warning">
+                            <div class="card-header bg-warning text-dark">
+                                <h6 class="mb-0"><i class="bi bi-cash-coin me-2"></i>Información Financiera</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2">
+                                    <div class="col-12">
+                                        <strong>Valor:</strong><br>
+                                        <span class="text-success fs-5">$${parseFloat(paymentData.amount).toLocaleString('es-CO', {minimumFractionDigits: 2})}</span>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Factura de Venta:</strong><br>
+                                        <span class="text-muted">${paymentData.sales_invoice || 'No especificada'}</span>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Recibo de Caja:</strong><br>
+                                        <span class="text-muted">${paymentData.receipt || 'No especificado'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card border-info">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0"><i class="bi bi-link-45deg me-2"></i>Referencias</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <strong>Referencia 1:</strong><br>
+                                        <span class="text-muted">${paymentData.reference_1 || 'No especificada'}</span>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Referencia 2:</strong><br>
+                                        <span class="text-muted">${paymentData.reference_2 || 'No especificada'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${paymentData.comment ? `
+                    <div class="col-12">
+                        <div class="card border-secondary">
+                            <div class="card-header bg-secondary text-white">
+                                <h6 class="mb-0"><i class="bi bi-chat-text me-2"></i>Comentarios</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-0">${paymentData.comment}</p>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            paymentDetailsContent.innerHTML = content;
+
+            // Configurar botones de edición y eliminación
+            const btnEdit = document.getElementById('btn-edit-payment');
+            const btnSave = document.getElementById('btn-save-payment');
+            const btnDelete = document.getElementById('btn-delete-payment');
+
+            if (btnEdit) {
+                btnEdit.dataset.paymentId = paymentData.id;
+                btnEdit.classList.remove('d-none');
+                
+                // Conectar con la funcionalidad existente de editar
+                btnEdit.onclick = function() {
+                    const pagoId = this.dataset.paymentId;
+                    fetch(`/payment/pagos/${pagoId}/edit/`)
+                        .then(response => response.text())
+                        .then(html => {
+                            document.getElementById('editarPagoModalContent').innerHTML = html;
+                            // Cerrar modal de detalles
+                            paymentDetailsModal.hide();
+                            // Abrir modal de edición
+                            var editModal = new bootstrap.Modal(document.getElementById('editarPagoModal'));
+                            editModal.show();
+                            bindEditarPagoForm(); // Re-asocia el evento del formulario
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showNotification('Error al cargar el formulario de edición', 'error');
+                        });
+                };
+            }
+            
+            if (btnDelete) {
+                btnDelete.dataset.paymentId = paymentData.id;
+                btnDelete.classList.remove('d-none');
+                
+                // Conectar con la funcionalidad existente de eliminar
+                btnDelete.onclick = async function() {
+                    const pagoId = this.dataset.paymentId;
+                    if (confirm('¿Estás seguro de que deseas eliminar este pago? Esta acción no se puede deshacer.')) {
+                        try {
+                            const response = await fetch(`/payment/pagos/${pagoId}/delete/`, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRFToken': getCSRFToken(),
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            });
+                            const data = await response.json();
+                            if (data.success) {
+                                paymentDetailsModal.hide();
+                                showNotification('Pago eliminado correctamente', 'success');
+                                setTimeout(() => window.location.reload(), 1500);
+                            } else {
+                                throw new Error(data.error || 'Error al eliminar el pago');
+                            }
+                        } catch (error) {
+                            showNotification(`Error: ${error.message}`, 'error');
+                        }
+                    }
+                };
+            }
+            
+            if (btnSave) {
+                btnSave.classList.add('d-none');
+            }
+        }
+
+
+      // Los botones de editar ahora están en el modal de detalles
+      // La funcionalidad se conecta directamente en displayPaymentDetails
     });
 
     // Función para manejar el formulario de edición y eliminación

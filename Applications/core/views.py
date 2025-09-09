@@ -62,13 +62,13 @@ def login_view(request):
             remember_me = data.get('remember', False)
         except json.JSONDecodeError:
             return JsonResponse({
-                'error': 'Invalid JSON data'
+                'error': 'Datos JSON no válidos'
             }, status=400)
         
         # Validate required fields
         if not username or not password:
             return JsonResponse({
-                'error': 'Username and password are required'
+                'error': 'Usuario y contraseña son obligatorios.'
             }, status=400)
         
         # Authenticate credentials
@@ -96,11 +96,11 @@ def login_view(request):
                 }, status=200)
             else:
                 return JsonResponse({
-                    'error': 'Access denied. Administrator privileges required.'
+                    'error': 'Acceso denegado. Se requieren privilegios de administrador.'
                 }, status=403)
         else:
             return JsonResponse({
-                'error': 'Invalid username or password.'
+                'error': 'Usuario o contraseña no válidos.'
             }, status=401)
     
     # Render login form for GET requests
