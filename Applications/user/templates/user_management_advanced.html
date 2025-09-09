@@ -415,12 +415,12 @@
             const btnDelete = document.getElementById('btn-delete-user');
 
             if (btnDelete) {
-                btnDelete.dataset.userType = (userData.tipo || '').toLowerCase();
+                btnDelete.dataset.userType = (userData.type || '').toLowerCase();
                 btnDelete.dataset.userId = userData.id || '';
                 btnDelete.classList.remove('d-none');
             }
             if (btnEdit) {
-                btnEdit.dataset.userType = (userData.tipo || '').toLowerCase();
+                btnEdit.dataset.userType = (userData.type || '').toLowerCase();
                 btnEdit.dataset.userId = userData.id || '';
                 btnEdit.classList.remove('d-none');
             }
@@ -579,13 +579,20 @@
         btnEdit = document.getElementById('btn-edit-user');
         btnSave = document.getElementById('btn-save-user');
 
+        // Variables para almacenar los datos del usuario actual
+        let currentUserType = '';
+        let currentUserId = '';
+
         // Configura los event listeners una sola vez
         if (btnEdit && btnSave) {
             
-            btnEdit.addEventListener('click', async function() {
 
+            btnEdit.addEventListener('click', async function() {
                 currentUserType = this.dataset.userType;
                 currentUserId = this.dataset.userId;
+                // Traducción para el backend
+                if (currentUserType === 'guardian') currentUserType = 'acudiente';
+                if (currentUserType === 'player') currentUserType = 'jugador';
 
                 try {
                     userDetailsContent.innerHTML = `
@@ -615,7 +622,7 @@
             });
 
             btnSave.addEventListener('click', async function() {
-                const form = document.querySelector('#userDetailsModal #userEditForm');
+                const form = document.querySelector('#user-details-modal #userEditForm');
                 
                 if (!form) {
                     userDetailsContent.innerHTML = `
@@ -641,16 +648,27 @@
                         method: 'POST',
                         body: formData,
                         headers: {
-                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                            'X-CSRFToken': getCSRFToken(),
                             'X-Requested-With': 'XMLHttpRequest'
                         }
                     });
+
+                    if (!response.ok) {
+                        throw new Error(`Error HTTP: ${response.status}`);
+                    }
 
                     const data = await response.json();
                     
                     if (data.success) {
                         const detailsResponse = await fetch(`/user/get_user_details/${currentUserType}/${currentUserId}/`);
+                        if (!detailsResponse.ok) {
+                            throw new Error('Error al recargar los detalles del usuario');
+                        }
                         displayUserDetails(await detailsResponse.json());
+                        
+                        // Restaurar los botones a su estado original
+                        btnEdit.classList.remove('d-none');
+                        btnSave.classList.add('d-none');
                         
                         userDetailsContent.insertAdjacentHTML('afterbegin', `
                             <div class="alert alert-success alert-dismissible fade show">
@@ -659,9 +677,20 @@
                             </div>
                         `);
                     } else {
-                        throw new Error(data.errors || 'Error desconocido');
+                        // Mostrar errores específicos del formulario
+                        let errorMessage = 'Error desconocido';
+                        if (data.errors) {
+                            errorMessage = Object.values(data.errors).join(', ');
+                        } else if (data.error) {
+                            errorMessage = data.error;
+                        }
+                        throw new Error(errorMessage);
                     }
                 } catch (error) {
+                    // Restaurar los botones en caso de error
+                    btnEdit.classList.remove('d-none');
+                    btnSave.classList.add('d-none');
+                    
                     userDetailsContent.innerHTML = `
                         <div class="alert alert-danger">
                             <i class="bi bi-exclamation-triangle"></i>
@@ -751,9 +780,11 @@
         
         if (btnDelete) {
             btnDelete.addEventListener('click', function() {
-                const userType = this.dataset.userType;
+                let userType = this.dataset.userType;
                 const userId = this.dataset.userId;
-                
+                // Traducción para el backend
+                if (userType === 'guardian') userType = 'acudiente';
+                if (userType === 'player') userType = 'jugador';
                 if (confirm(`¿Estás seguro de que deseas eliminar este ${userType}? Esta acción no se puede deshacer.`)) {
                     deleteUser(userType, userId);
                 }
@@ -775,7 +806,7 @@
             
             if (data.success) {
                 // Cerrar el modal
-                bootstrap.Modal.getInstance(document.getElementById('userDetailsModal')).hide();
+                bootstrap.Modal.getInstance(document.getElementById('user-details-modal')).hide();
                 
                 // Mostrar mensaje de éxito
                 showNotification('Usuario eliminado correctamente', 'success');

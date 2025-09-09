@@ -4,7 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 from datetime import date, timedelta
 from .models import Guardian, Player
-from .forms import  GuardianForm, PlayerForm
+from .forms import GuardianForm, PlayerForm
 from django.template.loader import render_to_string
 
 # Create your views here.
@@ -12,11 +12,13 @@ from django.template.loader import render_to_string
 
 def create_player(request):
     form = PlayerForm(request.POST or None)
+    form = PlayerForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
             form.save()
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': True})
+            return render(request, 'create_player.html', {'form': PlayerForm(), 'success': True})
             return render(request, 'create_player.html', {'form': PlayerForm(), 'success': True})
         else:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -28,11 +30,13 @@ def create_player(request):
 # Requirement FR-21
 def create_guardian(request):
     form = GuardianForm(request.POST or None)
+    form = GuardianForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
             form.save()
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'success': True})
+            return render(request, 'create_guardian.html', {'form': GuardianForm(), 'success': True})
             return render(request, 'create_guardian.html', {'form': GuardianForm(), 'success': True})
         else:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -264,7 +268,7 @@ def display_user_advanced(request): # Advanced search view
         search_words = search.split()
         
         if len(search_words) > 1:
-             # Si hay múltiples palabras, buscar que contengan todas las palabras
+            # Si hay múltiples palabras, buscar que contengan todas las palabras
             player_query = Q()
             for word in search_words:
                 player_query &= (
@@ -361,7 +365,7 @@ def get_user_details(request, user_type, user_id): #'Ver' Button logic
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     
     try:
-        if user_type == 'guardian':
+        if user_type in ['guardian', 'acudiente']:
             user = get_object_or_404(Guardian, id=user_id)
 
             # Calcular total de jugadores asociados
@@ -390,7 +394,7 @@ def get_user_details(request, user_type, user_id): #'Ver' Button logic
                 'players': players_list
             }
             
-        elif user_type == 'player':
+        elif user_type in ['player', 'jugador']:
             user = get_object_or_404(Player, id=user_id)
             age = (date.today() - user.birth_date).days // 365
 
@@ -434,10 +438,10 @@ def get_user_details(request, user_type, user_id): #'Ver' Button logic
 
 def get_user_edit_form(request, user_type, user_id):
     try:
-        if user_type == 'guardian':
+        if user_type == 'acudiente':
             user = get_object_or_404(Guardian, id=user_id)
             form = GuardianForm(instance=user, editable=True)
-        elif user_type == 'player':
+        elif user_type == 'jugador':
             user = get_object_or_404(Player, id=user_id)
             form = PlayerForm(instance=user, editable=True)
         else:
@@ -458,10 +462,10 @@ def update_user(request, user_type, user_id):
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     
     try:
-        if user_type == 'guardian':
+        if user_type == 'acudiente':
             user = get_object_or_404(Guardian, id=user_id)
             form = GuardianForm(request.POST, instance=user, editable=True)
-        elif user_type == 'player':
+        elif user_type == 'jugador':
             user = get_object_or_404(Player, id=user_id)
             form = PlayerForm(request.POST, instance=user, editable=True)
         else:
@@ -484,7 +488,7 @@ def delete_user(request, user_type, user_id):
         return JsonResponse({'error': 'Método no permitido'}, status=405)
 
     try:
-        if user_type == 'guardian':
+        if user_type == 'acudiente':
             user = get_object_or_404(Guardian, id=user_id)
             # Verificar si tiene jugadores asociados antes de eliminar
             if user.players.exists():
@@ -492,7 +496,7 @@ def delete_user(request, user_type, user_id):
                     'error': 'No se puede eliminar este guardián porque tiene jugadores asociados. '
                              'Primero debe reassignar o eliminar los jugadores.'
                 }, status=400)
-        elif user_type == 'player':
+        elif user_type == 'jugador':
             user = get_object_or_404(Player, id=user_id)
         else:
             return JsonResponse({'error': 'Tipo de usuario no válido'}, status=400)
