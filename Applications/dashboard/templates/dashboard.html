@@ -53,20 +53,39 @@
             </div>
           </div>
         </div>
+
         <!-- Guardian statistics section -->
         <div class="accordion-item">
+
           <h2 class="accordion-header" id="headingGuardians">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGuardians" aria-expanded="false" aria-controls="collapseGuardians">
               Estadísticas de acudientes
             </button>
           </h2>
+
           <div id="collapseGuardians" class="accordion-collapse collapse" aria-labelledby="headingGuardians" data-bs-parent="#dashboardAccordion">
             <div class="accordion-body">
-              <!-- Guardian charts go here -->
-              <div class="text-muted">No hay gráficos de acudientes aún.</div>
+
+              <div class="row">
+
+                <div class="col-lg-6 col-md-6 mb-4 d-flex justify-content-center">
+                  <div class="bg-white rounded shadow p-5 h-100 animate__animated animate__fadeInUp" style="width: 550px; height: 550px; max-width: 100%;">
+                    {{ chart_guardian_iva|safe }}
+                  </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 mb-4 d-flex justify-content-center">
+                  <div class="bg-white rounded shadow p-5 h-100 animate__animated animate__fadeInUp" style="width: 550px; height: 550px; max-width: 100%;">
+                    {{ chart_guardian_cities|safe }}
+                  </div>
+                </div>
+
+              </div>
+
             </div>
           </div>
         </div>
+
         <!-- Payments section -->
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingPayments">
@@ -74,10 +93,32 @@
               Estadísticas de pagos
             </button>
           </h2>
+
           <div id="collapsePayments" class="accordion-collapse collapse" aria-labelledby="headingPayments" data-bs-parent="#dashboardAccordion">
             <div class="accordion-body">
-              <!-- Payments charts go here -->
-              <div class="text-muted">No hay gráficos de pagos aún.</div>
+             
+              <div class="row">
+                <div class="col-lg-6 col-md-6 mb-4 d-flex justify-content-center">
+                  <div class="bg-white rounded shadow p-5 h-100 animate__animated animate__fadeInUp" style="width: 550px; height: 550px; max-width: 100%;">
+                    {{ chart_payments_time|safe }}
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 mb-4 d-flex justify-content-center">
+                  <div class="bg-white rounded shadow p-5 h-100 animate__animated animate__fadeInUp" style="width: 550px; height: 550px; max-width: 100%;">
+                    {{ chart_cuentas_sucursal|safe }}
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 mb-4 d-flex justify-content-center">
+                  <div class="bg-white rounded shadow p-5 h-100 animate__animated animate__fadeInUp" style="width: 550px; height: 550px; max-width: 100%;">
+                    {{ chart_motivo|safe }}
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6 mb-4 d-flex justify-content-center">
+                  <div class="bg-white rounded shadow p-5 h-100 animate__animated animate__fadeInUp" style="width: 550px; height: 550px; max-width: 100%;">
+                    {{ chart_ranking_acudientes|safe }}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
