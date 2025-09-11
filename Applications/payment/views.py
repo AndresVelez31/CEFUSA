@@ -2,28 +2,27 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from .models import Payment
-from .forms import PaymentForm
 from django.views.decorators.http import require_POST
-from django.db.models import Q
 from django.shortcuts import redirect, render
-from datetime import datetime
-from ..user.models import Guardian
+from django.db.models import Q
+
+from .models import Payment
+from Applications.user.models import Guardian
+from .forms import PaymentForm
+
 # Create your views here.
-
 def display_payment(request):
-
-    # Obtener y limpiar parámetros de búsqueda (eliminar espacios extra)
-    search = request.GET.get('search', '').strip()
+    search = request.GET.get('search', '')
     # Filtros avanzados
-    account = request.GET.get('account', '').strip()
-    date = request.GET.get('date', '').strip()
-    branch = request.GET.get('branch', '').strip()
-    reference_1 = request.GET.get('reference_1', '').strip()
-    reference_2 = request.GET.get('reference_2', '').strip()
-    player_name = request.GET.get('player_name', '').strip()
-    reason = request.GET.get('reason', '').strip()
-    responsible = request.GET.get('fk_responsible', '').strip()
-    sales_invoice = request.GET.get('sales_invoice', '').strip()
+    account = request.GET.get('account', '')
+    date = request.GET.get('date', '')
+    branch = request.GET.get('branch', '')
+    reference_1 = request.GET.get('reference_1', '')
+    reference_2 = request.GET.get('reference_2', '')
+    player_name = request.GET.get('player_name', '')
+    reason = request.GET.get('reason', '')
+    fk_responsible = request.GET.get('fk_responsible', '')
+    sales_invoice = request.GET.get('sales_invoice', '')
 
     payments = Payment.objects.all()
 
@@ -58,20 +57,19 @@ def display_payment(request):
         payments = payments.filter(player_name__icontains=player_name)
     if reason:
         payments = payments.filter(reason__icontains=reason)
-    if responsible:
-        payments = payments.filter(fk_responsible__id=responsible)
+    if fk_responsible:
+        payments = payments.filter(fk_responsible__id=fk_responsible)
     if sales_invoice:
         payments = payments.filter(sales_invoice__icontains=sales_invoice)
 
-    total_results = payments.count()
+    # Para el template: payments, accounts, responsibles, total_results
 
     responsibles = Guardian.objects.all()
-
     context = {
         'payments': payments,
         'accounts': Payment.AccountChoices.choices,
         'responsibles': responsibles,
-        'total_results': total_results,
+        'total_results': payments.count(),
     }
     return render(request, 'payment_management.html', context)
 
@@ -80,25 +78,31 @@ def create_payment(request):
         Payment.objects.create(
             account=request.POST.get("account"),
             date=request.POST.get("date"),
+            description=request.POST.get("description"),
+            branch=request.POST.get("branch"),
+            reference_1=request.POST.get("reference_1"),
+            reference_2=request.POST.get("reference_2"),
+            amount=request.POST.get("amount"),
             player_name=request.POST.get("player_name"),
             reason=request.POST.get("reason"),
-            amount=request.POST.get("amount"),
-            reference_1=request.POST.get("reference_1") or None,
-            sales_invoice=request.POST.get("sales_invoice") or None,
-            reference_2=request.POST.get("reference_2") or None,
-            fk_responsible_id=request.POST.get("responsible") or None,
-            description=request.POST.get("description") or None,
-            branch=request.POST.get("branch") or None,
-            receipt=request.POST.get("receipt") or None,
-            comment=request.POST.get("comment") or None
+            sales_invoice=request.POST.get("sales_invoice"),
+            receipt=request.POST.get("receipt"),
+            comment=request.POST.get("comment"),
+            fk_responsible_id=request.POST.get("responsible") or None
         )
-        return redirect('payment_management')  # Redirige a la lista de pagos
+    return redirect('payment_management')  # Redirect to payments list
 
 ## cambiar a get_edit_form
 def get_payment_edit_form(request, payment_id):
     payment = get_object_or_404(Payment, id=payment_id)
     form = PaymentForm(instance=payment)
+    # Debug: print form fields and errors
+    print('DEBUG PaymentForm fields:', form.fields.keys())
+    print('DEBUG PaymentForm errors:', form.errors)
+    print('DEBUG Payment object:', payment)
     html = render_to_string('get_payment_edit_form.html', {'form': form, 'payment': payment}, request=request)
+    if not html.strip():
+        print('DEBUG: Rendered HTML for edit form is empty!')
     return HttpResponse(html)
 
 def update_payment(request, payment_id):
@@ -112,7 +116,7 @@ def update_payment(request, payment_id):
             else:
                 from django.urls import reverse
                 from django.shortcuts import redirect
-                return redirect(reverse('payment_management'))
+                return redirect(reverse('display_payment'))
         else:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 html = render_to_string('get_payment_edit_form.html', {'form': form, 'payment': payment}, request=request)
@@ -124,20 +128,17 @@ def update_payment(request, payment_id):
     else:
         from django.urls import reverse
         from django.shortcuts import redirect
-    return redirect(reverse('payment_management'))
+    return redirect(reverse('display_payment'))
 
 def get_payment_details(request, payment_id):
-    """Vista para obtener los detalles de un pago específico"""
     if request.headers.get('x-requested-with') != 'XMLHttpRequest':
         return JsonResponse({'success': False, 'error': 'Petición inválida.'}, status=400)
     
     payment = get_object_or_404(Payment, id=payment_id)
-    
-    # Preparar los datos del pago
     payment_data = {
         'id': payment.id,
-        'account': payment.get_account_display(),
-        'date': payment.date.strftime('%d/%m/%Y') if payment.date else '',
+        'account': payment.account,  # <-- código, no display
+        'date': payment.date.strftime('%Y-%m-%d') if payment.date else '',  # <-- formato ISO
         'description': payment.description or '',
         'branch': payment.branch or '',
         'reference_1': payment.reference_1 or '',
@@ -153,7 +154,6 @@ def get_payment_details(request, payment_id):
             'id': payment.fk_responsible.id if payment.fk_responsible else None
         }
     }
-    
     return JsonResponse(payment_data)
 
 @require_POST

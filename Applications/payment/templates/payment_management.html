@@ -6,9 +6,9 @@
 
     <div class="card-header">  
       <div class="d-flex justify-content-between align-items-center">
-        <h4 class="mb-0">Gestión de Pagos</h4>
+  <h4 class="mb-0">Gestión de Pagos</h4>
         <div class="btn-group" role="group">
-          <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#crearPagoModal">
+          <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#createPaymentModal">
             Crear Pago
           </button>
         </div>
@@ -17,12 +17,12 @@
     
     <div class="card-body">
 
-      <form method="GET" id="filtros-pagos-form" class="row g-3 mb-3">
+  <form method="GET" id="payment-filters-form" class="row g-3 mb-3">
 
         <div class="col-md-3">
-          <label class="form-label">Búsqueda general</label>
+          <label class="form-label">Búsqueda General</label>
           <input type="text" class="form-control" name="search" value="{{ request.GET.search }}"
-            placeholder="Nombre, referencia, motivo, responsable...">
+            placeholder="Player, reference, reason, responsible...">
         </div>
 
         <div class="col-md-2">
@@ -174,11 +174,11 @@
     </div>
 </div>
 
-  <!-- Modal Crear Pago -->
-  <div class="modal fade" id="crearPagoModal" tabindex="-1" aria-labelledby="crearPagoModalLabel" aria-hidden="true">
+  <!-- Modal Create Payment -->
+  <div class="modal fade" id="createPaymentModal" tabindex="-1" aria-labelledby="createPaymentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form method="POST" action="{% url 'create_payment' %}">
+  <form method="POST" action="{% url 'create_payment' %}">
           {% csrf_token %}
           <div class="modal-header bg-success text-white">
             <h5 class="modal-title" id="crearPagoModalLabel">Crear Nuevo Pago</h5>
@@ -259,11 +259,11 @@
   <br>
   <br>
 
-  <!-- Modal Editar Pagos -->
-  <div class="modal fade" id="editarPagoModal" tabindex="-1" aria-labelledby="editarPagoModalLabel" aria-hidden="true">
+  <!-- Modal Edit Payment -->
+  <div class="modal fade" id="editPaymentModal" tabindex="-1" aria-labelledby="editPaymentModalLabel" aria-hidden="true">
 
     <div class="modal-dialog">
-      <div class="modal-content" id="editarPagoModalContent">
+  <div class="modal-content" id="editPaymentModalContent">
         <!-- Aquí se cargará el formulario por AJAX -->
       </div>
     </div>
@@ -457,25 +457,28 @@
                 btnEdit.dataset.paymentId = paymentData.id;
                 btnEdit.classList.remove('d-none');
                 
-                // Conectar con la funcionalidad existente de editar
-                btnEdit.onclick = function() {
-                    const pagoId = this.dataset.paymentId;
-                    fetch(`/payment/pagos/${pagoId}/edit/`)
-                        .then(response => response.text())
-                        .then(html => {
-                            document.getElementById('editarPagoModalContent').innerHTML = html;
-                            // Cerrar modal de detalles
-                            paymentDetailsModal.hide();
-                            // Abrir modal de edición
-                            var editModal = new bootstrap.Modal(document.getElementById('editarPagoModal'));
-                            editModal.show();
-                            bindEditarPagoForm(); // Re-asocia el evento del formulario
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            showNotification('Error al cargar el formulario de edición', 'error');
-                        });
-                };
+        // Conectar con la funcionalidad existente de editar
+        btnEdit.onclick = function() {
+          const paymentId = this.dataset.paymentId;
+          fetch(`/payment/pagos/${paymentId}/edit/`, {
+            method: 'GET',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          })
+          .then(response => response.text())
+          .then(html => {
+            document.getElementById('editPaymentModalContent').innerHTML = html;
+            paymentDetailsModal.hide(); 
+            var editModal = new bootstrap.Modal(document.getElementById('editPaymentModal'));
+            editModal.show();
+            bindEditPaymentForm();
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error al cargar el formulario de edición', 'error');
+          });
+        };
             }
             
             if (btnDelete) {
@@ -571,6 +574,7 @@
         if (notification.parentNode) notification.parentNode.removeChild(notification);
       }, 4000);
     }
+
 </script>
 
 {% endblock %}
