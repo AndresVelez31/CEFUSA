@@ -39,32 +39,35 @@ The web application will have the following main features:
 - Verify installation with:
   
   ```
-    - python --version
-    - pip --version
+    python --version
+    pip --version
   ```
   
 2.Clone the repository
 - Create or open the folder where you want the project:
   ```
-    - git clone https://github.com/AndresVelez31/CEFUSA.git
-    - cd CEFUSA
+    git clone https://github.com/AndresVelez31/CEFUSA.git
+    cd CEFUSA
   ```
   
 3.Install dependencies
 - Install all required libraries listed in requirements.txt:
     ```
-    - pip install -r requirements.txt
+    pip install -r requirements.txt
     ```
     
 4. Run and access to the application
 -  start the server with:
     ```
-    - python manage.py runserver
+    python manage.py runserver
     ```
     
 - Open your browser and go to
-    - localhost:8000 (which is the page of CEFUSA)
+    localhost:8000 (which is the page of CEFUSA)
   
+To run and test the project, you can log in with this user:
+  - Nombre de usuario: afveleza
+  - Contraseña: #Ricopizza1031#
 ---
 
 ## 👨‍💻 Contributions
