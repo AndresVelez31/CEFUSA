@@ -2,6 +2,15 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from .utils import (
+    user_is_admin, 
+    user_is_profesor, 
+    user_can_access_dashboard,
+    user_can_access_payments,
+    user_can_access_users,
+    user_can_crud,
+    get_user_role
+)
 import json
 
 
@@ -11,18 +20,32 @@ def home_page(request):
     Main application home page view.
     
     Renders the home page with the main system options.
-    Requires user authentication.
+    Shows different options based on user role:
+    - Admin: Can see all options (Users, Payments, Dashboard)
+    - Profesor: Can only see Users
     
     Args:
         request (HttpRequest): Django HTTP request object
         
     Returns:
-        HttpResponse: Rendered home page
+        HttpResponse: Rendered home page with role-based options
         
     Decorators:
         @login_required: Requires user authentication
     """
-    return render(request, 'home.html')
+    # Obtener información del rol del usuario
+    user = request.user
+    context = {
+        'user_role': get_user_role(user),
+        'is_admin': user_is_admin(user),
+        'is_profesor': user_is_profesor(user),
+        'can_access_dashboard': user_can_access_dashboard(user),
+        'can_access_payments': user_can_access_payments(user),
+        'can_access_users': user_can_access_users(user),
+        'can_crud': user_can_crud(user),
+    }
+    
+    return render(request, 'home.html', context)
 
 def login_view(request):
     """

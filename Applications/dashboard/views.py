@@ -1,6 +1,8 @@
 # Import necessary modules
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from collections import Counter
 
 import plotly.express as px
@@ -9,10 +11,20 @@ from django import forms
 
 from Applications.user.models import Player, Guardian
 from Applications.payment.models import Payment 
+from Applications.core.utils import user_can_access_dashboard
 from datetime import datetime, timedelta
 
 # This function is responsible for creating the logic behind of the dashboard
+@login_required
 def dashboard_view(request):
+    """
+    Vista del dashboard con datos y gráficos.
+    Solo los usuarios Admin pueden acceder.
+    """
+    # Verificar si el usuario puede acceder al dashboard
+    if not user_can_access_dashboard(request.user):
+        messages.error(request, 'No tienes permisos para acceder al dashboard. Solo los administradores pueden verlo.')
+        return redirect('homePage')
     players = Player.objects.all()
     guardians = Guardian.objects.all()
     payments = Payment.objects.all()
