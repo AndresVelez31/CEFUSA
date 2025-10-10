@@ -1,16 +1,27 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .models import Payment
 from .forms import PaymentForm
 from django.views.decorators.http import require_POST
 from django.db.models import Q
-from django.shortcuts import redirect, render
 from datetime import datetime
 from Applications.user.models import Guardian
+from Applications.core.utils import user_can_access_payments
 # Create your views here.
 
+@login_required
 def display_payment(request):
+    """
+    Vista principal de gestión de pagos.
+    Solo los usuarios Admin pueden acceder.
+    """
+    # Verificar si el usuario puede acceder a payments
+    if not user_can_access_payments(request.user):
+        messages.error(request, 'No tienes permisos para acceder a la gestión de pagos. Solo los administradores pueden acceder.')
+        return redirect('homePage')
 
     # Obtener y limpiar parámetros de búsqueda (eliminar espacios extra)
     search = request.GET.get('search', '').strip()
@@ -75,7 +86,12 @@ def display_payment(request):
     }
     return render(request, 'payment_management.html', context)
 
+@login_required
 def create_payment(request):
+    # Verificar permisos de Admin
+    if not user_can_access_payments(request.user):
+        messages.error(request, 'No tienes permisos para crear pagos.')
+        return redirect('homePage')
     if request.method == "POST":
         Payment.objects.create(
             account=request.POST.get("account"),
@@ -95,6 +111,7 @@ def create_payment(request):
         return redirect('payment_management')  # Redirige a la lista de pagos
 
 ## cambiar a get_edit_form
+@login_required
 def get_payment_edit_form(request, payment_id):
     try:
         print(f"🔍 Intentando obtener payment_id: {payment_id}")
@@ -124,7 +141,11 @@ def get_payment_edit_form(request, payment_id):
             </div>
         """, status=500)
 
+@login_required
 def update_payment(request, payment_id):
+    # Verificar permisos de Admin
+    if not user_can_access_payments(request.user):
+        return JsonResponse({'error': 'No tienes permisos para actualizar pagos.'}, status=403)
     payment = get_object_or_404(Payment, id=payment_id)
     if request.method == 'POST':
         form = PaymentForm(request.POST, instance=payment)
@@ -138,10 +159,10 @@ def update_payment(request, payment_id):
                 return redirect(reverse('payment_management'))
         else:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                html = render_to_string('get_payment_edit_form.html', {'form': form, 'payment': payment}, request=request)
+                html = render_to_string('get_payment_edit_form.html', {'form': form, 'pago': payment}, request=request)
                 return JsonResponse({'success': False, 'html': html})
             else:
-                return render(request, 'get_payment_edit_form.html', {'form': form, 'payment': payment})
+                return render(request, 'get_payment_edit_form.html', {'form': form, 'pago': payment})
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({'success': False, 'error': 'Método no permitido'})
     else:
@@ -149,7 +170,11 @@ def update_payment(request, payment_id):
         from django.shortcuts import redirect
     return redirect(reverse('payment_management'))
 
+@login_required
 def get_payment_details(request, payment_id):
+    # Verificar permisos de Admin
+    if not user_can_access_payments(request.user):
+        return JsonResponse({'error': 'No tienes permisos para ver detalles de pagos.'}, status=403)
     """Vista para obtener los detalles de un pago específico"""
     if request.headers.get('x-requested-with') != 'XMLHttpRequest':
         return JsonResponse({'success': False, 'error': 'Petición inválida.'}, status=400)
@@ -180,7 +205,11 @@ def get_payment_details(request, payment_id):
     return JsonResponse(payment_data)
 
 @require_POST
+@login_required
 def delete_payment(request, payment_id):
+    # Verificar permisos de Admin
+    if not user_can_access_payments(request.user):
+        return JsonResponse({'error': 'No tienes permisos para eliminar pagos.'}, status=403)
     if request.headers.get('x-requested-with') != 'XMLHttpRequest':
         return JsonResponse({'success': False, 'error': 'Petición inválida.'}, status=400)
     payment = get_object_or_404(Payment, id=payment_id)

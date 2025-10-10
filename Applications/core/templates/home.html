@@ -1,56 +1,23 @@
 {% extends "base.html" %}
 {% block title %}CEFUSA - Home{% endblock %}
 {% block content %}
-
-<style>
-  /* 💡 Ajuste general del tamaño y centrado */
-  .home-container {
-    min-height: 75vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .home-card {
-    padding: 3rem 2rem;
-    border-radius: 15px;
-    background-color: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-  }
-
-  .home-card h2 {
-    font-size: 2.2rem;
-    font-weight: bold;
-    color: #0a1f1c;
-  }
-
-  .home-card .btn {
-    font-size: 1.4rem;
-    font-weight: 600;
-    padding: 1rem;
-    border-radius: 10px;
-  }
-
-  .home-card .btn i {
-    font-size: 1.5rem;
-  }
-</style>
-
-<div class="container home-container">
-  <div class="col-md-8 col-lg-6">
-    <div class="card home-card text-center">
-      <div class="card-body">
-        <h2 class="mb-5">¿Qué quieres hacer?</h2>
-        <div class="d-grid gap-4 col-10 mx-auto">
-          <a href="/user/" class="btn btn-primary">
-            <i class="bi bi-people me-2"></i> Gestión de Usuarios
-          </a>
-          <a href="/payment/" class="btn btn-success">
-            <i class="bi bi-cash-coin me-2"></i> Gestión de Pagos
-          </a>
-          <a href="/dashboard/" class="btn btn-success">
-            <i class="bi bi-bar-chart me-2"></i> Ver Dashboard
-          </a>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow">
+        <div class="card-body text-center">
+          <h2 class="mb-4">¿Qué quieres hacer?</h2>
+          <div class="d-grid gap-4 col-8 mx-auto">
+            <a href="/user/" class="btn btn-primary btn-lg">
+              <i class="bi bi-people me-2"></i> Gestión de Usuarios
+            </a>
+            <a href="/payment/" class="btn btn-success btn-lg">
+              <i class="bi bi-cash-coin me-2"></i> Gestión de Pagos
+            </a>
+            <a href="/dashboard/" class="btn btn-success btn-lg">
+              <i class="bi bi-bar-chart me-2"></i> Ver Dashboard
+            </a>
+          </div>
         </div>
       </div>
     </div>

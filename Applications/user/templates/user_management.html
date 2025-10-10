@@ -4,16 +4,29 @@
 
 {% block content %}
 
+<style>
+    /* Estilos para badges de roles */
+    .bg-admin { background-color: #0d6efd !important; }
+    .bg-profesor { background-color: #198754 !important; }
+</style>
+
 <div class="card">
 
     <div class="card-header">
         <div class="d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Gestión de Usuarios</h4>
+            <h4 class="mb-0">Gestión de Usuarios 
+                <span class="badge bg-{{ user_role|lower }} ms-2">{{ user_role }}</span>
+            </h4>
             <div class="btn-group" role="group">
                 <a href="{% url 'display_user_advanced' %}" class="btn btn-info btn-sm">🔍 Búsqueda Avanzada</a>
-                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearAcudiente">+ Nuevo Acudiente</button>
+                {% if can_crud %}
+                    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearAcudiente">+ Nuevo Acudiente</button>
+                {% else %}
+                    <button type="button" class="btn btn-secondary btn-sm" disabled title="Solo lectura - {{user_role}}">+ Nuevo Acudiente</button>
+                {% endif %}
 
-                                <!-- Modal para crear acudiente -->
+                {% if can_crud %}
+                    <!-- Modal para crear acudiente -->
                     <div class="modal fade" id="modalCrearAcudiente" tabindex="-1" aria-labelledby="modalCrearAcudienteLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -58,8 +71,13 @@
                             </div>
                         </div>
                     </div>
+                {% endif %}
 
-                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearJugador">+ Nuevo Jugador</button>
+                {% if can_crud %}
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearJugador">+ Nuevo Jugador</button>
+                {% else %}
+                    <button type="button" class="btn btn-secondary btn-sm" disabled title="Solo lectura - {{user_role}}">+ Nuevo Jugador</button>
+                {% endif %}
             </div>
         </div>
     </div>
