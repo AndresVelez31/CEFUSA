@@ -1,4 +1,5 @@
-<form id="formEditarPago" method="POST" action="{% url 'update_payment' pago.id %}">
+<!-- CAMBIAR: pago.id → payment.id -->
+<form id="formEditarPago" method="POST" action="{% url 'update_payment' payment.id %}">
   {% csrf_token %}
   <div class="modal-header bg-primary text-white">
     <h5 class="modal-title">Editar Pago</h5>
@@ -12,12 +13,10 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-    <button type="button" class="btn btn-danger" id="btn-delete-pago" data-id="{{ pago.id }}">Eliminar</button>
+    <button type="button" class="btn btn-danger" id="btn-delete-pago" data-id="{{ payment.id }}">Eliminar</button>
     <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-    
   </div>
 </form>
-
 
 <script>
 function bindEditarPagoForm() {
@@ -31,15 +30,24 @@ function bindEditarPagoForm() {
         headers: {'X-Requested-With': 'XMLHttpRequest'}
       })
       .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            document.getElementById('mensaje-exito').style.display = 'block';
-            // Solo mostrar el mensaje de éxito dentro del modal, sin cerrar el modal ni recargar la página
+      .then(data => {
+        if (data.success) {
+          document.getElementById('mensaje-exito').style.display = 'block';
+          // Opcional: cerrar el modal después de 2 segundos
+          setTimeout(() => {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editarPagoModal'));
+            if (modal) modal.hide();
+            location.reload(); // Recargar para ver cambios
+          }, 2000);
         } else {
           document.getElementById('editarPagoModalContent').innerHTML = data.html;
           // Re-asocia el evento tras re-render
           setTimeout(bindEditarPagoForm, 100);
         }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error al actualizar el pago');
       });
     });
   }
