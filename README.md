@@ -67,9 +67,12 @@ The web application will have the following main features:
   
 To run and test the project, you can log in with this user:
   *To test the program with an admin view:*
+  
   - User name: afveleza
   - Password: #Ricopizza1031#
+    
   *To test the program within a techers account:*
+  
   - User name: smazog
   - Password: @S1035975446m
 ---
