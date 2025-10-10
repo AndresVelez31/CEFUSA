@@ -6,7 +6,15 @@
 <div class="container py-4">
   <div class="card shadow">
     <div class="card-header bg-primary text-white text-center">
-      <h2 class="mb-0"> Dashboard de Administrador</h2>
+      <div class="d-flex justify-content-between align-items-center">
+        <div></div> <!-- Espaciador para centrar el título -->
+        <h2 class="mb-0"> Dashboard de Administrador</h2>
+        <div>
+          <a href="{% url 'dashboard_pdf' %}" class="btn btn-success btn-sm" title="Descargar Reporte de Datos como PDF">
+            <i class="bi bi-download"></i> Descargar Reporte
+          </a>
+        </div>
+      </div>
     </div>
     <div class="card-body">
       <div class="accordion" id="dashboardAccordion">

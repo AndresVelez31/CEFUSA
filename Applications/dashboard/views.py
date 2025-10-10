@@ -2,10 +2,21 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from collections import Counter
+import io
+import base64
 
 import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
 from django import forms
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.utils import ImageReader
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.lib import colors
+from datetime import datetime
 
 from Applications.user.models import Player, Guardian
 from Applications.payment.models import Payment 
@@ -275,3 +286,294 @@ def dashboard_view(request):
     }
 
     return render(request, 'dashboard.html', context)
+
+
+def generate_dashboard_pdf(request):
+    """
+    Genera un PDF con todos los datos estadísticos del dashboard en formato tabular
+    """
+    # Obtener los datos igual que en dashboard_view
+    players = Player.objects.all()
+    guardians = Guardian.objects.all()
+    payments = Payment.objects.all()
+    
+    # Crear respuesta HTTP para PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="reporte_datos_cefusa_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf"'
+    
+    # Crear el documento PDF
+    doc = SimpleDocTemplate(response, pagesize=A4, leftMargin=50, rightMargin=50, topMargin=50, bottomMargin=50)
+    story = []
+    styles = getSampleStyleSheet()
+    
+    # Estilos personalizados
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=18,
+        spaceAfter=30,
+        alignment=1,  # Centrado
+        textColor='darkblue'
+    )
+    
+    subtitle_style = ParagraphStyle(
+        'CustomSubtitle',
+        parent=styles['Heading2'],
+        fontSize=14,
+        spaceAfter=20,
+        alignment=0,
+        textColor='darkred'
+    )
+    
+    # Título principal
+    story.append(Paragraph("Reporte de Datos Estadísticos CEFUSA", title_style))
+    story.append(Paragraph(f"Reporte generado el {datetime.now().strftime('%d/%m/%Y a las %H:%M')}", styles['Normal']))
+    story.append(Spacer(1, 30))
+    
+    # Función helper para crear tablas
+    def create_table(data, col_widths=None):
+        table = Table(data, colWidths=col_widths)
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+        return table
+    
+    try:
+        # === RESUMEN GENERAL ===
+        story.append(Paragraph("Resumen General", subtitle_style))
+        
+        summary_data = [
+            ['Categoría', 'Cantidad Total'],
+            ['Jugadores Registrados', str(players.count())],
+            ['Acudientes Registrados', str(guardians.count())],
+            ['Pagos Registrados', str(payments.count())]
+        ]
+        
+        story.append(create_table(summary_data, [3*inch, 2*inch]))
+        story.append(Spacer(1, 30))
+        
+        # === SECCIÓN JUGADORES ===
+        story.append(Paragraph("Estadísticas Detalladas de Jugadores", subtitle_style))
+        
+        # 1. Tipos de documento
+        story.append(Paragraph("Distribución por Tipo de Documento:", styles['Heading3']))
+        tipo_doc_counts = {}
+        for p in players:
+            type_doc = p.document_type if p.document_type else 'Sin documento'
+            tipo_doc_counts[type_doc] = tipo_doc_counts.get(type_doc, 0) + 1
+        
+        doc_data = [['Tipo de Documento', 'Cantidad', 'Porcentaje']]
+        total_players = players.count()
+        for doc_type, count in sorted(tipo_doc_counts.items()):
+            percentage = f"{(count/total_players)*100:.1f}%" if total_players > 0 else "0%"
+            doc_data.append([doc_type, str(count), percentage])
+        
+        story.append(create_table(doc_data, [2.5*inch, 1.5*inch, 1.5*inch]))
+        story.append(Spacer(1, 20))
+        
+        # 2. Distribución por edades y condiciones médicas
+        story.append(Paragraph("Distribución por Grupos de Edad y Condición Médica:", styles['Heading3']))
+        from datetime import date
+        age_bins = [0, 5, 10, 15, 100]
+        age_labels = ['0-5 años', '6-10 años', '11-15 años', 'Mayores a 15 años']
+        today = date.today()
+        
+        age_condition_data = {}
+        for p in players:
+            if p.birth_date:
+                age = today.year - p.birth_date.year - ((today.month, today.day) < (p.birth_date.month, p.birth_date.day))
+                # Determinar grupo de edad
+                if age <= 5:
+                    age_group = '0-5 años'
+                elif age <= 10:
+                    age_group = '6-10 años'
+                elif age <= 15:
+                    age_group = '11-15 años'
+                else:
+                    age_group = 'Mayores a 15 años'
+                
+                condition = 'Con condición médica' if p.has_disease else 'Sin condición médica'
+                key = f"{age_group} - {condition}"
+                age_condition_data[key] = age_condition_data.get(key, 0) + 1
+        
+        age_data = [['Grupo de Edad y Condición', 'Cantidad']]
+        for key, count in sorted(age_condition_data.items()):
+            age_data.append([key, str(count)])
+        
+        story.append(create_table(age_data, [4*inch, 1.5*inch]))
+        story.append(Spacer(1, 20))
+        
+        # 3. Jornadas de entrenamiento
+        story.append(Paragraph("Distribución por Jornada de Entrenamiento:", styles['Heading3']))
+        session_counts = {}
+        for p in players:
+            session = p.training_session if p.training_session else 'Sin jornada asignada'
+            session_counts[session] = session_counts.get(session, 0) + 1
+        
+        session_data = [['Jornada', 'Cantidad', 'Porcentaje']]
+        for session, count in sorted(session_counts.items()):
+            percentage = f"{(count/total_players)*100:.1f}%" if total_players > 0 else "0%"
+            session_data.append([session, str(count), percentage])
+        
+        story.append(create_table(session_data, [2.5*inch, 1.5*inch, 1.5*inch]))
+        story.append(Spacer(1, 20))
+        
+        # 4. EPS más utilizadas
+        story.append(Paragraph("Distribución por EPS (Top 10):", styles['Heading3']))
+        eps_counts = {}
+        for p in players:
+            eps = p.eps if p.eps else 'Sin EPS'
+            eps_counts[eps] = eps_counts.get(eps, 0) + 1
+        
+        # Ordenar por cantidad y tomar top 10
+        sorted_eps = sorted(eps_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+        
+        eps_data = [['EPS', 'Cantidad', 'Porcentaje']]
+        for eps, count in sorted_eps:
+            percentage = f"{(count/total_players)*100:.1f}%" if total_players > 0 else "0%"
+            eps_data.append([eps, str(count), percentage])
+        
+        story.append(create_table(eps_data, [3*inch, 1*inch, 1*inch]))
+        story.append(PageBreak())
+        
+        # === SECCIÓN ACUDIENTES ===
+        story.append(Paragraph("Estadísticas Detalladas de Acudientes", subtitle_style))
+        
+        # 1. Responsabilidad de IVA
+        story.append(Paragraph("Distribución por Responsabilidad de IVA:", styles['Heading3']))
+        iva_counts = {}
+        total_guardians = guardians.count()
+        for g in guardians:
+            iva_type = g.regime_type if g.regime_type else 'Sin dato'
+            iva_counts[iva_type] = iva_counts.get(iva_type, 0) + 1
+        
+        iva_data = [['Tipo de Responsabilidad IVA', 'Cantidad', 'Porcentaje']]
+        for iva_type, count in sorted(iva_counts.items()):
+            percentage = f"{(count/total_guardians)*100:.1f}%" if total_guardians > 0 else "0%"
+            iva_data.append([iva_type, str(count), percentage])
+        
+        story.append(create_table(iva_data, [3*inch, 1*inch, 1*inch]))
+        story.append(Spacer(1, 20))
+        
+        # 2. Ciudades más frecuentes
+        story.append(Paragraph("Distribución por Ciudad (Top 10):", styles['Heading3']))
+        city_counts = {}
+        for g in guardians:
+            city = g.city if g.city else 'Sin ciudad'
+            city_counts[city] = city_counts.get(city, 0) + 1
+        
+        # Ordenar por cantidad y tomar top 10
+        sorted_cities = sorted(city_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+        
+        city_data = [['Ciudad', 'Cantidad', 'Porcentaje']]
+        for city, count in sorted_cities:
+            percentage = f"{(count/total_guardians)*100:.1f}%" if total_guardians > 0 else "0%"
+            city_data.append([city, str(count), percentage])
+        
+        story.append(create_table(city_data, [3*inch, 1*inch, 1*inch]))
+        story.append(PageBreak())
+        
+        # === SECCIÓN PAGOS ===
+        story.append(Paragraph("Estadísticas Detalladas de Pagos", subtitle_style))
+        
+        payments_df = pd.DataFrame(list(payments.values()))
+        
+        if not payments_df.empty and 'date' in payments_df.columns and 'amount' in payments_df.columns:
+            payments_df['date'] = pd.to_datetime(payments_df['date'])
+            payments_df['amount'] = payments_df['amount'].astype(float)
+            
+            # 1. Resumen financiero
+            story.append(Paragraph("Resumen Financiero:", styles['Heading3']))
+            total_amount = payments_df['amount'].sum()
+            avg_amount = payments_df['amount'].mean()
+            min_amount = payments_df['amount'].min()
+            max_amount = payments_df['amount'].max()
+            
+            financial_data = [
+                ['Concepto', 'Valor'],
+                ['Total Recaudado', f"${total_amount:,.2f}"],
+                ['Promedio por Pago', f"${avg_amount:,.2f}"],
+                ['Pago Mínimo', f"${min_amount:,.2f}"],
+                ['Pago Máximo', f"${max_amount:,.2f}"]
+            ]
+            
+            story.append(create_table(financial_data, [3*inch, 2*inch]))
+            story.append(Spacer(1, 20))
+            
+            # 2. Ingresos mensuales del último año
+            story.append(Paragraph("Ingresos Mensuales (Último Año):", styles['Heading3']))
+            today = datetime.today()
+            one_year_ago = today - timedelta(days=365)
+            last_year_df = payments_df[(payments_df['date'] >= one_year_ago) & (payments_df['date'] <= today)]
+            
+            if not last_year_df.empty:
+                monthly_income = last_year_df.groupby(last_year_df['date'].dt.to_period('M')).agg({'amount': 'sum'}).reset_index()
+                monthly_income['month'] = monthly_income['date'].astype(str)
+                
+                monthly_data = [['Mes', 'Ingresos']]
+                for _, row in monthly_income.iterrows():
+                    monthly_data.append([row['month'], f"${row['amount']:,.2f}"])
+                
+                story.append(create_table(monthly_data, [2*inch, 2*inch]))
+                story.append(Spacer(1, 20))
+            
+            # 3. Pagos por sucursal (solo cuentas 5031 y 5032)
+            story.append(Paragraph("Distribución de Pagos por Sucursal:", styles['Heading3']))
+            if 'account' in payments_df.columns and 'branch' in payments_df.columns:
+                cuentas_df = payments_df[payments_df['account'].isin(['5031', '5032'])]
+                if not cuentas_df.empty:
+                    branch_data = cuentas_df.groupby(['branch', 'account']).size().reset_index(name='cantidad')
+                    
+                    branch_table = [['Sucursal', 'Cuenta', 'Cantidad de Pagos']]
+                    for _, row in branch_data.iterrows():
+                        branch_table.append([str(row['branch']), str(row['account']), str(row['cantidad'])])
+                    
+                    story.append(create_table(branch_table, [2*inch, 1.5*inch, 1.5*inch]))
+                    story.append(Spacer(1, 20))
+            
+            # 4. Descripciones de pagos más frecuentes
+            story.append(Paragraph("Tipos de Pago Más Frecuentes (Top 10):", styles['Heading3']))
+            if 'description' in payments_df.columns:
+                desc_counts = payments_df['description'].value_counts().head(10)
+                
+                desc_data = [['Descripción', 'Cantidad', 'Porcentaje']]
+                total_payments = len(payments_df)
+                for desc, count in desc_counts.items():
+                    percentage = f"{(count/total_payments)*100:.1f}%"
+                    desc_data.append([str(desc), str(count), percentage])
+                
+                story.append(create_table(desc_data, [3*inch, 1*inch, 1*inch]))
+        else:
+            story.append(Paragraph("No hay datos de pagos disponibles para mostrar.", styles['Normal']))
+        
+        # Información del reporte
+        story.append(PageBreak())
+        story.append(Paragraph("Información del Reporte", subtitle_style))
+        
+        info_text = f"""
+        <b>Fecha de generación:</b> {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}<br/>
+        <b>Total de registros procesados:</b><br/>
+        • Jugadores: {players.count()}<br/>
+        • Acudientes: {guardians.count()}<br/>
+        • Pagos: {payments.count()}<br/>
+        <b>Sistema:</b> CEFUSA - Centro de Formación de Fútbol<br/>
+        <b>Tipo de reporte:</b> Estadísticas completas en formato tabular
+        """
+        
+        story.append(Paragraph(info_text, styles['Normal']))
+        
+    except Exception as e:
+        story.append(Paragraph(f"Error al procesar los datos: {str(e)}", styles['Normal']))
+    
+    # Construir PDF
+    doc.build(story)
+    return response
