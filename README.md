@@ -66,8 +66,16 @@ The web application will have the following main features:
     localhost:8000 (which is the page of CEFUSA)
   
 To run and test the project, you can log in with this user:
-  - Nombre de usuario: afveleza
-  - Contraseña: #Ricopizza1031#
+
+  *Admin view:*
+  
+  - User name: afveleza
+  - Password: #Ricopizza1031#
+    
+  *Techers view:*
+  
+  - User name: smazog
+  - Password: @S1035975446m
 ---
 
 ## 👨‍💻 Contributions

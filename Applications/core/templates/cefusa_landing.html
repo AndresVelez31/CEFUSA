@@ -1,0 +1,276 @@
+{% load static %}
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8"/>
+<meta charset="utf-8"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Space+Grotesk%3Awght%40400%3B500%3B700" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<title>CEFUSA - CLub de Fútbol</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --primary-color: #2F663C;
+            --secondary-color: #1a1a1a;
+            --background-color: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --accent-color: #2F663C;
+        }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+        }
+        .carousel-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .carousel-slide {
+            min-width: 100%;
+            box-sizing: border-box;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .carousel-slide-active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .carousel-slide-inactive {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+<div class="relative flex size-full min-h-screen flex-col bg-cover bg-center" style='background-image: url("/static/Fondo%20CEFUSA.jpg");'>
+        
+<header class="bg-black/80 py-4 px-6 flex justify-between items-center sticky top-0 z-50 w-full backdrop-blur-sm">
+<div class="flex items-center space-x-3">
+        <img src="{% static 'logo CEFUSA.png' %}" alt="logo CEFUSA" class="h-16 w-auto mr-2" />
+    <h2 class="text-2xl font-bold text-[var(--text-primary)] uppercase">CEFUSA</h2>
+</div>
+<nav class="flex items-center space-x-4">
+<a class="text-[var(--text-primary)] hover:text-[var(--primary-color)] transition-colors duration-300 px-4 py-2 rounded-md" href="#">Sobre Nosotros</a>
+<button class="bg-[var(--primary-color)] text-white px-6 py-3 rounded-md font-bold hover:bg-opacity-90 transition-colors duration-300" onclick="window.location.href='/login/'">
+<span class="truncate">Login</span>
+</button>
+</nav>
+</header>
+<div class="flex-grow flex items-center justify-center p-4 relative z-10">
+<div class="m-auto flex w-full max-w-6xl min-h-[350px] flex-col bg-black/80 backdrop-blur-md shadow-2xl rounded-2xl">
+<main class="flex-grow bg-transparent rounded-t-2xl">
+<div class="relative w-full text-center p-8 bg-transparent">
+<h1 class="text-5xl font-bold text-white">Bienvenido a CEFUSA</h1>
+<p class="text-2xl text-gray-300 mt-3">Tu viaje hacia la excelencia futbolística comienza aquí.</p>
+</div>
+<div class="bg-transparent py-8 px-4 sm:px-6 lg:px-8" x-data="{ currentSlide: 0, totalSlides: 3 }">
+<div class="relative">
+<div class="carousel-container">
+<div :style="{ transform: `translateX(-${currentSlide * 100}%)` }" class="carousel-track">
+<div x-show="currentSlide === 0" :class="{'carousel-slide-active': currentSlide === 0, 'carousel-slide-inactive': currentSlide !== 0}" class="carousel-slide">
+<div class="px-3">
+<div class="bg-black/70 rounded-2xl shadow-2xl p-12 min-h-[400px] overflow-y-auto max-w-5xl w-full mx-auto flex flex-col justify-center">
+<h2 class="text-4xl font-bold text-white mb-8 mt-2">Últimas Noticias</h2>
+<div class="space-y-6">
+<div class="flex flex-col gap-4">
+<div class="h-48 bg-center bg-cover rounded-xl flex-shrink-0 mb-4" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDKuCveCqvkN4xTnN8fXIFacv_9EEc2u4hvbJZwVyLettjzyfoupmE0lx6-bHu8nQfWHTWprwZfSU3bgY-CEv-QF9ZvILWwQl0-1QAmmolvmGmGgsFT4jdZ83lRawRNtcrWVNoCfaHpKrnmY8fbcVXtnadPvMZQXn_qLyH_0Jh0QwViZoREZ721sB2KlNF3si2TjgMolLE249Nk0LwBwPKn-oqH838d6PNLjkt_kv6dQnZhuyGWULNyXr2PxoyjWgb2utf7TBZVgmk");'></div>
+<div class="flex flex-col gap-2">
+<p class="text-gray-400 text-lg">Noticias del Club</p>
+<p class="text-3xl font-bold text-white">CEFUSA Anuncia Nueva Instalación de Entrenamiento</p>
+<p class="text-xl text-gray-300">CEFUSA se complace en anunciar la apertura de nuestra nueva instalación de entrenamiento de última generación. Esta instalación proporcionará a nuestros atletas los mejores recursos para desarrollar sus habilidades y alcanzar su máximo potencial.</p>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<div class="h-48 bg-center bg-cover rounded-xl flex-shrink-0 mb-4" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDvUiyoX3jDTJ_JIZELc72X02bHiChlrlL3Drs-LctiMKXCV1qJRZoTKS8NutZKNe6D63SQzK-TU2TJCsrjwJSqaE11mw2pxawYeU44g4oj3oWY-bKv-JwWx9ev3niQz_bvSZdXHrM8Fekw75b40cTYtFs3iGDLIl6KPgUy1-e8X6jDGaWc6SLSBvcRVSOXS59lp1JWScolsZjfmc_VdabhNvj5ngBLyXZ11vXWXVv5VGhFTqJY0rRtXcdqWK94PW24Qyu_wfq2H3c");'></div>
+<div class="flex flex-col gap-2">
+<p class="text-gray-400 text-lg">Noticias del Club</p>
+<p class="text-3xl font-bold text-white">CEFUSA U17 Campeones del Campeonato Nacional</p>
+<p class="text-xl text-gray-300">¡Felicitaciones al equipo CEFUSA U17 por ganar el Campeonato Nacional! Su arduo trabajo y dedicación a lo largo de la temporada han dado sus frutos, y estamos increíblemente orgullosos de su logro.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div x-show="currentSlide === 1" :class="{'carousel-slide-active': currentSlide === 1, 'carousel-slide-inactive': currentSlide !== 1}" class="carousel-slide">
+<div class="px-3">
+<div class="bg-black/70 rounded-2xl shadow-2xl p-12 min-h-[400px] overflow-y-auto max-w-5xl w-full mx-auto flex flex-col justify-center">
+<h2 class="text-4xl font-bold text-white mb-8 mt-2">Torneos</h2>
+<div class="space-y-6">
+    <div class="flex flex-row gap-8">
+        <div class="flex flex-col gap-4 w-1/2">
+            <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
+                <img src="https://bocajuniors2016.wordpress.com/wp-content/uploads/2016/02/72847_000.jpg" alt="Copa de Verano CEFUSA" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex flex-col gap-2">
+                <p class="text-gray-400 text-lg">Torneo</p>
+                <p class="text-3xl font-bold text-white">Copa de Verano CEFUSA</p>
+                <p class="text-xl text-gray-300">15-20 de julio</p>
+            </div>
+        </div>
+        <div class="flex flex-col gap-4 w-1/2">
+            <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
+                <img src="https://scontent.fbaq8-1.fna.fbcdn.net/v/t39.30808-6/489918295_1228820912577775_6626766674420830097_n.jpg?stp=dst-jpg_s960x960_tt6&_nc_cat=102&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=F_tDr7lGCIQQ7kNvwGLZ2US&_nc_oc=AdldjjAtmCAfw8dvHHfLQPPR0nk_-8NGWHI09OFtqEoNdrs3ktFVZ1gnnpGEgoC0ziQ&_nc_zt=23&_nc_ht=scontent.fbaq8-1.fna&_nc_gid=J66Tt1rwzKz6Z6Rz96sKcw&oh=00_Afd-sgpvqNhw9fzu0mcZnx176rcRrXg-YafluFsQ_Vr54g&oe=68EE4A8E" alt="Torneo Nacional Juvenil" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex flex-col gap-2">
+                <p class="text-gray-400 text-lg">Torneo</p>
+                <p class="text-3xl font-bold text-white">Torneo Nacional Juvenil</p>
+                <p class="text-xl text-gray-300">5-10 de agosto</p>
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-row gap-8">
+        <div class="flex flex-col gap-4 w-1/2">
+            <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3YnBvFaHtWt-Vm8ApP16IOCp4aDq6P8ANjA&s" alt="Exhibición Navidad" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex flex-col gap-2">
+                <p class="text-gray-400 text-lg">Torneo</p>
+                <p class="text-3xl font-bold text-white">Exhibición Navidad</p>
+                <p class="text-xl text-gray-300">1-3 de diciembre</p>
+            </div>
+        </div>
+        <div class="flex flex-col gap-4 w-1/2">
+            <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzs-GuJcfyXkDH4SH-cpaZLKzfQ8YZL9BYIQ&s" alt="Clasificatorios Regionales" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex flex-col gap-2">
+                <p class="text-gray-400 text-lg">Torneo</p>
+                <p class="text-3xl font-bold text-white">Clasificatorios Regionales</p>
+                <p class="text-xl text-gray-300">20-25 de septiembre</p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+<div x-show="currentSlide === 2" :class="{'carousel-slide-active': currentSlide === 2, 'carousel-slide-inactive': currentSlide !== 2}" class="carousel-slide">
+<div class="px-3">
+<div class="bg-black/70 rounded-2xl shadow-2xl p-12 min-h-[400px] overflow-y-auto max-w-5xl w-full mx-auto flex flex-col justify-center">
+<h2 class="text-4xl font-bold text-white mb-8 mt-2">Partidos</h2>
+<div class="space-y-6">
+    <div class="flex flex-row gap-8">
+        <div class="flex flex-col gap-4 w-1/2">
+            <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
+                <img src="https://scontent.fbaq8-1.fna.fbcdn.net/v/t39.30808-6/524113006_1333773928753057_7543002104686226213_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=127cfc&_nc_ohc=ofXfE7dVJC4Q7kNvwGIgcyD&_nc_oc=AdnoL77ffEE-Ev35_Dip8BG2eqqOlvcxXXhaPksfPWKC2HoVQtTJiRWoEnWj9v3WoG0&_nc_zt=23&_nc_ht=scontent.fbaq8-1.fna&_nc_gid=ONOLGSzbdLJw3NG_CkvFWg&oh=00_Affe4UIOQV70uaR6o4VS8t8H5dDWX39ByCQxggbDJ2O31w&oe=68EE4CBB" alt="U17 vs. Rivals FC" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex flex-col gap-2">
+                <p class="text-gray-400 text-lg">Partido</p>
+                <p class="text-3xl font-bold text-white">U17 vs. Rivals FC</p>
+                <p class="text-xl text-gray-300">Sábado, 10:00 AM</p>
+            </div>
+        </div>
+        <div class="flex flex-col gap-4 w-1/2">
+            <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
+                <img src="https://scontent.fbaq8-1.fna.fbcdn.net/v/t39.30808-6/516070036_1315105053953278_9080547571882265324_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=127cfc&_nc_ohc=MHSW2EhmBeQQ7kNvwGKaCXE&_nc_oc=Adk6teOtzG2DrjsHAKu7XGq0vAc352poFM2B7U4h_-ENRJjSLmgyJFbzs-GgaNNK5vg&_nc_zt=23&_nc_ht=scontent.fbaq8-1.fna&_nc_gid=f_5o6fHm2dN3M8FfNwlNHA&oh=00_AfeU1FkNAe3fU6Spms8le53ptNUIJJ9bT4Zo3NiiAnAijg&oe=68EE4B43" alt="U15 vs. Eagles Academy" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex flex-col gap-2">
+                <p class="text-gray-400 text-lg">Partido</p>
+                <p class="text-3xl font-bold text-white">U15 vs. Eagles Academy</p>
+                <p class="text-xl text-gray-300">Sábado, 12:00 PM</p>
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-row gap-8">
+        <div class="flex flex-col gap-4 w-1/2">
+            <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
+                <img src="https://scontent.fbaq8-1.fna.fbcdn.net/v/t39.30808-6/492408968_1251600536970397_483189845452657679_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=127cfc&_nc_ohc=UprTOIWgduAQ7kNvwH7xZ2R&_nc_oc=AdkBgrH1YrWN8ESuk5Z8iY9FjYC6l6vVmrSpG4PtnzbFzbYVhi3rllJDUNKgYHPA8hI&_nc_zt=23&_nc_ht=scontent.fbaq8-1.fna&_nc_gid=Yh3en72Sc5Q1vhxMIx53gg&oh=00_AffxeV0poZBQTtEa2FRSQUEKU2AZQBA_90byO2qv9cgceg&oe=68EE3157" alt="U19 vs. Titans United" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex flex-col gap-2">
+                <p class="text-gray-400 text-lg">Partido</p>
+                <p class="text-3xl font-bold text-white">U19 vs. Titans United</p>
+                <p class="text-xl text-gray-300">Domingo, 2:00 PM</p>
+            </div>
+        </div>
+        <div class="flex flex-col gap-4 w-1/2">
+            <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
+                <img src="https://scontent.fbaq8-1.fna.fbcdn.net/v/t39.30808-6/538382824_1357973836333066_3622324040579687866_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_ohc=Xoj48W9VCtkQ7kNvwFxhl_Y&_nc_oc=AdnaUqrWeMaUcYV2rWjQizhMjByey6szaUk0f2vIYWrMD-z-LFtda1GY06FpYSSXvD4&_nc_zt=23&_nc_ht=scontent.fbaq8-1.fna&_nc_gid=P7-aVwCg_jY7f4TfhQidUw&oh=00_AfdY-EO14Kc3vjl3fMVtfhaV1UhK_j0m2d2b9y1WFOtOQg&oe=68EE2DB2" alt="U17 vs. Phoenix FC" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex flex-col gap-2">
+                <p class="text-gray-400 text-lg">Partido</p>
+                <p class="text-3xl font-bold text-white">U17 vs. Phoenix FC</p>
+                <p class="text-xl text-gray-300">Miércoles, 7:00 PM</p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<button x-on:click="currentSlide = (currentSlide - 1 + totalSlides) % totalSlides" class="absolute top-1/2 -translate-y-1/2 left-0 -ml-4 text-white bg-black/50 rounded-full p-2 hover:bg-[var(--primary-color)] transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button x-on:click="currentSlide = (currentSlide + 1) % totalSlides" class="absolute top-1/2 -translate-y-1/2 right-0 -mr-4 text-white bg-black/50 rounded-full p-2 hover:bg-[var(--primary-color)] transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+<div class="absolute -bottom-8 left-1/2 -translate-x-1/2 flex space-x-2">
+<template :key="i" x-for="i in totalSlides">
+<button :class="{'bg-[var(--primary-color)]': currentSlide === i - 1, 'bg-gray-500': currentSlide !== i - 1}" @click="currentSlide = i - 1" class="h-2 w-2 rounded-full hover:bg-[var(--primary-color)] transition-colors"></button>
+</template>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+<footer class="bg-black/80 backdrop-blur-sm py-6 px-10 w-full relative z-10 mt-auto">
+  <div class="w-full flex flex-col md:flex-row items-center justify-between text-center md:text-left gap-6">
+
+    <!-- Contáctanos -->
+    <div>
+      <h3 class="text-2xl font-bold text-white">Contáctanos</h3>
+      <p class="text-sm text-gray-300">
+        contact@cefusa.com | +1 234 567 890
+      </p>
+    </div>
+
+    <!-- Redes sociales -->
+    <div class="flex justify-center items-center space-x-8">
+      <!-- Facebook -->
+      <a href="https://www.facebook.com/CorporacionDeportivaCefusa"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="text-gray-300 hover:text-[#3b82f6] transition-colors duration-300">
+        <svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M22.675 0h-21.35C.595 0 0 .595 0 1.325v21.351C0 23.405.595 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.658-4.788 1.325 0 2.464.099 2.796.143v3.24l-1.918.001c-1.504 0-1.796.716-1.796 1.765v2.313h3.59l-.467 3.622h-3.123V24h6.127C23.405 24 24 23.405 24 22.676V1.325C24 .595 23.405 0 22.675 0z"/>
+        </svg>
+      </a>
+
+      <!-- Instagram -->
+      <a href="https://www.instagram.com/cefusacorporaciondeportiva/?hl=es-la"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="relative h-7 w-7 group">
+        <div class="absolute inset-0 rounded-lg bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-400 group-hover:opacity-90 transition-opacity duration-300"></div>
+        <svg class="relative z-10 h-7 w-7 p-1 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.584-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919C2.163 15.584 2.151 15.204 2.151 12s.012-3.584.07-4.85c.148-3.228 1.667-4.771 4.919-4.919C8.416 2.175 8.796 2.163 12 2.163zm0 1.802c-3.116 0-3.483.01-4.71.066-2.529.115-3.611 1.2-3.725 3.725-.056 1.227-.066 1.594-.066 4.71s.01 3.483.066 4.71c.114 2.525 1.196 3.611 3.725 3.725 1.227.056 1.594.066 4.71.066s3.483-.01 4.71-.066c2.529-.115 3.611-1.2 3.725-3.725.056-1.227.066-1.594.066-4.71s-.01-3.483-.066-4.71c-.114-2.525-1.196-3.611-3.725-3.725-1.227-.056-1.594-.066-4.71-.066zm0 2.88a3.428 3.428 0 1 1 0 6.856 3.428 3.428 0 0 1 0-6.856z"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Copyright -->
+    <div>
+      <p class="text-gray-400 text-sm md:text-right">
+        © 2024 CEFUSA. Todos los derechos reservados.
+      </p>
+    </div>
+
+  </div>
+</footer>
+
+
+
+
+
+</div>
+<script defer="" src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
+
+</body></html>

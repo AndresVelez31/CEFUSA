@@ -8,9 +8,8 @@ from .forms import PaymentForm
 from django.views.decorators.http import require_POST
 from django.db.models import Q
 from datetime import datetime
-from ..user.models import Guardian
-from ..core.utils import user_can_access_payments
-# Ya no necesitamos el wrapper, usamos verificación directa
+from Applications.user.models import Guardian
+from Applications.core.utils import user_can_access_payments
 # Create your views here.
 
 @login_required
@@ -114,13 +113,33 @@ def create_payment(request):
 ## cambiar a get_edit_form
 @login_required
 def get_payment_edit_form(request, payment_id):
-    # Verificar permisos de Admin
-    if not user_can_access_payments(request.user):
-        return JsonResponse({'error': 'No tienes permisos para editar pagos.'}, status=403)
-    payment = get_object_or_404(Payment, id=payment_id)
-    form = PaymentForm(instance=payment)
-    html = render_to_string('get_payment_edit_form.html', {'form': form, 'pago': payment}, request=request)
-    return HttpResponse(html)
+    try:
+        print(f"🔍 Intentando obtener payment_id: {payment_id}")
+        payment = get_object_or_404(Payment, id=payment_id)
+        print(f"✅ Payment encontrado: {payment}")
+        
+        form = PaymentForm(instance=payment)
+        print(f"✅ Formulario creado")
+        
+        html = render_to_string('get_payment_edit_form.html', {'form': form, 'payment': payment}, request=request)
+        print(f"✅ Template renderizado")
+        
+        return HttpResponse(html)
+        
+    except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"❌ ERROR en get_payment_edit_form: {str(e)}")
+        print(f"📋 Traceback completo:\n{error_details}")
+        
+        # Para desarrollo, muestra el error completo
+        return HttpResponse(f"""
+            <div class="alert alert-danger">
+                <h4>Error al cargar formulario de edición</h4>
+                <p><strong>Error:</strong> {str(e)}</p>
+                <pre>{error_details}</pre>
+            </div>
+        """, status=500)
 
 @login_required
 def update_payment(request, payment_id):

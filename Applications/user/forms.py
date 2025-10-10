@@ -7,17 +7,32 @@ class GuardianForm(forms.ModelForm):
         self.editable = kwargs.pop('editable', False)
         super().__init__(*args, **kwargs)
         
+        labels = {
+            'document_type': 'Tipo de documento',
+            'identification': 'Número de documento',
+            'first_name': 'Nombre',
+            'last_name': 'Apellido',    
+            'city': 'Ciudad de Residencia',
+            'address': 'Dirección',
+            'phone': 'Teléfono',
+            'email': 'Correo electrónico',
+            'regime_type': 'Tipo de régimen',
+        }
+
         for field in self.fields.values():
             field.help_text = ''
-            
+
         for field_name, field in self.fields.items():
+            # Etiquetas en español
+            if field_name in labels:
+                field.label = labels[field_name]
             field.widget.attrs['class'] = 'form-control'
-            
+
             if field_name in ['tipo_doc', 'tipo_regimen']:
                 field.widget.attrs['class'] = 'form-select'
             elif isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs['class'] = 'form-check-input'
-            
+
             if not self.editable and not self.instance._state.adding:
                 if isinstance(field.widget, (forms.Select, forms.CheckboxInput)):
                     field.widget.attrs['disabled'] = True
