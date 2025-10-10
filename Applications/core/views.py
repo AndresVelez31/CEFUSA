@@ -1,9 +1,12 @@
+
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 import json
 
+def landing(request):
+    return render(request, 'cefusa_landing.html')
 
 @login_required
 def home_page(request):
