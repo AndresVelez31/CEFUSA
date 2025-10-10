@@ -1,17 +1,25 @@
 # Logic behind users templates (real function)
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from datetime import date, timedelta
 from .models import Guardian, Player
 from .forms import GuardianForm, PlayerForm
 from django.template.loader import render_to_string
+from ..core.utils import user_can_crud, user_can_access_users
 
 # Create your views here.
 # Requirement FR-06
 
+@login_required
 def create_player(request):
-    form = PlayerForm(request.POST or None)
+    # Verificar que el usuario puede hacer CRUD
+    if not user_can_crud(request.user):
+        messages.error(request, 'No tienes permisos para crear jugadores. Solo los administradores pueden hacerlo.')
+        return redirect('/user/')
+    
     form = PlayerForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
@@ -28,7 +36,13 @@ def create_player(request):
     return render(request, 'create_player.html', {'form': form})
 
 # Requirement FR-21
+@login_required
 def create_guardian(request):
+    # Verificar que el usuario puede hacer CRUD
+    if not user_can_crud(request.user):
+        messages.error(request, 'No tienes permisos para crear acudientes. Solo los administradores pueden hacerlo.')
+        return redirect('/user/')
+    
     form = GuardianForm(request.POST or None)
     form = GuardianForm(request.POST or None)
     if request.method == 'POST':
@@ -45,7 +59,12 @@ def create_guardian(request):
         return HttpResponse(form.as_p())
     return render(request, 'create_guardian.html', {'form': form})
 
+@login_required
 def display_user(request): # Basic research
+    # Verificar que el usuario puede acceder a usuarios
+    if not user_can_access_users(request.user):
+        messages.error(request, 'No tienes permisos para acceder a la gestión de usuarios.')
+        return redirect('homePage')
     # Get filter parameters
 
     #The 'variable' comes from the HTML, the input obtained from the GET request.
@@ -164,11 +183,20 @@ def display_user(request): # Basic research
         'guardians': guardians,  # Mantener en inglés porque es código
         'players': players,  # Mantener en inglés porque es código
         'available_cities': available_cities,  # Mantener en inglés porque es código
-        'document_types_in_db': document_types_in_db  # Cambiado a 'document_types_in_db' para uniformidad
+        'document_types_in_db': document_types_in_db,  # Cambiado a 'document_types_in_db' para uniformidad
+        # Información de permisos para el template
+        'can_crud': user_can_crud(request.user),
+        'can_access_users': user_can_access_users(request.user),
+        'user_role': 'Admin' if user_can_crud(request.user) else 'Profesor'
     }
     return render(request, 'user_management.html', context)
 
+@login_required
 def display_user_advanced(request): # Advanced search view
+    # Verificar que el usuario puede acceder a usuarios
+    if not user_can_access_users(request.user):
+        messages.error(request, 'No tienes permisos para acceder a la gestión de usuarios.')
+        return redirect('homePage')
 
     # View for advanced search with multiple filters
     # The 'variable' comes from the HTML, the input obtained from the GET request.
@@ -353,12 +381,20 @@ def display_user_advanced(request): # Advanced search view
         'available_cities': available_cities,
         'document_types_in_db': document_types_in_db,
         'regime_types_in_db': regime_types_in_db,
-        'total_results': total_results
+        'total_results': total_results,
+        # Información de permisos para el template
+        'can_crud': user_can_crud(request.user),
+        'can_access_users': user_can_access_users(request.user),
+        'user_role': 'Admin' if user_can_crud(request.user) else 'Profesor'
     }
     
     return render(request, 'user_management_advanced.html', context)
 
+@login_required
 def get_user_details(request, user_type, user_id): #'Ver' Button logic
+    # Verificar que el usuario puede acceder a usuarios (tanto Admin como Profesor pueden ver)
+    if not user_can_access_users(request.user):
+        return JsonResponse({'error': 'No tienes permisos para ver detalles de usuarios.'}, status=403)
     
     # Vista AJAX para obtener detalles de un usuario
     if request.method != 'GET':
@@ -436,7 +472,11 @@ def get_user_details(request, user_type, user_id): #'Ver' Button logic
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+@login_required
 def get_user_edit_form(request, user_type, user_id):
+    # Verificar que el usuario puede hacer CRUD
+    if not user_can_crud(request.user):
+        return JsonResponse({'error': 'No tienes permisos para editar usuarios.'}, status=403)
     try:
         if user_type == 'acudiente':
             user = get_object_or_404(Guardian, id=user_id)
@@ -457,7 +497,11 @@ def get_user_edit_form(request, user_type, user_id):
         error_html = f'<div class="alert alert-danger">Error al cargar el formulario: {str(e)}</div>'
         return HttpResponse(error_html)
 
+@login_required
 def update_user(request, user_type, user_id):
+    # Verificar que el usuario puede hacer CRUD
+    if not user_can_crud(request.user):
+        return JsonResponse({'error': 'No tienes permisos para actualizar usuarios.'}, status=403)
     if request.method != 'POST':
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     
@@ -483,7 +527,11 @@ def update_user(request, user_type, user_id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+@login_required
 def delete_user(request, user_type, user_id):
+    # Verificar que el usuario puede hacer CRUD
+    if not user_can_crud(request.user):
+        return JsonResponse({'error': 'No tienes permisos para eliminar usuarios.'}, status=403)
     if request.method != 'POST':
         return JsonResponse({'error': 'Método no permitido'}, status=405)
 

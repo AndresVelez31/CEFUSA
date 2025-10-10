@@ -14,11 +14,18 @@
 <div class="card">
     <div class="card-header">
         <div class="d-flex justify-content-between align-items-center">
-            <h4 class="mb-0"> Búsqueda Avanzada de Usuarios </h4>
+            <h4 class="mb-0"> Búsqueda Avanzada de Usuarios 
+                <span class="badge bg-{{ user_role|lower }} ms-2">{{ user_role }}</span>
+            </h4>
             <div class="btn-group" role="group">
                 <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-sm">Vista Simple</a>
-                <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearAcudiente">+ Nuevo Acudiente</a>
-                <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearJugador">+ Nuevo Jugador</a>
+                {% if can_crud %}
+                    <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearAcudiente">+ Nuevo Acudiente</a>
+                    <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearJugador">+ Nuevo Jugador</a>
+                {% else %}
+                    <button type="button" class="btn btn-secondary btn-sm" disabled title="Solo lectura - {{user_role}}">+ Nuevo Acudiente</button>
+                    <button type="button" class="btn btn-secondary btn-sm" disabled title="Solo lectura - {{user_role}}">+ Nuevo Jugador</button>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -191,8 +198,10 @@
                                     <td><small>{{ guardian.get_regime_type_display }}</small></td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
+                                            <!-- Solo botón Ver - las opciones de editar/eliminar están dentro del modal -->
                                             <button type="button" class="btn btn-outline-primary btn-view-user" 
-                                                    data-user-type="guardian" data-user-id="{{ guardian.id }}">
+                                                    data-user-type="guardian" data-user-id="{{ guardian.id }}"
+                                                    title="Ver detalles">
                                                 Ver
                                             </button>
                                         </div>
@@ -226,8 +235,10 @@
                                     <td><small>{{ player.fk_guardian.first_name }} {{ player.fk_guardian.last_name }}</small></td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
+                                            <!-- Botón Ver - disponible para todos -->
                                             <button type="button" class="btn btn-outline-primary btn-view-user" 
-                                                    data-user-type="player" data-user-id="{{ player.id }}">
+                                                    data-user-type="player" data-user-id="{{ player.id }}"
+                                                    title="Ver detalles">
                                                 Ver
                                             </button>
                                         </div>
@@ -268,9 +279,11 @@
                 <!-- Contenido dinámico -->
             </div>
             <div class="modal-footer">
-                <button type="button" id="btn-edit-user" class="btn btn-warning d-none">Editar</button>
-                <button type="button" id="btn-save-user" class="btn btn-success d-none">Guardar</button>
-                <button type="button" id="btn-delete-user" class="btn btn-danger d-none">Eliminar</button>
+                {% if can_crud %}
+                    <button type="button" id="btn-edit-user" class="btn btn-warning d-none">Editar</button>
+                    <button type="button" id="btn-save-user" class="btn btn-success d-none">Guardar</button>
+                    <button type="button" id="btn-delete-user" class="btn btn-danger d-none">Eliminar</button>
+                {% endif %}
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>

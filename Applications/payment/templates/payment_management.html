@@ -260,7 +260,7 @@
   <br>
 
   <!-- Modal Editar Pagos -->
-  <div class="modal fade" id="editarPagoModal" tabindex="-1" aria-labelledby="editarPagoModalLabel" aria-hidden="true">
+  <div class="modal fade" id="editarPagoModal" tabindex="-1" aria-labelledby="editarPagoModalLabel" aria-hidden="true" style="z-index: 9999;">
 
     <div class="modal-dialog">
       <div class="modal-content" id="editarPagoModalContent">
@@ -460,19 +460,58 @@
                 // Conectar con la funcionalidad existente de editar
                 btnEdit.onclick = function() {
                     const pagoId = this.dataset.paymentId;
+                    console.log('Botón editar clickeado, pagoId:', pagoId);
+                    console.log('URL que se va a llamar:', `/payment/pagos/${pagoId}/edit/`);
+                    
                     fetch(`/payment/pagos/${pagoId}/edit/`)
-                        .then(response => response.text())
+                        .then(response => {
+                            console.log('Response status:', response.status);
+                            return response.text();
+                        })
                         .then(html => {
-                            document.getElementById('editarPagoModalContent').innerHTML = html;
+                            console.log('HTML recibido, longitud:', html.length);
+                            console.log('Primeros 200 caracteres:', html.substring(0, 200));
+                            
+                            const modalContent = document.getElementById('editarPagoModalContent');
+                            console.log('Modal content element:', modalContent);
+                            
+                            modalContent.innerHTML = html;
+                            
                             // Cerrar modal de detalles
                             paymentDetailsModal.hide();
-                            // Abrir modal de edición
-                            var editModal = new bootstrap.Modal(document.getElementById('editarPagoModal'));
-                            editModal.show();
-                            bindEditarPagoForm(); // Re-asocia el evento del formulario
+                            
+                            // Pequeño delay para asegurar que el contenido se cargó
+                            setTimeout(() => {
+                                // Abrir modal de edición
+                                const editModalElement = document.getElementById('editarPagoModal');
+                                console.log('Edit modal element:', editModalElement);
+                                
+                                var editModal = new bootstrap.Modal(editModalElement);
+                                console.log('Bootstrap modal created:', editModal);
+                                
+                                editModal.show();
+                                console.log('Modal.show() called');
+                                
+                                // Verificar si el modal está visible después de 500ms
+                                setTimeout(() => {
+                                    const modalElement = document.getElementById('editarPagoModal');
+                                    const isVisible = modalElement.classList.contains('show');
+                                    const display = window.getComputedStyle(modalElement).display;
+                                    console.log('Modal después de show() - visible:', isVisible, 'display:', display);
+                                    
+                                    // Si no está visible, forzar la visibilidad
+                                    if (!isVisible || display === 'none') {
+                                        console.log('Forzando visibilidad del modal');
+                                        modalElement.style.display = 'block';
+                                        modalElement.classList.add('show');
+                                    }
+                                }, 500);
+                                
+                                bindEditarPagoForm(); // Re-asocia el evento del formulario
+                            }, 100);
                         })
                         .catch(error => {
-                            console.error('Error:', error);
+                            console.error('Error completo:', error);
                             showNotification('Error al cargar el formulario de edición', 'error');
                         });
                 };
