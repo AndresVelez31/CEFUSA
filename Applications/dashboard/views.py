@@ -17,6 +17,9 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.lib import colors
 from datetime import datetime
+import openpyxl
+from openpyxl.styles import Font, PatternFill, Alignment
+from openpyxl.utils.dataframe import dataframe_to_rows
 
 from Applications.user.models import Player, Guardian
 from Applications.payment.models import Payment 
@@ -576,4 +579,320 @@ def generate_dashboard_pdf(request):
     
     # Construir PDF
     doc.build(story)
+    return response
+
+
+def generate_dashboard_excel(request):
+    """
+    Genera un archivo Excel con todas las estadísticas del dashboard en múltiples hojas
+    """
+    # Obtener los datos
+    players = Player.objects.all()
+    guardians = Guardian.objects.all()
+    payments = Payment.objects.all()
+    
+    # Crear respuesta HTTP para Excel
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename="estadisticas_cefusa_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx"'
+    
+    # Crear workbook
+    wb = openpyxl.Workbook()
+    
+    # Estilos
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+    center_alignment = Alignment(horizontal="center", vertical="center")
+    
+    def format_header(worksheet, start_row, end_row, start_col, end_col):
+        """Función helper para formatear encabezados"""
+        for row in range(start_row, end_row + 1):
+            for col in range(start_col, end_col + 1):
+                cell = worksheet.cell(row=row, column=col)
+                cell.font = header_font
+                cell.fill = header_fill
+                cell.alignment = center_alignment
+    
+    # === HOJA 1: RESUMEN GENERAL ===
+    ws_resumen = wb.active
+    ws_resumen.title = "Resumen General"
+    
+    # Información del reporte
+    ws_resumen.cell(row=1, column=1, value="REPORTE ESTADÍSTICAS CEFUSA")
+    ws_resumen.cell(row=2, column=1, value=f"Generado el: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
+    ws_resumen.cell(row=4, column=1, value="RESUMEN GENERAL")
+    
+    # Datos del resumen
+    summary_data = [
+        ["Categoría", "Cantidad Total"],
+        ["Jugadores Registrados", players.count()],
+        ["Acudientes Registrados", guardians.count()],
+        ["Pagos Registrados", payments.count()]
+    ]
+    
+    for i, row_data in enumerate(summary_data, start=6):
+        for j, value in enumerate(row_data, start=1):
+            ws_resumen.cell(row=i, column=j, value=value)
+    
+    format_header(ws_resumen, 6, 6, 1, 2)
+    
+    # === HOJA 2: JUGADORES ===
+    ws_jugadores = wb.create_sheet("Jugadores")
+    
+    # Tipos de documento
+    ws_jugadores.cell(row=1, column=1, value="ESTADÍSTICAS DE JUGADORES")
+    ws_jugadores.cell(row=3, column=1, value="Distribución por Tipo de Documento")
+    
+    tipo_doc_counts = {}
+    total_players = players.count()
+    for p in players:
+        type_doc = p.document_type if p.document_type else 'Sin documento'
+        tipo_doc_counts[type_doc] = tipo_doc_counts.get(type_doc, 0) + 1
+    
+    doc_headers = ["Tipo de Documento", "Cantidad", "Porcentaje"]
+    for j, header in enumerate(doc_headers, start=1):
+        ws_jugadores.cell(row=5, column=j, value=header)
+    
+    row_num = 6
+    for doc_type, count in sorted(tipo_doc_counts.items()):
+        percentage = f"{(count/total_players)*100:.1f}%" if total_players > 0 else "0%"
+        ws_jugadores.cell(row=row_num, column=1, value=doc_type)
+        ws_jugadores.cell(row=row_num, column=2, value=count)
+        ws_jugadores.cell(row=row_num, column=3, value=percentage)
+        row_num += 1
+    
+    format_header(ws_jugadores, 5, 5, 1, 3)
+    
+    # Distribución por edades y condiciones médicas
+    current_row = row_num + 2
+    ws_jugadores.cell(row=current_row, column=1, value="Distribución por Grupos de Edad y Condición Médica")
+    current_row += 2
+    
+    from datetime import date
+    today = date.today()
+    age_condition_data = {}
+    
+    for p in players:
+        if p.birth_date:
+            age = today.year - p.birth_date.year - ((today.month, today.day) < (p.birth_date.month, p.birth_date.day))
+            if age <= 5:
+                age_group = '0-5 años'
+            elif age <= 10:
+                age_group = '6-10 años'
+            elif age <= 15:
+                age_group = '11-15 años'
+            else:
+                age_group = 'Mayores a 15 años'
+            
+            condition = 'Con condición médica' if p.has_disease else 'Sin condición médica'
+            key = f"{age_group} - {condition}"
+            age_condition_data[key] = age_condition_data.get(key, 0) + 1
+    
+    ws_jugadores.cell(row=current_row, column=1, value="Grupo de Edad y Condición")
+    ws_jugadores.cell(row=current_row, column=2, value="Cantidad")
+    format_header(ws_jugadores, current_row, current_row, 1, 2)
+    current_row += 1
+    
+    for key, count in sorted(age_condition_data.items()):
+        ws_jugadores.cell(row=current_row, column=1, value=key)
+        ws_jugadores.cell(row=current_row, column=2, value=count)
+        current_row += 1
+    
+    # Jornadas de entrenamiento
+    current_row += 2
+    ws_jugadores.cell(row=current_row, column=1, value="Distribución por Jornada de Entrenamiento")
+    current_row += 2
+    
+    session_counts = {}
+    for p in players:
+        session = p.training_session if p.training_session else 'Sin jornada asignada'
+        session_counts[session] = session_counts.get(session, 0) + 1
+    
+    ws_jugadores.cell(row=current_row, column=1, value="Jornada")
+    ws_jugadores.cell(row=current_row, column=2, value="Cantidad")
+    ws_jugadores.cell(row=current_row, column=3, value="Porcentaje")
+    format_header(ws_jugadores, current_row, current_row, 1, 3)
+    current_row += 1
+    
+    for session, count in sorted(session_counts.items()):
+        percentage = f"{(count/total_players)*100:.1f}%" if total_players > 0 else "0%"
+        ws_jugadores.cell(row=current_row, column=1, value=session)
+        ws_jugadores.cell(row=current_row, column=2, value=count)
+        ws_jugadores.cell(row=current_row, column=3, value=percentage)
+        current_row += 1
+    
+    # EPS más utilizadas
+    current_row += 2
+    ws_jugadores.cell(row=current_row, column=1, value="EPS Más Utilizadas (Top 10)")
+    current_row += 2
+    
+    eps_counts = {}
+    for p in players:
+        eps = p.eps if p.eps else 'Sin EPS'
+        eps_counts[eps] = eps_counts.get(eps, 0) + 1
+    
+    sorted_eps = sorted(eps_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+    
+    ws_jugadores.cell(row=current_row, column=1, value="EPS")
+    ws_jugadores.cell(row=current_row, column=2, value="Cantidad")
+    ws_jugadores.cell(row=current_row, column=3, value="Porcentaje")
+    format_header(ws_jugadores, current_row, current_row, 1, 3)
+    current_row += 1
+    
+    for eps, count in sorted_eps:
+        percentage = f"{(count/total_players)*100:.1f}%" if total_players > 0 else "0%"
+        ws_jugadores.cell(row=current_row, column=1, value=eps)
+        ws_jugadores.cell(row=current_row, column=2, value=count)
+        ws_jugadores.cell(row=current_row, column=3, value=percentage)
+        current_row += 1
+    
+    # === HOJA 3: ACUDIENTES ===
+    ws_acudientes = wb.create_sheet("Acudientes")
+    
+    ws_acudientes.cell(row=1, column=1, value="ESTADÍSTICAS DE ACUDIENTES")
+    ws_acudientes.cell(row=3, column=1, value="Distribución por Responsabilidad de IVA")
+    
+    total_guardians = guardians.count()
+    iva_counts = {}
+    for g in guardians:
+        iva_type = g.regime_type if g.regime_type else 'Sin dato'
+        iva_counts[iva_type] = iva_counts.get(iva_type, 0) + 1
+    
+    ws_acudientes.cell(row=5, column=1, value="Tipo de Responsabilidad IVA")
+    ws_acudientes.cell(row=5, column=2, value="Cantidad")
+    ws_acudientes.cell(row=5, column=3, value="Porcentaje")
+    format_header(ws_acudientes, 5, 5, 1, 3)
+    
+    row_num = 6
+    for iva_type, count in sorted(iva_counts.items()):
+        percentage = f"{(count/total_guardians)*100:.1f}%" if total_guardians > 0 else "0%"
+        ws_acudientes.cell(row=row_num, column=1, value=iva_type)
+        ws_acudientes.cell(row=row_num, column=2, value=count)
+        ws_acudientes.cell(row=row_num, column=3, value=percentage)
+        row_num += 1
+    
+    # Ciudades más frecuentes
+    current_row = row_num + 2
+    ws_acudientes.cell(row=current_row, column=1, value="Distribución por Ciudad (Top 10)")
+    current_row += 2
+    
+    city_counts = {}
+    for g in guardians:
+        city = g.city if g.city else 'Sin ciudad'
+        city_counts[city] = city_counts.get(city, 0) + 1
+    
+    sorted_cities = sorted(city_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+    
+    ws_acudientes.cell(row=current_row, column=1, value="Ciudad")
+    ws_acudientes.cell(row=current_row, column=2, value="Cantidad")
+    ws_acudientes.cell(row=current_row, column=3, value="Porcentaje")
+    format_header(ws_acudientes, current_row, current_row, 1, 3)
+    current_row += 1
+    
+    for city, count in sorted_cities:
+        percentage = f"{(count/total_guardians)*100:.1f}%" if total_guardians > 0 else "0%"
+        ws_acudientes.cell(row=current_row, column=1, value=city)
+        ws_acudientes.cell(row=current_row, column=2, value=count)
+        ws_acudientes.cell(row=current_row, column=3, value=percentage)
+        current_row += 1
+    
+    # === HOJA 4: PAGOS ===
+    ws_pagos = wb.create_sheet("Pagos")
+    
+    ws_pagos.cell(row=1, column=1, value="ESTADÍSTICAS DE PAGOS")
+    
+    payments_df = pd.DataFrame(list(payments.values()))
+    
+    if not payments_df.empty and 'date' in payments_df.columns and 'amount' in payments_df.columns:
+        payments_df['date'] = pd.to_datetime(payments_df['date'])
+        payments_df['amount'] = payments_df['amount'].astype(float)
+        
+        # Resumen financiero
+        ws_pagos.cell(row=3, column=1, value="Resumen Financiero")
+        
+        total_amount = payments_df['amount'].sum()
+        avg_amount = payments_df['amount'].mean()
+        min_amount = payments_df['amount'].min()
+        max_amount = payments_df['amount'].max()
+        
+        financial_data = [
+            ["Concepto", "Valor"],
+            ["Total Recaudado", f"${total_amount:,.2f}"],
+            ["Promedio por Pago", f"${avg_amount:,.2f}"],
+            ["Pago Mínimo", f"${min_amount:,.2f}"],
+            ["Pago Máximo", f"${max_amount:,.2f}"]
+        ]
+        
+        for i, row_data in enumerate(financial_data, start=5):
+            for j, value in enumerate(row_data, start=1):
+                ws_pagos.cell(row=i, column=j, value=value)
+        
+        format_header(ws_pagos, 5, 5, 1, 2)
+        
+        # Ingresos mensuales del último año
+        current_row = 11
+        ws_pagos.cell(row=current_row, column=1, value="Ingresos Mensuales (Último Año)")
+        current_row += 2
+        
+        today = datetime.today()
+        one_year_ago = today - timedelta(days=365)
+        last_year_df = payments_df[(payments_df['date'] >= one_year_ago) & (payments_df['date'] <= today)]
+        
+        if not last_year_df.empty:
+            monthly_income = last_year_df.groupby(last_year_df['date'].dt.to_period('M')).agg({'amount': 'sum'}).reset_index()
+            monthly_income['month'] = monthly_income['date'].astype(str)
+            
+            ws_pagos.cell(row=current_row, column=1, value="Mes")
+            ws_pagos.cell(row=current_row, column=2, value="Ingresos")
+            format_header(ws_pagos, current_row, current_row, 1, 2)
+            current_row += 1
+            
+            for _, row_data in monthly_income.iterrows():
+                ws_pagos.cell(row=current_row, column=1, value=row_data['month'])
+                ws_pagos.cell(row=current_row, column=2, value=f"${row_data['amount']:,.2f}")
+                current_row += 1
+        
+        # Tipos de pago más frecuentes
+        current_row += 2
+        ws_pagos.cell(row=current_row, column=1, value="Tipos de Pago Más Frecuentes (Top 10)")
+        current_row += 2
+        
+        if 'description' in payments_df.columns:
+            desc_counts = payments_df['description'].value_counts().head(10)
+            
+            ws_pagos.cell(row=current_row, column=1, value="Descripción")
+            ws_pagos.cell(row=current_row, column=2, value="Cantidad")
+            ws_pagos.cell(row=current_row, column=3, value="Porcentaje")
+            format_header(ws_pagos, current_row, current_row, 1, 3)
+            current_row += 1
+            
+            total_payments = len(payments_df)
+            for desc, count in desc_counts.items():
+                percentage = f"{(count/total_payments)*100:.1f}%"
+                ws_pagos.cell(row=current_row, column=1, value=str(desc))
+                ws_pagos.cell(row=current_row, column=2, value=count)
+                ws_pagos.cell(row=current_row, column=3, value=percentage)
+                current_row += 1
+    else:
+        ws_pagos.cell(row=3, column=1, value="No hay datos de pagos disponibles")
+    
+    # Ajustar anchos de columnas en todas las hojas
+    for ws in [ws_resumen, ws_jugadores, ws_acudientes, ws_pagos]:
+        for column in ws.columns:
+            max_length = 0
+            column_letter = column[0].column_letter
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = min(max_length + 2, 50)
+            ws.column_dimensions[column_letter].width = adjusted_width
+    
+    # Guardar el archivo en memoria
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+    
+    response.write(output.getvalue())
     return response
