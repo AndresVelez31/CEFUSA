@@ -136,6 +136,11 @@
                               data-payment-id="{{ payment.id }}">
                           Ver
                       </button>
+                      <!-- Nuevo botón Editar directo -->
+                      <button type="button" class="btn btn-outline-warning btn-edit-pago"
+                              data-payment-id="{{ payment.id }}">
+                          Editar
+                      </button>
                   </div>
                 </td>
               </tr>
@@ -151,7 +156,7 @@
   </div>
 
   <!-- Modal para mostrar detalles del pago -->
-<div class="modal fade" id="payment-details-modal" tabindex="-1" aria-labelledby="payment-details-modal-label" aria-hidden="true">
+  <div class="modal fade" id="payment-details-modal" tabindex="-1" aria-labelledby="payment-details-modal-label" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -172,7 +177,7 @@
             </div>
         </div>
     </div>
-</div>
+  </div>
 
   <!-- Modal Crear Pago -->
   <div class="modal fade" id="crearPagoModal" tabindex="-1" aria-labelledby="crearPagoModalLabel" aria-hidden="true">
@@ -186,66 +191,67 @@
           </div>
 
           <div class="modal-body">
-  <div class="mb-3">
-    <label class="form-label">Cuenta</label>
-    <select name="account" class="form-select" required>
-      {% for c in accounts %}
-      <option value="{{ c.0 }}">{{ c.1 }}</option>
-      {% endfor %}
-    </select>
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Fecha</label>
-    <input type="date" name="date" class="form-control" required>
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Descripción</label>
-    <input type="text" name="description" class="form-control" required>
-  </div>
-          <div class="mb-3">
-            <label class="form-label">Sucursal</label>
-            <input type="text" name="branch" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Referencia 1</label>
-            <input type="text" name="reference_1" class="form-control">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Referencia 2</label>
-            <input type="text" name="reference_2" class="form-control">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Valor</label>
-            <input type="number" name="amount" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Nombre</label>
-            <input type="text" name="player_name" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Motivo</label>
-            <input type="text" name="reason" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Factura venta</label>
-            <input type="text" name="sales_invoice" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Recibo caja</label>
-            <input type="text" name="receipt" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Comentario</label>
-            <input type="text" name="comment" class="form-control" required>
-          </div>
-        <div class="mb-3">
-            <label class="form-label">Responsable</label>
-            <select name="responsible" class="form-select" >
-              <option value="">Seleccione responsable</option>
-              {% for responsible in responsibles %}
-              <option value="{{ responsible.id }}">{{ responsible.first_name }} {{ responsible.last_name }}</option>
-              {% endfor %}
-            </select>
+            <div class="mb-3">
+              <label class="form-label">Cuenta</label>
+              <select name="account" class="form-select" required>
+                {% for c in accounts %}
+                <option value="{{ c.0 }}">{{ c.1 }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Fecha</label>
+              <input type="date" name="date" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Descripción</label>
+              <input type="text" name="description" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Sucursal</label>
+              <input type="text" name="branch" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Referencia 1</label>
+              <input type="text" name="reference_1" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Referencia 2</label>
+              <input type="text" name="reference_2" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Valor</label>
+              <input type="number" name="amount" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Nombre</label>
+              <input type="text" name="player_name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Motivo</label>
+              <input type="text" name="reason" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Factura venta</label>
+              <input type="text" name="sales_invoice" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Recibo caja</label>
+              <input type="text" name="receipt" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Comentario</label>
+              <input type="text" name="comment" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Responsable</label>
+              <select name="responsible" class="form-select" >
+                <option value="">Seleccione responsable</option>
+                {% for responsible in responsibles %}
+                <option value="{{ responsible.id }}">{{ responsible.first_name }} {{ responsible.last_name }}</option>
+                {% endfor %}
+              </select>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -259,10 +265,9 @@
   <br>
   <br>
 
-  <!-- Modal Editar Pagos -->
+  <!-- Modal Editar Pagos (contenedor vacío que se llena por AJAX) -->
   <div class="modal fade" id="editarPagoModal" tabindex="-1" aria-labelledby="editarPagoModalLabel" aria-hidden="true">
-
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content" id="editarPagoModalContent">
         <!-- Aquí se cargará el formulario por AJAX -->
       </div>
@@ -270,307 +275,288 @@
   </div>
 
 <script>
+  // === Utilidades ===
+  function getCSRFToken() {
+    const cookieValue = document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)');
+    return cookieValue ? cookieValue.pop() : '';
+  }
 
-    // Le agregamos funcionalidad al botón de editar pagos
-    document.addEventListener('DOMContentLoaded', function () {
+  function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show`;
+    notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+      <strong>${type === 'error' ? 'Error' : 'Éxito'}:</strong> ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+      if (notification.parentNode) notification.parentNode.removeChild(notification);
+    }, 4000);
+  }
 
-      // Funcionalidad para el botón "Ver"
-        const viewPaymentBtns = document.querySelectorAll('.btn-view-payment');
-        const paymentDetailsModal = new bootstrap.Modal(document.getElementById('payment-details-modal'));
-        const paymentDetailsContent = document.getElementById('payment-details-content');
-
-        viewPaymentBtns.forEach(btn => {
-            btn.addEventListener('click', async function() {
-                const paymentId = this.dataset.paymentId;
-
-                // Mostrar modal con spinner de carga
-                paymentDetailsContent.innerHTML = `
-                    <div class="d-flex justify-content-center">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Cargando...</span>
-                        </div>
-                    </div>
-                `;
-                paymentDetailsModal.show();
-
-                try {
-                    const response = await fetch(`/payment/pagos/${paymentId}/details/`, {
-                        method: 'GET',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Content-Type': 'application/json',
-                        }
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
-                    }
-
-                    const paymentData = await response.json();
-                    
-                    if (paymentData.success === false) {
-                        throw new Error(paymentData.error || 'Error desconocido');
-                    }
-                    
-                    displayPaymentDetails(paymentData);
-
-                } catch (error) {
-                    console.error('Error loading payment details:', error);
-                    paymentDetailsContent.innerHTML = `
-                        <div class="alert alert-danger">
-                            <i class="bi bi-exclamation-triangle"></i>
-                            Error al cargar los detalles del pago: ${error.message}
-                        </div>
-                    `;
-                }
+  // Re-bindea acciones internas del formulario que viene en get_payment_edit_form.html
+  function bindEditarPagoForm() {
+    // Botón Eliminar Pago en el modal de edición
+    const btnDeletePago = document.getElementById('btn-delete-pago');
+    if (btnDeletePago) {
+      btnDeletePago.addEventListener('click', async function () {
+        const pagoId = this.getAttribute('data-id');
+        if (confirm('¿Estás seguro de que deseas eliminar este pago? Esta acción no se puede deshacer.')) {
+          try {
+            const response = await fetch(`/payment/pagos/${pagoId}/delete/`, {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': getCSRFToken(),
+                'X-Requested-With': 'XMLHttpRequest'
+              }
             });
-        });
-
-        function displayPaymentDetails(paymentData) {
-            const content = `
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="card border-primary">
-                            <div class="card-header bg-primary text-white">
-                                <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Información Básica</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-2">
-                                    <div class="col-6">
-                                        <strong>ID:</strong><br>
-                                        <span class="text-muted">${paymentData.id}</span>
-                                    </div>
-                                    <div class="col-6">
-                                        <strong>Cuenta:</strong><br>
-                                        <span class="text-muted">${paymentData.account}</span>
-                                    </div>
-                                    <div class="col-6">
-                                        <strong>Fecha:</strong><br>
-                                        <span class="text-muted">${paymentData.date}</span>
-                                    </div>
-                                    <div class="col-6">
-                                        <strong>Sucursal:</strong><br>
-                                        <span class="text-muted">${paymentData.branch || 'No especificada'}</span>
-                                    </div>
-                                    <div class="col-12">
-                                        <strong>Descripción:</strong><br>
-                                        <span class="text-muted">${paymentData.description || 'Sin descripción'}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="card border-success">
-                            <div class="card-header bg-success text-white">
-                                <h6 class="mb-0"><i class="bi bi-person-fill me-2"></i>Información del Jugador</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-2">
-                                    <div class="col-12">
-                                        <strong>Nombre:</strong><br>
-                                        <span class="text-muted">${paymentData.player_name}</span>
-                                    </div>
-                                    <div class="col-12">
-                                        <strong>Motivo:</strong><br>
-                                        <span class="text-muted">${paymentData.reason}</span>
-                                    </div>
-                                    <div class="col-12">
-                                        <strong>Responsable:</strong><br>
-                                        <span class="text-muted">${paymentData.responsible.name}</span>
-                                        ${paymentData.responsible.id ? `<small class="text-secondary">(ID: ${paymentData.responsible.id})</small>` : ''}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="card border-warning">
-                            <div class="card-header bg-warning text-dark">
-                                <h6 class="mb-0"><i class="bi bi-cash-coin me-2"></i>Información Financiera</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-2">
-                                    <div class="col-12">
-                                        <strong>Valor:</strong><br>
-                                        <span class="text-success fs-5">$${parseFloat(paymentData.amount).toLocaleString('es-CO', {minimumFractionDigits: 2})}</span>
-                                    </div>
-                                    <div class="col-6">
-                                        <strong>Factura de Venta:</strong><br>
-                                        <span class="text-muted">${paymentData.sales_invoice || 'No especificada'}</span>
-                                    </div>
-                                    <div class="col-6">
-                                        <strong>Recibo de Caja:</strong><br>
-                                        <span class="text-muted">${paymentData.receipt || 'No especificado'}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="card border-info">
-                            <div class="card-header bg-info text-white">
-                                <h6 class="mb-0"><i class="bi bi-link-45deg me-2"></i>Referencias</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-2">
-                                    <div class="col-6">
-                                        <strong>Referencia 1:</strong><br>
-                                        <span class="text-muted">${paymentData.reference_1 || 'No especificada'}</span>
-                                    </div>
-                                    <div class="col-6">
-                                        <strong>Referencia 2:</strong><br>
-                                        <span class="text-muted">${paymentData.reference_2 || 'No especificada'}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    ${paymentData.comment ? `
-                    <div class="col-12">
-                        <div class="card border-secondary">
-                            <div class="card-header bg-secondary text-white">
-                                <h6 class="mb-0"><i class="bi bi-chat-text me-2"></i>Comentarios</h6>
-                            </div>
-                            <div class="card-body">
-                                <p class="mb-0">${paymentData.comment}</p>
-                            </div>
-                        </div>
-                    </div>
-                    ` : ''}
-                </div>
-            `;
-            
-            paymentDetailsContent.innerHTML = content;
-
-            // Configurar botones de edición y eliminación
-            const btnEdit = document.getElementById('btn-edit-payment');
-            const btnSave = document.getElementById('btn-save-payment');
-            const btnDelete = document.getElementById('btn-delete-payment');
-
-            if (btnEdit) {
-                btnEdit.dataset.paymentId = paymentData.id;
-                btnEdit.classList.remove('d-none');
-                
-                // Conectar con la funcionalidad existente de editar
-                btnEdit.onclick = function() {
-                    const pagoId = this.dataset.paymentId;
-                    fetch(`/payment/pagos/${pagoId}/edit/`)
-                        .then(response => response.text())
-                        .then(html => {
-                            document.getElementById('editarPagoModalContent').innerHTML = html;
-                            // Cerrar modal de detalles
-                            paymentDetailsModal.hide();
-                            // Abrir modal de edición
-                            var editModal = new bootstrap.Modal(document.getElementById('editarPagoModal'));
-                            editModal.show();
-                            bindEditarPagoForm(); // Re-asocia el evento del formulario
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            showNotification('Error al cargar el formulario de edición', 'error');
-                        });
-                };
+            const data = await response.json();
+            if (data.success) {
+              bootstrap.Modal.getInstance(document.getElementById('editarPagoModal')).hide();
+              showNotification('Pago eliminado correctamente', 'success');
+              setTimeout(() => window.location.reload(), 800);
+            } else {
+              throw new Error(data.error || 'Error al eliminar el pago');
             }
-            
-            if (btnDelete) {
-                btnDelete.dataset.paymentId = paymentData.id;
-                btnDelete.classList.remove('d-none');
-                
-                // Conectar con la funcionalidad existente de eliminar
-                btnDelete.onclick = async function() {
-                    const pagoId = this.dataset.paymentId;
-                    if (confirm('¿Estás seguro de que deseas eliminar este pago? Esta acción no se puede deshacer.')) {
-                        try {
-                            const response = await fetch(`/payment/pagos/${pagoId}/delete/`, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRFToken': getCSRFToken(),
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                }
-                            });
-                            const data = await response.json();
-                            if (data.success) {
-                                paymentDetailsModal.hide();
-                                showNotification('Pago eliminado correctamente', 'success');
-                                setTimeout(() => window.location.reload(), 1500);
-                            } else {
-                                throw new Error(data.error || 'Error al eliminar el pago');
-                            }
-                        } catch (error) {
-                            showNotification(`Error: ${error.message}`, 'error');
-                        }
-                    }
-                };
-            }
-            
-            if (btnSave) {
-                btnSave.classList.add('d-none');
-            }
+          } catch (error) {
+            showNotification(`Error: ${error.message}`, 'error');
+          }
         }
+      });
+    }
+  }
 
+  // Abre el modal de edición y carga el formulario
+  async function openEditModal(paymentId) {
+    const content = document.getElementById('editarPagoModalContent');
+    // Spinner mientras carga
+    content.innerHTML = `
+      <div class="modal-header">
+        <h5 class="modal-title">Editar pago #${paymentId}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border" role="status"><span class="visually-hidden">Cargando...</span></div>
+        </div>
+      </div>
+    `;
 
-      // Los botones de editar ahora están en el modal de detalles
-      // La funcionalidad se conecta directamente en displayPaymentDetails
+    const editModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editarPagoModal'));
+    editModal.show();
+
+    try {
+      const resp = await fetch(`/payment/pagos/${paymentId}/edit/`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+      const html = await resp.text();
+      content.innerHTML = html;
+
+      // Importante: el HTML de edición usa esta función para manejar el submit y otros eventos
+      if (typeof bindEditarPagoForm === 'function') {
+        bindEditarPagoForm();
+      }
+    } catch (err) {
+      console.error(err);
+      content.innerHTML = `
+        <div class="modal-header">
+          <h5 class="modal-title text-danger">Error</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger">No se pudo cargar el formulario de edición.</div>
+        </div>
+      `;
+    }
+  }
+
+  // === Lógica principal ===
+  document.addEventListener('DOMContentLoaded', function () {
+    // ----- Botones "Ver" (detalles) -----
+    const viewPaymentBtns = document.querySelectorAll('.btn-view-payment');
+    const paymentDetailsModal = new bootstrap.Modal(document.getElementById('payment-details-modal'));
+    const paymentDetailsContent = document.getElementById('payment-details-content');
+
+    viewPaymentBtns.forEach(btn => {
+      btn.addEventListener('click', async function() {
+        const paymentId = this.dataset.paymentId;
+
+        paymentDetailsContent.innerHTML = `
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+          </div>
+        `;
+        paymentDetailsModal.show();
+
+        try {
+          const response = await fetch(`/payment/pagos/${paymentId}/details/`, {
+            method: 'GET',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'Content-Type': 'application/json',
+            }
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
+          }
+
+          const paymentData = await response.json();
+          if (paymentData.success === false) {
+            throw new Error(paymentData.error || 'Error desconocido');
+          }
+
+          // Render de detalles
+          const content = `
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="card border-primary">
+                  <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Información Básica</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-2">
+                      <div class="col-6"><strong>ID:</strong><br><span class="text-muted">${paymentData.id}</span></div>
+                      <div class="col-6"><strong>Cuenta:</strong><br><span class="text-muted">${paymentData.account}</span></div>
+                      <div class="col-6"><strong>Fecha:</strong><br><span class="text-muted">${paymentData.date}</span></div>
+                      <div class="col-6"><strong>Sucursal:</strong><br><span class="text-muted">${paymentData.branch || 'No especificada'}</span></div>
+                      <div class="col-12"><strong>Descripción:</strong><br><span class="text-muted">${paymentData.description || 'Sin descripción'}</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="card border-success">
+                  <div class="card-header bg-success text-white">
+                    <h6 class="mb-0"><i class="bi bi-person-fill me-2"></i>Información del Jugador</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-2">
+                      <div class="col-12"><strong>Nombre:</strong><br><span class="text-muted">${paymentData.player_name}</span></div>
+                      <div class="col-12"><strong>Motivo:</strong><br><span class="text-muted">${paymentData.reason}</span></div>
+                      <div class="col-12"><strong>Responsable:</strong><br>
+                        <span class="text-muted">${paymentData.responsible.name}</span>
+                        ${paymentData.responsible.id ? `<small class="text-secondary">(ID: ${paymentData.responsible.id})</small>` : ''}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="card border-warning">
+                  <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0"><i class="bi bi-cash-coin me-2"></i>Información Financiera</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-2">
+                      <div class="col-12">
+                        <strong>Valor:</strong><br>
+                        <span class="text-success fs-5">$${parseFloat(paymentData.amount).toLocaleString('es-CO', {minimumFractionDigits: 2})}</span>
+                      </div>
+                      <div class="col-6"><strong>Factura de Venta:</strong><br><span class="text-muted">${paymentData.sales_invoice || 'No especificada'}</span></div>
+                      <div class="col-6"><strong>Recibo de Caja:</strong><br><span class="text-muted">${paymentData.receipt || 'No especificado'}</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="card border-info">
+                  <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="bi bi-link-45deg me-2"></i>Referencias</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-2">
+                      <div class="col-6"><strong>Referencia 1:</strong><br><span class="text-muted">${paymentData.reference_1 || 'No especificada'}</span></div>
+                      <div class="col-6"><strong>Referencia 2:</strong><br><span class="text-muted">${paymentData.reference_2 || 'No especificada'}</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              ${paymentData.comment ? `
+              <div class="col-12">
+                <div class="card border-secondary">
+                  <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0"><i class="bi bi-chat-text me-2"></i>Comentarios</h6>
+                  </div>
+                  <div class="card-body"><p class="mb-0">${paymentData.comment}</p></div>
+                </div>
+              </div>` : ''}
+            </div>
+          `;
+          paymentDetailsContent.innerHTML = content;
+
+          // Botones del footer del modal de detalles
+          const btnEdit = document.getElementById('btn-edit-payment');
+          const btnDelete = document.getElementById('btn-delete-payment');
+          const btnSave = document.getElementById('btn-save-payment');
+
+          if (btnEdit) {
+            btnEdit.dataset.paymentId = paymentData.id;
+            btnEdit.classList.remove('d-none');
+            btnEdit.onclick = () => {
+              paymentDetailsModal.hide();
+              openEditModal(paymentData.id);
+            };
+          }
+
+          if (btnDelete) {
+            btnDelete.dataset.paymentId = paymentData.id;
+            btnDelete.classList.remove('d-none');
+            btnDelete.onclick = async function() {
+              const id = this.dataset.paymentId;
+              if (!confirm('¿Estás seguro de eliminar este pago?')) return;
+              try {
+                const res = await fetch(`/payment/pagos/${id}/delete/`, {
+                  method: 'POST',
+                  headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                  }
+                });
+                const data = await res.json();
+                if (data.success) {
+                  paymentDetailsModal.hide();
+                  showNotification('Pago eliminado correctamente', 'success');
+                  setTimeout(() => window.location.reload(), 800);
+                } else {
+                  throw new Error(data.error || 'Error al eliminar');
+                }
+              } catch (e) {
+                showNotification(e.message, 'error');
+              }
+            };
+          }
+
+          if (btnSave) btnSave.classList.add('d-none');
+
+        } catch (error) {
+          console.error('Error loading payment details:', error);
+          paymentDetailsContent.innerHTML = `
+            <div class="alert alert-danger">
+              <i class="bi bi-exclamation-triangle"></i>
+              Error al cargar los detalles del pago: ${error.message}
+            </div>
+          `;
+        }
+      });
     });
 
-    // Función para manejar el formulario de edición y eliminación
-    function bindEditarPagoForm() {
-      // Botón Eliminar Pago en el modal de edición
-      const btnDeletePago = document.getElementById('btn-delete-pago');
-      if (btnDeletePago) {
-        btnDeletePago.addEventListener('click', async function () {
-          const pagoId = this.getAttribute('data-id');
-          if (confirm('¿Estás seguro de que deseas eliminar este pago? Esta acción no se puede deshacer.')) {
-            try {
-              const response = await fetch(`/payment/pagos/${pagoId}/delete/`, {
-                method: 'POST',
-                headers: {
-                  'X-CSRFToken': getCSRFToken(),
-                  'X-Requested-With': 'XMLHttpRequest'
-                }
-              });
-              const data = await response.json();
-              if (data.success) {
-                bootstrap.Modal.getInstance(document.getElementById('editarPagoModal')).hide();
-                showNotification('Pago eliminado correctamente', 'success');
-                setTimeout(() => window.location.reload(), 1500);
-              } else {
-                throw new Error(data.error || 'Error al eliminar el pago');
-              }
-            } catch (error) {
-              showNotification(`Error: ${error.message}`, 'error');
-            }
-          }
-        });
-      }
-    }
-
-    // Función para obtener CSRF token (si no la tienes ya)
-    function getCSRFToken() {
-      const cookieValue = document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)');
-      return cookieValue ? cookieValue.pop() : '';
-    }
-
-    // Función para mostrar notificaciones (si no la tienes ya)
-    function showNotification(message, type = 'success') {
-      const notification = document.createElement('div');
-      notification.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show`;
-      notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-      notification.innerHTML = `
-        <strong>${type === 'error' ? 'Error' : 'Éxito'}:</strong> ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      `;
-      document.body.appendChild(notification);
-      setTimeout(() => {
-        if (notification.parentNode) notification.parentNode.removeChild(notification);
-      }, 4000);
-    }
+    // ----- Botones "Editar" directos en la tabla (delegado) -----
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('.btn-edit-pago');
+      if (!btn) return;
+      const id = btn.getAttribute('data-payment-id');
+      openEditModal(id);
+    });
+  });
 </script>
 
 {% endblock %}
