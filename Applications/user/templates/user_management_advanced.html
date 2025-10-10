@@ -430,143 +430,395 @@
         }
 
         function generateGuardianDetails(data) {
-            let playersHtml = '';
-            if (data.players && data.players.length > 0) {
-                playersHtml = `
-                    <div class="mt-3">
-                        <h6 class="text-success">Jugadores Asociados (${data.total_players})</h6>
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr><th>ID</th><th>Nombre</th><th>Identificación</th><th>Edad</th></tr>
-                                </thead>
-                                <tbody>
-                                    ${data.players.map(player => `
-                                        <tr>
-                                            <td>${player.id}</td>
-                                            <td>${player.name}</td>
-                                            <td>${player.identification}</td>
-                                            <td>${player.age} años</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                `;
-            } else {
-                playersHtml = `
-                    <div class="mt-3">
-                        <h6 class="text-muted">Sin jugadores asociados</h6>
-                    </div>
-                `;
-            }
-            
             return `
-                <div class="row">
-                    <div class="col-12">
-                        <div class="d-flex align-items-center mb-3">
-                            <span class="badge bg-primary me-2">Acudiente</span>
-                            <h5 class="mb-0">${data.name}</h5>
+                <div class="container-fluid">
+                    <!-- Header del usuario -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="position-relative p-4 rounded-3 shadow-sm overflow-hidden" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <div class="position-absolute top-0 end-0 opacity-25">
+                                    <i class="bi bi-person-vcard" style="font-size: 8rem;"></i>
+                                </div>
+                                <div class="d-flex align-items-center position-relative">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-4" style="width: 70px; height: 70px; background: rgba(255,255,255,0.2);">
+                                        <i class="bi bi-person-fill text-white fs-1"></i>
+                                    </div>
+                                    <div class="text-white">
+                                        <h3 class="mb-1 text-white fw-bold" style="text-shadow: 0 2px 4px rgba(0,0,0,0.3);">${data.name}</h3>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <span class="badge bg-light text-dark">
+                                                <i class="bi bi-shield-check me-1"></i>Acudiente
+                                            </span>
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-person-badge me-1"></i>ID: ${data.id}
+                                            </span>
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-people me-1"></i>${data.total_players} Jugador${data.total_players !== 1 ? 'es' : ''}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información en formato de lista elegante -->
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="h-100">
+                                <div class="border-start border-primary border-4 ps-3 mb-4">
+                                    <h6 class="text-primary fw-bold mb-3">
+                                        <i class="bi bi-person-vcard me-2"></i>Datos Personales
+                                    </h6>
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                                <span class="text-muted">Tipo de Documento:</span>
+                                                <strong>${data.document_type}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                                <span class="text-muted">Identificación:</span>
+                                                <strong class="text-primary">${data.identification}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                                <span class="text-muted">Régimen Fiscal:</span>
+                                                <span class="badge bg-secondary">${data.regime_type}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="h-100">
+                                <div class="border-start border-success border-4 ps-3 mb-4">
+                                    <h6 class="text-success fw-bold mb-3">
+                                        <i class="bi bi-geo-alt me-2"></i>Información de Contacto
+                                    </h6>
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                                <span class="text-muted">Ciudad:</span>
+                                                <strong>${data.city}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                                <span class="text-muted">Dirección:</span>
+                                                <strong>${data.address}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                                <span class="text-muted">Teléfono:</span>
+                                                <a href="tel:${data.phone}" class="text-decoration-none">
+                                                    <i class="bi bi-telephone me-1"></i>${data.phone}
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                                <span class="text-muted">Email:</span>
+                                                <a href="mailto:${data.email}" class="text-decoration-none">
+                                                    <i class="bi bi-envelope me-1"></i>${data.email}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección de jugadores -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="bg-light rounded-3 p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                        <i class="bi bi-people-fill text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">Jugadores Asociados</h6>
+                                        <small class="text-muted">Total: ${data.total_players} jugador${data.total_players !== 1 ? 'es' : ''}</small>
+                                    </div>
+                                </div>
+                                
+                                ${data.players && data.players.length > 0 ? `
+                                    <div class="row g-2">
+                                        ${data.players.map(player => `
+                                            <div class="col-md-6">
+                                                <div class="d-flex align-items-center p-3 bg-white rounded shadow-sm">
+                                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 35px; height: 35px; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                                                        <i class="bi bi-person text-dark"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="fw-bold">${player.name}</div>
+                                                        <small class="text-muted">${player.identification} • ${player.age} años</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                ` : `
+                                    <div class="text-center py-3">
+                                        <i class="bi bi-person-x fs-1 text-muted opacity-50"></i>
+                                        <p class="text-muted mb-0 mt-2">Sin jugadores asociados</p>
+                                    </div>
+                                `}
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Información Personal</h6>
-                        <table class="table table-sm table-borderless">
-                            <tr><th>ID:</th><td>${data.id}</td></tr>
-                            <tr><th>Tipo de Documento:</th><td>${data.document_type}</td></tr>
-                            <tr><th>Identificación:</th><td>${data.identification}</td></tr>
-                            <tr><th>Ciudad:</th><td>${data.city}</td></tr>
-                            <tr><th>Dirección:</th><td>${data.address}</td></tr>
-                        </table>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Información de Contacto</h6>
-                        <table class="table table-sm table-borderless">
-                            <tr><th>Teléfono:</th><td>${data.phone}</td></tr>
-                            <tr><th>Correo:</th><td>${data.email}</td></tr>
-                            <tr><th>Tipo Régimen:</th><td>${data.regime_type}</td></tr>
-                        </table>
-                    </div>
-                </div>
-                
-                ${playersHtml}
             `;
         }
         
         function generatePlayerDetails(data) {
             return `
-                <div class="row">
-                    <div class="col-12">
-                        <div class="d-flex align-items-center mb-3">
-                            <span class="badge bg-success me-2">Jugador</span>
-                            <h5 class="mb-0">${data.name}</h5>
-                            <span class="badge bg-info ms-2">${data.age} años</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Información Personal</h6>
-                        <table class="table table-sm table-borderless">
-                            <tr><th>ID:</th><td>${data.id}</td></tr>
-                            <tr><th>Tipo de Documento:</th><td>${data.document_type}</td></tr>
-                            <tr><th>Identificación:</th><td>${data.identification}</td></tr>
-                            <tr><th>Fecha de Nacimiento:</th><td>${data.birth_date}</td></tr>
-                            <tr><th>Ciudad:</th><td>${data.city}</td></tr>
-                            <tr><th>Ciudad de Nacimiento:</th><td>${data.birth_city}</td></tr>
-                            <tr><th>Dirección:</th><td>${data.address}</td></tr>
-                        </table>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Información Académica</h6>
-                        <table class="table table-sm table-borderless">
-                            <tr><th>Institución Educativa:</th><td>${data.educational_institution}</td></tr>
-                            <tr><th>Jornada de Entreno:</th><td>${data.training_session}</td></tr>
-                        </table>
-                        
-                        <h6>Información Médica</h6>
-                        <table class="table table-sm table-borderless">
-                            <tr><th>Tiene Enfermedad:</th><td>${data.has_disease}</td></tr>
-                            <tr><th>Tipo de Enfermedad:</th><td>${data.disease_type}</td></tr>
-                            <tr><th>Contraindicaciones:</th><td>${data.has_contraindication}</td></tr>
-                            <tr><th>EPS:</th><td>${data.eps}</td></tr>
-                            <tr><th>Centro de Atención:</th><td>${data.health_center}</td></tr>
-                        </table>
-                    </div>
-                </div>
-                
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <h6>Contacto de Emergencia</h6>
-                        <div class="card card-body bg-light">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <strong>Contacto:</strong> ${data.emergency_contact}<br>
-                                    <strong>Teléfono:</strong> ${data.emergency_contact_number}<br>
-                                    <strong>Parentesco:</strong> ${data.kinship}
+                <div class="container-fluid">
+                    <!-- Header del jugador con diseño deportivo -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="position-relative p-4 rounded-3 shadow-sm overflow-hidden" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <div class="position-absolute top-0 end-0 opacity-25">
+                                    <i class="bi bi-trophy" style="font-size: 8rem;"></i>
+                                </div>
+                                <div class="d-flex align-items-center position-relative">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-4" style="width: 70px; height: 70px; background: rgba(255,255,255,0.2);">
+                                        <i class="bi bi-person-arms-up text-white fs-1"></i>
+                                    </div>
+                                    <div class="text-white">
+                                        <h3 class="mb-1">${data.name}</h3>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <span class="badge bg-light text-dark">
+                                                <i class="bi bi-calendar me-1"></i>${data.age} años
+                                            </span>
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-person-badge me-1"></i>Jugador ID: ${data.id}
+                                            </span>
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="bi bi-mortarboard me-1"></i>${data.training_session}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <h6>Acudiente Responsable</h6>
-                        <div class="card card-body bg-primary bg-opacity-10">
-                            <div class="row">
+
+                    <!-- Tabs de navegación -->
+                    <ul class="nav nav-pills nav-fill mb-4 bg-light rounded-pill p-1" id="playerTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active rounded-pill" id="personal-tab" data-bs-toggle="pill" data-bs-target="#personal" type="button" role="tab">
+                                <i class="bi bi-person me-1"></i>Personal
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link rounded-pill" id="academic-tab" data-bs-toggle="pill" data-bs-target="#academic" type="button" role="tab">
+                                <i class="bi bi-mortarboard me-1"></i>Académico
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link rounded-pill" id="health-tab" data-bs-toggle="pill" data-bs-target="#health" type="button" role="tab">
+                                <i class="bi bi-heart-pulse me-1"></i>Salud
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link rounded-pill" id="contact-tab" data-bs-toggle="pill" data-bs-target="#contact" type="button" role="tab">
+                                <i class="bi bi-telephone me-1"></i>Contacto
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Contenido de los tabs -->
+                    <div class="tab-content" id="playerTabContent">
+                        <!-- Tab Personal -->
+                        <div class="tab-pane fade show active" id="personal" role="tabpanel">
+                            <div class="row g-4">
                                 <div class="col-md-6">
-                                    <strong>Nombre:</strong> ${data.fk_guardian.name}<br>
-                                    <strong>Identificación:</strong> ${data.fk_guardian.identification}
+                                    <div class="bg-gradient rounded-3 p-4 h-100" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                                        <h6 class="text-dark fw-bold mb-3">
+                                            <i class="bi bi-person-vcard me-2"></i>Información Personal
+                                        </h6>
+                                        <div class="space-y-3">
+                                            <div class="d-flex justify-content-between py-2 border-bottom border-white">
+                                                <span class="text-dark-emphasis">Documento:</span>
+                                                <strong>${data.document_type}</strong>
+                                            </div>
+                                            <div class="d-flex justify-content-between py-2 border-bottom border-white">
+                                                <span class="text-dark-emphasis">Identificación:</span>
+                                                <strong class="text-primary">${data.identification}</strong>
+                                            </div>
+                                            <div class="d-flex justify-content-between py-2 border-bottom border-white">
+                                                <span class="text-dark-emphasis">Fecha de Nacimiento:</span>
+                                                <strong>${data.birth_date}</strong>
+                                            </div>
+                                            <div class="d-flex justify-content-between py-2">
+                                                <span class="text-dark-emphasis">Ciudad de Nacimiento:</span>
+                                                <strong>${data.birth_city}</strong>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <strong>Teléfono:</strong> ${data.fk_guardian.phone}<br>
-                                    <strong>Correo:</strong> ${data.fk_guardian.email}
+                                    <div class="bg-gradient rounded-3 p-4 h-100" style="background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);">
+                                        <h6 class="text-dark fw-bold mb-3">
+                                            <i class="bi bi-geo-alt me-2"></i>Residencia Actual
+                                        </h6>
+                                        <div class="space-y-3">
+                                            <div class="d-flex justify-content-between py-2 border-bottom border-white">
+                                                <span class="text-dark-emphasis">Ciudad:</span>
+                                                <strong>${data.city}</strong>
+                                            </div>
+                                            <div class="d-flex justify-content-between py-2">
+                                                <span class="text-dark-emphasis">Dirección:</span>
+                                                <strong>${data.address}</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab Académico -->
+                        <div class="tab-pane fade" id="academic" role="tabpanel">
+                            <div class="row justify-content-center">
+                                <div class="col-md-8">
+                                    <div class="text-center mb-4">
+                                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                            <i class="bi bi-mortarboard text-white fs-1"></i>
+                                        </div>
+                                        <h5 class="text-primary">Información Académica y Deportiva</h5>
+                                    </div>
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-body p-4">
+                                            <div class="row g-3">
+                                                <div class="col-12">
+                                                    <div class="d-flex align-items-center p-3 bg-light rounded">
+                                                        <i class="bi bi-building me-3 text-primary fs-4"></i>
+                                                        <div>
+                                                            <small class="text-muted">Institución Educativa</small>
+                                                            <div class="fw-bold">${data.educational_institution}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="d-flex align-items-center p-3 bg-light rounded">
+                                                        <i class="bi bi-clock me-3 text-warning fs-4"></i>
+                                                        <div>
+                                                            <small class="text-muted">Jornada de Entrenamiento</small>
+                                                            <div class="fw-bold">${data.training_session}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab Salud -->
+                        <div class="tab-pane fade" id="health" role="tabpanel">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm h-100">
+                                        <div class="card-header bg-danger text-white">
+                                            <h6 class="mb-0"><i class="bi bi-heart-pulse me-2"></i>Estado de Salud</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="space-y-3">
+                                                <div class="d-flex justify-content-between py-2 border-bottom">
+                                                    <span class="text-muted">Tiene Enfermedad:</span>
+                                                    <span class="badge ${data.has_disease === 'Sí' ? 'bg-warning' : 'bg-success'}">${data.has_disease}</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between py-2 border-bottom">
+                                                    <span class="text-muted">Tipo de Enfermedad:</span>
+                                                    <strong>${data.disease_type}</strong>
+                                                </div>
+                                                <div class="d-flex justify-content-between py-2">
+                                                    <span class="text-muted">Contraindicaciones:</span>
+                                                    <span class="badge ${data.has_contraindication === 'Sí' ? 'bg-warning' : 'bg-success'}">${data.has_contraindication}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm h-100">
+                                        <div class="card-header bg-info text-white">
+                                            <h6 class="mb-0"><i class="bi bi-hospital me-2"></i>Información Médica</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="space-y-3">
+                                                <div class="d-flex justify-content-between py-2 border-bottom">
+                                                    <span class="text-muted">EPS:</span>
+                                                    <strong>${data.eps}</strong>
+                                                </div>
+                                                <div class="d-flex justify-content-between py-2">
+                                                    <span class="text-muted">Centro de Atención:</span>
+                                                    <strong>${data.health_center}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab Contacto -->
+                        <div class="tab-pane fade" id="contact" role="tabpanel">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-header bg-warning text-dark">
+                                            <h6 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Contacto de Emergencia</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="text-center mb-3">
+                                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px; background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
+                                                    <i class="bi bi-person-exclamation text-white"></i>
+                                                </div>
+                                                <h6 class="fw-bold">${data.emergency_contact}</h6>
+                                                <p class="text-muted mb-0">${data.kinship}</p>
+                                            </div>
+                                            <div class="text-center">
+                                                <a href="tel:${data.emergency_contact_number}" class="btn btn-outline-primary">
+                                                    <i class="bi bi-telephone me-1"></i>${data.emergency_contact_number}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-header bg-primary text-white">
+                                            <h6 class="mb-0"><i class="bi bi-person-check me-2"></i>Acudiente Responsable</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="text-center mb-3">
+                                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                                    <i class="bi bi-shield-check text-white"></i>
+                                                </div>
+                                                <h6 class="fw-bold">${data.fk_guardian.name}</h6>
+                                                <p class="text-muted mb-1">ID: ${data.fk_guardian.id}</p>
+                                                <p class="text-muted mb-0">${data.fk_guardian.identification}</p>
+                                            </div>
+                                            <div class="d-flex gap-2 justify-content-center">
+                                                <a href="tel:${data.fk_guardian.phone}" class="btn btn-sm btn-outline-success">
+                                                    <i class="bi bi-telephone"></i>
+                                                </a>
+                                                <a href="mailto:${data.fk_guardian.email}" class="btn btn-sm btn-outline-info">
+                                                    <i class="bi bi-envelope"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
