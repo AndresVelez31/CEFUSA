@@ -122,27 +122,49 @@ def dashboard_view(request):
     )
     chart_html_sessions = fig_sessions.to_html(full_html=False, include_plotlyjs=False)
 
-    # Chart: most used EPS
-    eps_list = [p.eps if p.eps else 'Sin EPS' for p in players]
-    df_eps = pd.DataFrame({'EPS': eps_list})
-    eps_counts = df_eps['EPS'].value_counts().reset_index()
-    eps_counts.columns = ['EPS', 'Cantidad']
-    fig_eps = px.bar(
-        eps_counts.head(10),
-        x='EPS',
+    # Chart: Students by category (birth year)
+    categories = []
+    for p in players:
+        if p.birth_date:
+            category = p.birth_date.year
+            categories.append(str(category))
+        else:
+            categories.append('Sin fecha de nacimiento')
+    
+    df_categories = pd.DataFrame({'Categoría': categories})
+    category_counts = df_categories['Categoría'].value_counts().reset_index()
+    category_counts.columns = ['Categoría', 'Cantidad']
+    
+    # Ordenar por año de nacimiento (categoría) - filtrar solo años válidos
+    valid_categories = category_counts[category_counts['Categoría'] != 'Sin fecha de nacimiento'].copy()
+    invalid_categories = category_counts[category_counts['Categoría'] == 'Sin fecha de nacimiento'].copy()
+    
+    # Convertir a entero para ordenar correctamente y luego de vuelta a string
+    if not valid_categories.empty:
+        valid_categories['Categoría'] = valid_categories['Categoría'].astype(int)
+        valid_categories = valid_categories.sort_values('Categoría')
+        valid_categories['Categoría'] = valid_categories['Categoría'].astype(str)
+    
+    # Concatenar categorías válidas e inválidas
+    category_counts = pd.concat([valid_categories, invalid_categories], ignore_index=True)
+    
+    fig_categories = px.bar(
+        category_counts,
+        x='Categoría',
         y='Cantidad',
-        title='EPS más usadas',
-        color='EPS',
+        title='Cantidad de estudiantes por categoría',
+        color='Categoría',
         width=500,
         height=450
     )
-    fig_eps.update_layout(
-        title_text='EPS más usadas',
+    fig_categories.update_layout(
+        title_text='Cantidad de estudiantes por categoría',
         title_font=dict(size=20, family='Montserrat, sans-serif', color='black'),
         title_x=0.5,
-        yaxis_title='Cantidad'
+        yaxis_title='Cantidad',
+        xaxis_title='Categoría (Año de nacimiento)'
     )
-    chart_html_eps = fig_eps.to_html(full_html=False, include_plotlyjs=False)
+    chart_html_eps = fig_categories.to_html(full_html=False, include_plotlyjs=False)
 
     # Guardian Charts
     # Guardian pie chart: IVA responsibility
@@ -442,22 +464,30 @@ def generate_dashboard_pdf(request):
         story.append(create_table(session_data, [2.5*inch, 1.5*inch, 1.5*inch]))
         story.append(Spacer(1, 20))
         
-        # 4. EPS más utilizadas
-        story.append(Paragraph("Distribución por EPS (Top 10):", styles['Heading3']))
-        eps_counts = {}
+        # 4. Estudiantes por categoría (año de nacimiento)
+        story.append(Paragraph("Distribución por Categoría (Año de Nacimiento):", styles['Heading3']))
+        category_counts = {}
         for p in players:
-            eps = p.eps if p.eps else 'Sin EPS'
-            eps_counts[eps] = eps_counts.get(eps, 0) + 1
+            if p.birth_date:
+                category = str(p.birth_date.year)
+                category_counts[category] = category_counts.get(category, 0) + 1
+            else:
+                category_counts['Sin fecha de nacimiento'] = category_counts.get('Sin fecha de nacimiento', 0) + 1
         
-        # Ordenar por cantidad y tomar top 10
-        sorted_eps = sorted(eps_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+        # Separar categorías válidas de inválidas y ordenar por año
+        valid_categories = {k: v for k, v in category_counts.items() if k != 'Sin fecha de nacimiento'}
+        invalid_categories = {k: v for k, v in category_counts.items() if k == 'Sin fecha de nacimiento'}
         
-        eps_data = [['EPS', 'Cantidad', 'Porcentaje']]
-        for eps, count in sorted_eps:
+        # Ordenar categorías válidas por año
+        sorted_valid = sorted(valid_categories.items(), key=lambda x: int(x[0]))
+        sorted_invalid = list(invalid_categories.items())
+        
+        category_data = [['Categoría (Año)', 'Cantidad', 'Porcentaje']]
+        for category, count in sorted_valid + sorted_invalid:
             percentage = f"{(count/total_players)*100:.1f}%" if total_players > 0 else "0%"
-            eps_data.append([eps, str(count), percentage])
+            category_data.append([category, str(count), percentage])
         
-        story.append(create_table(eps_data, [3*inch, 1*inch, 1*inch]))
+        story.append(create_table(category_data, [3*inch, 1*inch, 1*inch]))
         story.append(PageBreak())
         
         # === SECCIÓN ACUDIENTES ===
@@ -732,27 +762,37 @@ def generate_dashboard_excel(request):
         ws_jugadores.cell(row=current_row, column=3, value=percentage)
         current_row += 1
     
-    # EPS más utilizadas
+    # Estudiantes por categoría (año de nacimiento)
     current_row += 2
-    ws_jugadores.cell(row=current_row, column=1, value="EPS Más Utilizadas (Top 10)")
+    ws_jugadores.cell(row=current_row, column=1, value="Estudiantes por Categoría (Año de Nacimiento)")
     current_row += 2
     
-    eps_counts = {}
+    category_counts = {}
     for p in players:
-        eps = p.eps if p.eps else 'Sin EPS'
-        eps_counts[eps] = eps_counts.get(eps, 0) + 1
+        if p.birth_date:
+            category = str(p.birth_date.year)
+            category_counts[category] = category_counts.get(category, 0) + 1
+        else:
+            category_counts['Sin fecha de nacimiento'] = category_counts.get('Sin fecha de nacimiento', 0) + 1
     
-    sorted_eps = sorted(eps_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+    # Separar categorías válidas de inválidas y ordenar por año
+    valid_categories = {k: v for k, v in category_counts.items() if k != 'Sin fecha de nacimiento'}
+    invalid_categories = {k: v for k, v in category_counts.items() if k == 'Sin fecha de nacimiento'}
     
-    ws_jugadores.cell(row=current_row, column=1, value="EPS")
+    # Ordenar categorías válidas por año
+    sorted_valid = sorted(valid_categories.items(), key=lambda x: int(x[0]))
+    sorted_invalid = list(invalid_categories.items())
+    sorted_categories = sorted_valid + sorted_invalid
+    
+    ws_jugadores.cell(row=current_row, column=1, value="Categoría (Año)")
     ws_jugadores.cell(row=current_row, column=2, value="Cantidad")
     ws_jugadores.cell(row=current_row, column=3, value="Porcentaje")
     format_header(ws_jugadores, current_row, current_row, 1, 3)
     current_row += 1
     
-    for eps, count in sorted_eps:
+    for category, count in sorted_categories:
         percentage = f"{(count/total_players)*100:.1f}%" if total_players > 0 else "0%"
-        ws_jugadores.cell(row=current_row, column=1, value=eps)
+        ws_jugadores.cell(row=current_row, column=1, value=category)
         ws_jugadores.cell(row=current_row, column=2, value=count)
         ws_jugadores.cell(row=current_row, column=3, value=percentage)
         current_row += 1
