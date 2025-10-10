@@ -67,7 +67,7 @@ The web application will have the following main features:
   
 To run and test the project, you can log in with this user:
 
-  * Admin view:*
+  *Admin view:*
   
   - User name: afveleza
   - Password: #Ricopizza1031#
