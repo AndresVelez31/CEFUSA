@@ -193,7 +193,9 @@
           <div class="modal-body">
             <div class="mb-3">
               <label class="form-label">Cuenta</label>
-              <select name="account" class="form-select" required>
+              <select name="account" class="form-select" required 
+                      oninvalid="this.setCustomValidity('Por favor, completa este campo')" 
+                      oninput="this.setCustomValidity('')">
                 {% for c in accounts %}
                 <option value="{{ c.0 }}">{{ c.1 }}</option>
                 {% endfor %}
@@ -201,15 +203,21 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Fecha</label>
-              <input type="date" name="date" class="form-control" required>
+              <input type="date" name="date" class="form-control" required
+                     oninvalid="this.setCustomValidity('Por favor, completa este campo')" 
+                     oninput="this.setCustomValidity('')">
             </div>
             <div class="mb-3">
               <label class="form-label">Descripción</label>
-              <input type="text" name="description" class="form-control" required>
+              <input type="text" name="description" class="form-control" required
+                     oninvalid="this.setCustomValidity('Por favor, completa este campo')" 
+                     oninput="this.setCustomValidity('')">
             </div>
             <div class="mb-3">
               <label class="form-label">Sucursal</label>
-              <input type="text" name="branch" class="form-control" required>
+              <input type="text" name="branch" class="form-control" required
+                     oninvalid="this.setCustomValidity('Por favor, completa este campo')" 
+                     oninput="this.setCustomValidity('')">
             </div>
             <div class="mb-3">
               <label class="form-label">Referencia 1</label>
@@ -221,27 +229,39 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Valor</label>
-              <input type="number" name="amount" class="form-control" required>
+              <input type="number" name="amount" class="form-control" required
+                     oninvalid="this.setCustomValidity('Por favor, completa este campo')" 
+                     oninput="this.setCustomValidity('')">
             </div>
             <div class="mb-3">
               <label class="form-label">Nombre</label>
-              <input type="text" name="player_name" class="form-control" required>
+              <input type="text" name="player_name" class="form-control" required
+                     oninvalid="this.setCustomValidity('Por favor, completa este campo')" 
+                     oninput="this.setCustomValidity('')">
             </div>
             <div class="mb-3">
               <label class="form-label">Motivo</label>
-              <input type="text" name="reason" class="form-control" required>
+              <input type="text" name="reason" class="form-control" required
+                     oninvalid="this.setCustomValidity('Por favor, completa este campo')" 
+                     oninput="this.setCustomValidity('')">
             </div>
             <div class="mb-3">
               <label class="form-label">Factura venta</label>
-              <input type="text" name="sales_invoice" class="form-control" required>
+              <input type="text" name="sales_invoice" class="form-control" required
+                     oninvalid="this.setCustomValidity('Por favor, completa este campo')" 
+                     oninput="this.setCustomValidity('')">
             </div>
             <div class="mb-3">
               <label class="form-label">Recibo caja</label>
-              <input type="text" name="receipt" class="form-control" required>
+              <input type="text" name="receipt" class="form-control" required
+                     oninvalid="this.setCustomValidity('Por favor, completa este campo')" 
+                     oninput="this.setCustomValidity('')">
             </div>
             <div class="mb-3">
               <label class="form-label">Comentario</label>
-              <input type="text" name="comment" class="form-control" required>
+              <input type="text" name="comment" class="form-control" required
+                     oninvalid="this.setCustomValidity('Por favor, completa este campo')" 
+                     oninput="this.setCustomValidity('')">
             </div>
             <div class="mb-3">
               <label class="form-label">Responsable</label>
