@@ -27,6 +27,10 @@ class GuardianForm(forms.ModelForm):
             if field_name in labels:
                 field.label = labels[field_name]
             field.widget.attrs['class'] = 'form-control'
+            
+            # Mensaje de validación en español
+            field.widget.attrs['oninvalid'] = "this.setCustomValidity('Por favor, completa este campo')"
+            field.widget.attrs['oninput'] = "this.setCustomValidity('')"
 
             if field_name in ['tipo_doc', 'tipo_regimen']:
                 field.widget.attrs['class'] = 'form-select'
@@ -93,13 +97,19 @@ class PlayerForm(forms.ModelForm):
             # Placeholder en español
             if field_name in placeholders:
                 field.widget.attrs['placeholder'] = placeholders[field_name]
+            
+            # Mensaje de validación en español
+            field.widget.attrs['oninvalid'] = "this.setCustomValidity('Por favor, completa este campo')"
+            field.widget.attrs['oninput'] = "this.setCustomValidity('')"
 
             # Widget especial para fecha de nacimiento
             if field_name == 'birth_date':
                 field.widget = forms.DateInput(attrs={
                     'type': 'date',
                     'class': 'form-control',
-                    'placeholder': placeholders.get('birth_date', '')
+                    'placeholder': placeholders.get('birth_date', ''),
+                    'oninvalid': "this.setCustomValidity('Por favor, completa este campo')",
+                    'oninput': "this.setCustomValidity('')"
                 }, format='%Y-%m-%d')
                 field.input_formats = ['%Y-%m-%d']
             elif field_name in ['document_type', 'training_session', 'fk_guardian']:

@@ -136,7 +136,7 @@ def logout_view(request):
     """
     User logout view.
     
-    Handles user logout and redirects to login page.
+    Handles user logout and redirects to landing page.
     Compatible with AJAX requests and traditional navigation.
     
     Args:
@@ -144,11 +144,11 @@ def logout_view(request):
         
     Returns:
         AJAX: JsonResponse with redirect URL
-        HTTP: HttpResponseRedirect to login
+        HTTP: HttpResponseRedirect to landing page
         
     Note:
         Logs out user only if authenticated.
-        Redirects to login regardless of initial state.
+        Redirects to landing page regardless of initial state.
     """
     # Log out if authenticated
     if request.user.is_authenticated:
@@ -159,8 +159,8 @@ def logout_view(request):
         # AJAX request: JSON response
         return JsonResponse({
             'success': True, 
-            'redirect_url': '/home/'
+            'redirect_url': '/'
         })
     
-    # Traditional HTTP request: redirect
-    return redirect('login')
+    # Traditional HTTP request: redirect to landing page
+    return redirect('/')

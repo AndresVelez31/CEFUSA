@@ -117,7 +117,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Authentication URLs
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/home/'
-LOGOUT_REDIRECT_URL = '/login/'
+LOGOUT_REDIRECT_URL = '/'  # Redirigir al landing page después del logout
 
 # Session Configuration
 SESSION_COOKIE_AGE = 86400  # 24 horas por defecto (pero se anulará por set_expiry)
@@ -134,3 +134,6 @@ CACHES = {
         'LOCATION': 'cefusa-cache',
     }
 }
+
+# Forzar que todos los logout redirijan al landing page
+LOGOUT_URL = '/logout/'
