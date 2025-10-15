@@ -451,3 +451,324 @@ body {
         gap: 16px;
     }
 }
+
+/* ==================== PASSWORD RECOVERY MODALS ==================== */
+
+/* Modal Overlay - MUST BE HIDDEN BY DEFAULT */
+#usernameModal,
+#emailModal,
+#resetPasswordModal,
+#successResetModal {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Show modal only when .show class is added */
+#usernameModal.show,
+#emailModal.show,
+#resetPasswordModal.show,
+#successResetModal.show {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* General Modal Overlay Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+    transition: opacity 0.3s ease;
+}
+
+/* Modal Container */
+.modal-container {
+    background: #ffffff;
+    border-radius: 16px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-overlay.show .modal-container {
+    transform: scale(1);
+}
+
+/* Modal Header */
+.modal-header {
+    padding: 24px 24px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    color: #191414;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #727272;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: #f6f6f6;
+    color: #191414;
+}
+
+/* Modal Body */
+.modal-body {
+    padding: 24px;
+}
+
+.modal-description {
+    color: #727272;
+    font-size: 14px;
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+/* Masked Email Display */
+.masked-email-display {
+    background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(29, 185, 84, 0.2);
+}
+
+.masked-email-display svg {
+    color: #ffffff;
+    flex-shrink: 0;
+}
+
+.masked-email-display span {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+}
+
+/* Modal Actions */
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    align-items: center; /* Alinear verticalmente los botones */
+}
+
+.modal-actions .modal-btn,
+.modal-actions .modal-btn-secondary {
+    flex: 1; /* Ambos botones ocupan el mismo espacio */
+    margin-top: 0; /* Quitar margen cuando están en modal-actions */
+}
+
+/* Modal Buttons */
+.modal-btn {
+    width: 100%;
+    background: #1DB954;
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 24px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    position: relative;
+    transition: all 0.2s ease;
+    overflow: hidden;
+    min-height: 48px;
+    height: 48px; /* Altura fija */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box; /* Incluir borde en el tamaño total */
+    margin-top: 24px; /* Margen por defecto cuando está solo */
+}
+
+.modal-btn:hover {
+    background: #1ed760;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+}
+
+.modal-btn:disabled {
+    background: #a7a7a7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.modal-btn.loading .btn-text {
+    opacity: 0;
+}
+
+.modal-btn.loading .btn-loader {
+    opacity: 1;
+}
+
+.modal-btn-secondary {
+    background: #f6f6f6;
+    color: #191414;
+    border: 2px solid #e1e1e1;
+    border-radius: 50px;
+    padding: 14px 24px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    min-height: 48px;
+    height: 48px; /* Misma altura que modal-btn */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box; /* Incluir borde en el tamaño total */
+}
+
+.modal-btn-secondary:hover {
+    background: #e1e1e1;
+    border-color: #d9d9d9;
+}
+
+/* Password Requirements */
+.password-requirements {
+    background: #f6f6f6;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+.password-requirements ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.password-requirements li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    color: #727272;
+    font-size: 13px;
+    transition: color 0.2s ease;
+}
+
+.password-requirements li svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    stroke: #d9d9d9;
+    transition: all 0.2s ease;
+}
+
+.password-requirements li.valid {
+    color: #1DB954;
+}
+
+.password-requirements li.valid svg {
+    stroke: #1DB954;
+}
+
+.password-requirements li.valid svg circle {
+    fill: #1DB954;
+}
+
+.password-requirements li.valid svg {
+    animation: checkPop 0.3s ease;
+}
+
+@keyframes checkPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Success Modal Variant */
+.modal-success .modal-body {
+    padding: 40px 32px;
+}
+
+.modal-success .success-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+}
+
+/* Modal Form Groups (override if needed) */
+.modal-body .form-group {
+    margin-bottom: 20px;
+}
+
+.modal-body .form-group:last-of-type {
+    margin-bottom: 0;
+}
+
+/* Modal Responsive */
+@media (max-width: 480px) {
+    .modal-container {
+        max-width: 100%;
+        border-radius: 12px;
+    }
+    
+    .modal-header {
+        padding: 20px 20px 12px;
+    }
+    
+    .modal-header h2 {
+        font-size: 1.25rem;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+    
+    .modal-actions button {
+        width: 100%;
+    }
+    
+    .password-requirements {
+        padding: 12px;
+    }
+    
+    .password-requirements li {
+        font-size: 12px;
+    }
+}
