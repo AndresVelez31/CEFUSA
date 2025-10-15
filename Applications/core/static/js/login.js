@@ -196,4 +196,371 @@ class LoginForm {
 // Initialize form when page loads
 document.addEventListener('DOMContentLoaded', () => {
     new LoginForm();
+    new PasswordRecovery();
 });
+
+
+// ==================== PASSWORD RECOVERY SYSTEM ====================
+
+class PasswordRecovery {
+    constructor() {
+        // Modal elements
+        this.usernameModal = document.getElementById('usernameModal');
+        this.emailModal = document.getElementById('emailModal');
+        this.resetPasswordModal = document.getElementById('resetPasswordModal');
+        this.successResetModal = document.getElementById('successResetModal');
+        
+        // Forms
+        this.usernameForm = document.getElementById('usernameVerificationForm');
+        this.emailForm = document.getElementById('emailVerificationForm');
+        this.resetPasswordForm = document.getElementById('resetPasswordForm');
+        
+        // Buttons
+        this.forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        this.closeUsernameModal = document.getElementById('closeUsernameModal');
+        this.closeEmailModal = document.getElementById('closeEmailModal');
+        this.closeResetModal = document.getElementById('closeResetModal');
+        this.backToUsernameBtn = document.getElementById('backToUsername');
+        
+        // Debug: Verify elements exist
+        console.log('🔧 Password Recovery Debug:');
+        console.log('forgotPasswordLink:', this.forgotPasswordLink);
+        console.log('usernameModal:', this.usernameModal);
+        
+        if (!this.forgotPasswordLink) {
+            console.error('❌ ERROR: No se encontró el botón "¿Olvidaste tu contraseña?"');
+            return;
+        }
+        
+        if (!this.usernameModal) {
+            console.error('❌ ERROR: No se encontró el modal de username');
+            return;
+        }
+        
+        console.log('✅ Elementos encontrados correctamente');
+        
+        // Inputs
+        this.recoveryUsernameInput = document.getElementById('recoveryUsername');
+        this.recoveryEmailInput = document.getElementById('recoveryEmail');
+        this.newPassword1Input = document.getElementById('newPassword1');
+        this.newPassword2Input = document.getElementById('newPassword2');
+        this.maskedEmailDisplay = document.getElementById('maskedEmailDisplay');
+        
+        // Password toggle buttons
+        this.toggleNewPassword1 = document.getElementById('toggleNewPassword1');
+        this.toggleNewPassword2 = document.getElementById('toggleNewPassword2');
+        
+        // State
+        this.maskedEmail = '';
+        
+        this.init();
+    }
+    
+    init() {
+        this.bindEvents();
+        this.setupPasswordToggles();
+        this.setupPasswordValidation();
+    }
+    
+    bindEvents() {
+        // Open password recovery flow
+        this.forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('🔑 Click en "¿Olvidaste tu contraseña?"');
+            console.log('Abriendo modal de username...');
+            this.openUsernameModal();
+        });
+        
+        // Close modals
+        this.closeUsernameModal.addEventListener('click', () => this.closeModal(this.usernameModal));
+        this.closeEmailModal.addEventListener('click', () => this.closeModal(this.emailModal));
+        this.closeResetModal.addEventListener('click', () => this.closeModal(this.resetPasswordModal));
+        
+        // Close modals on overlay click
+        [this.usernameModal, this.emailModal, this.resetPasswordModal, this.successResetModal].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.closeModal(modal);
+                }
+            });
+        });
+        
+        // Back button
+        this.backToUsernameBtn.addEventListener('click', () => {
+            this.closeModal(this.emailModal);
+            this.openUsernameModal();
+        });
+        
+        // Form submissions
+        this.usernameForm.addEventListener('submit', (e) => this.handleUsernameVerification(e));
+        this.emailForm.addEventListener('submit', (e) => this.handleEmailVerification(e));
+        this.resetPasswordForm.addEventListener('submit', (e) => this.handlePasswordReset(e));
+        
+        // Clear errors on input
+        this.recoveryUsernameInput.addEventListener('input', () => this.clearError('recoveryUsername'));
+        this.recoveryEmailInput.addEventListener('input', () => this.clearError('recoveryEmail'));
+        this.newPassword1Input.addEventListener('input', () => this.clearError('newPassword1'));
+        this.newPassword2Input.addEventListener('input', () => this.clearError('newPassword2'));
+    }
+    
+    setupPasswordToggles() {
+        [this.toggleNewPassword1, this.toggleNewPassword2].forEach((btn, index) => {
+            const input = index === 0 ? this.newPassword1Input : this.newPassword2Input;
+            btn.addEventListener('click', () => {
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                btn.style.transform = isPassword ? 'rotate(180deg)' : 'rotate(0deg)';
+            });
+        });
+    }
+    
+    setupPasswordValidation() {
+        this.newPassword1Input.addEventListener('input', () => {
+            this.validatePasswordRequirements();
+        });
+    }
+    
+    validatePasswordRequirements() {
+        const password = this.newPassword1Input.value;
+        
+        // Check each requirement
+        const requirements = {
+            'req-length': password.length >= 8,
+            'req-uppercase': /[A-Z]/.test(password),
+            'req-lowercase': /[a-z]/.test(password),
+            'req-number': /\d/.test(password)
+        };
+        
+        // Update UI for each requirement
+        Object.entries(requirements).forEach(([id, isMet]) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.classList.toggle('valid', isMet);
+            }
+        });
+        
+        return Object.values(requirements).every(val => val);
+    }
+    
+    // Modal management
+    openModal(modal) {
+        console.log('📂 Abriendo modal:', modal.id);
+        console.log('Agregando clase "show"...');
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        console.log('✅ Modal debe estar visible ahora');
+    }
+    
+    closeModal(modal) {
+        console.log('📕 Cerrando modal:', modal.id);
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+        
+        // Reset form in modal
+        const form = modal.querySelector('form');
+        if (form) {
+            form.reset();
+            // Clear all errors in this modal
+            modal.querySelectorAll('.error-message').forEach(error => {
+                error.classList.remove('show');
+                error.textContent = '';
+            });
+            modal.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error');
+            });
+        }
+    }
+    
+    openUsernameModal() {
+        this.openModal(this.usernameModal);
+        this.recoveryUsernameInput.focus();
+    }
+    
+    // Error handling
+    showError(fieldId, message) {
+        const input = document.getElementById(fieldId);
+        const formGroup = input.closest('.form-group');
+        const errorElement = document.getElementById(`${fieldId}Error`);
+        
+        formGroup.classList.add('error');
+        errorElement.textContent = message;
+        errorElement.classList.add('show');
+    }
+    
+    clearError(fieldId) {
+        const input = document.getElementById(fieldId);
+        const formGroup = input.closest('.form-group');
+        const errorElement = document.getElementById(`${fieldId}Error`);
+        
+        formGroup.classList.remove('error');
+        errorElement.classList.remove('show');
+        setTimeout(() => {
+            errorElement.textContent = '';
+        }, 200);
+    }
+    
+    // Form submission handlers
+    async handleUsernameVerification(e) {
+        e.preventDefault();
+        
+        const username = this.recoveryUsernameInput.value.trim();
+        
+        if (!username) {
+            this.showError('recoveryUsername', 'El nombre de usuario es requerido.');
+            return;
+        }
+        
+        const submitBtn = this.usernameForm.querySelector('.modal-btn');
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+        
+        try {
+            const response = await fetch('/password-recovery/verify-username/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.getCSRFToken()
+                },
+                body: JSON.stringify({ username })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                this.maskedEmail = data.masked_email;
+                this.maskedEmailDisplay.textContent = data.masked_email;
+                
+                // Move to next step
+                this.closeModal(this.usernameModal);
+                this.openModal(this.emailModal);
+                this.recoveryEmailInput.focus();
+            } else {
+                this.showError('recoveryUsername', data.error || 'Error al verificar el usuario.');
+            }
+        } catch (error) {
+            this.showError('recoveryUsername', 'Error de conexión. Intente nuevamente.');
+        } finally {
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        }
+    }
+    
+    async handleEmailVerification(e) {
+        e.preventDefault();
+        
+        const email = this.recoveryEmailInput.value.trim().toLowerCase();
+        
+        if (!email) {
+            this.showError('recoveryEmail', 'El correo electrónico es requerido.');
+            return;
+        }
+        
+        if (!this.isValidEmail(email)) {
+            this.showError('recoveryEmail', 'Ingrese un correo electrónico válido.');
+            return;
+        }
+        
+        const submitBtn = this.emailForm.querySelector('.modal-btn');
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+        
+        try {
+            const response = await fetch('/password-recovery/verify-email/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.getCSRFToken()
+                },
+                body: JSON.stringify({ email })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                // Move to password reset step
+                this.closeModal(this.emailModal);
+                this.openModal(this.resetPasswordModal);
+                this.newPassword1Input.focus();
+            } else {
+                this.showError('recoveryEmail', data.error || 'El correo no coincide.');
+            }
+        } catch (error) {
+            this.showError('recoveryEmail', 'Error de conexión. Intente nuevamente.');
+        } finally {
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        }
+    }
+    
+    async handlePasswordReset(e) {
+        e.preventDefault();
+        
+        const password1 = this.newPassword1Input.value;
+        const password2 = this.newPassword2Input.value;
+        
+        // Validate passwords
+        if (!password1 || !password2) {
+            if (!password1) this.showError('newPassword1', 'La contraseña es requerida.');
+            if (!password2) this.showError('newPassword2', 'Confirme la contraseña.');
+            return;
+        }
+        
+        if (password1 !== password2) {
+            this.showError('newPassword2', 'Las contraseñas no coinciden.');
+            return;
+        }
+        
+        if (!this.validatePasswordRequirements()) {
+            this.showError('newPassword1', 'La contraseña no cumple con los requisitos.');
+            return;
+        }
+        
+        const submitBtn = this.resetPasswordForm.querySelector('.modal-btn');
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+        
+        try {
+            const response = await fetch('/password-recovery/reset-password/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.getCSRFToken()
+                },
+                body: JSON.stringify({ 
+                    password1, 
+                    password2 
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                // Show success modal
+                this.closeModal(this.resetPasswordModal);
+                this.openModal(this.successResetModal);
+                
+                // Redirect to login after delay
+                setTimeout(() => {
+                    this.closeModal(this.successResetModal);
+                    window.location.reload();
+                }, 3000);
+            } else {
+                this.showError('newPassword1', data.error || 'Error al actualizar la contraseña.');
+            }
+        } catch (error) {
+            this.showError('newPassword1', 'Error de conexión. Intente nuevamente.');
+        } finally {
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        }
+    }
+    
+    // Utility functions
+    getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+    
+    isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+}
