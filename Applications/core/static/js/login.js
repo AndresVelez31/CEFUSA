@@ -222,22 +222,10 @@ class PasswordRecovery {
         this.closeResetModal = document.getElementById('closeResetModal');
         this.backToUsernameBtn = document.getElementById('backToUsername');
         
-        // Debug: Verify elements exist
-        console.log('🔧 Password Recovery Debug:');
-        console.log('forgotPasswordLink:', this.forgotPasswordLink);
-        console.log('usernameModal:', this.usernameModal);
-        
-        if (!this.forgotPasswordLink) {
-            console.error('❌ ERROR: No se encontró el botón "¿Olvidaste tu contraseña?"');
+        // Verify required elements exist
+        if (!this.forgotPasswordLink || !this.usernameModal) {
             return;
         }
-        
-        if (!this.usernameModal) {
-            console.error('❌ ERROR: No se encontró el modal de username');
-            return;
-        }
-        
-        console.log('✅ Elementos encontrados correctamente');
         
         // Inputs
         this.recoveryUsernameInput = document.getElementById('recoveryUsername');
@@ -266,8 +254,6 @@ class PasswordRecovery {
         // Open password recovery flow
         this.forgotPasswordLink.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('🔑 Click en "¿Olvidaste tu contraseña?"');
-            console.log('Abriendo modal de username...');
             this.openUsernameModal();
         });
         
@@ -344,15 +330,11 @@ class PasswordRecovery {
     
     // Modal management
     openModal(modal) {
-        console.log('📂 Abriendo modal:', modal.id);
-        console.log('Agregando clase "show"...');
         modal.classList.add('show');
         document.body.style.overflow = 'hidden';
-        console.log('✅ Modal debe estar visible ahora');
     }
     
     closeModal(modal) {
-        console.log('📕 Cerrando modal:', modal.id);
         modal.classList.remove('show');
         document.body.style.overflow = '';
         
