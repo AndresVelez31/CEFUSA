@@ -1,0 +1,96 @@
+/* 
+ * Tipografías Globales del Branding CEFUSA
+ * 
+ * Fuentes utilizadas:
+ * - Títulos: Almaq W01 Rough
+ * - Subtítulos: Bricolage Grotesque  
+ */
+
+/* Importar fuentes de Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@200;300;400;500;600;700;800&display=swap');
+
+/* Definir fuente personalizada Almaq W01 Rough */
+@font-face {
+    font-family: 'Almaq W01 Rough';
+    src: url('../fonts/AlmaqW01-Rough.woff2') format('woff2'),
+         url('../fonts/AlmaqW01-Rough.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Clases de tipografía para títulos */
+.font-title,
+.cefusa-title {
+    font-family: 'Almaq W01 Rough', 'Arial Black', sans-serif;
+}
+
+/* Clases de tipografía para subtítulos */
+.font-subtitle,
+.cefusa-subtitle {
+    font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+/* Aplicar automáticamente a elementos semánticos */
+h1 {
+    font-family: 'Almaq W01 Rough', 'Arial Black', sans-serif;
+}
+
+h2 {
+    font-family: 'Almaq W01 Rough', 'Arial Black', sans-serif;
+}
+
+h3 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+h4, h5, h6 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+/* Variaciones de peso para títulos */
+.title-light {
+    font-family: 'Almaq W01 Rough', 'Arial Black', sans-serif;
+    font-weight: 400;
+}
+
+.title-bold {
+    font-family: 'Almaq W01 Rough', 'Arial Black', sans-serif;
+    font-weight: 700;
+}
+
+.title-black {
+    font-family: 'Almaq W01 Rough', 'Arial Black', sans-serif;
+    font-weight: 900;
+}
+
+/* Variaciones de peso para subtítulos */
+.subtitle-light {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 300;
+}
+
+.subtitle-regular {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 400;
+}
+
+.subtitle-medium {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 500;
+}
+
+.subtitle-semibold {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 600;
+}
+
+.subtitle-bold {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+}
+
+.subtitle-extrabold {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+}

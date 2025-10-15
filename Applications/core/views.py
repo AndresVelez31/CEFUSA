@@ -159,7 +159,7 @@ def logout_view(request):
         # AJAX request: JSON response
         return JsonResponse({
             'success': True, 
-            'redirect_url': '/login/'
+            'redirect_url': '/home/'
         })
     
     # Traditional HTTP request: redirect

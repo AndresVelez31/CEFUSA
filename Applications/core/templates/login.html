@@ -6,29 +6,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CEFUSA</title>
+    
+    <!-- Fuentes del branding -->
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'css/branding-fonts.css' %}">
 </head>
 <body>
+    <!-- Botón volver -->
+    <div style="position: fixed; top: 20px; left: 20px; z-index: 1000;">
+        <a href="/" style="
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            padding: 10px 16px; 
+            background: rgba(255, 255, 255, 0.9); 
+            border-radius: 8px; 
+            text-decoration: none; 
+            color: #333; 
+            font-size: 14px; 
+            font-weight: 500; 
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+            transition: all 0.2s ease; 
+            backdrop-filter: blur(10px);
+        " 
+        onmouseover="this.style.background='rgba(255, 255, 255, 1)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'"
+        onmouseout="this.style.background='rgba(255, 255, 255, 0.9)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0, 0, 0, 0.1)'"
+        class="font-subtitle">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Volver al inicio
+        </a>
+    </div>
+
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
                 <div class="logo">
-                    <img src="{% static 'img/LogoCefusa.png' %}" alt="Logo CEFUSA" style="height:120px; width:auto; border-radius:15px; box-shadow:0 2px 8px rgba(0,0,0,0.1); background:#fff; padding:4px;">
+                    <a href="/" style="text-decoration: none; cursor: pointer;" onmouseover="this.querySelector('img').style.transform='scale(1.05)'" onmouseout="this.querySelector('img').style.transform='scale(1)'">
+                        <img src="{% static 'Logo CEFUSA.png' %}" alt="Logo CEFUSA" style="height:120px; width:auto; border-radius:15px; box-shadow:0 2px 8px rgba(0,0,0,0.1); background:#fff; padding:4px; transition: transform 0.2s ease;" title="Volver al inicio">
+                    </a>
                 </div>
-                <h1>Ingresa a CEFUSA</h1>
+                <h1 class="font-title" style="font-weight: normal;">Ingrese como administrador</h1>
             </div>
             
             <form class="login-form" id="loginForm" method="post" action="{% url 'login' %}" novalidate>
                 {% csrf_token %}
 
                 <div class="form-group">
-                    <label for="username">Nombre de Usuario</label>
+                    <label for="username" class="font-subtitle">Nombre de Usuario</label>
                     <input type="text" id="username" name="username" required autocomplete="username">
                     <span class="error-message" id="usernameError"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Contraseña</label>
+                    <label for="password" class="font-subtitle">Contraseña</label>
                     <div class="password-wrapper">
                         <input type="password" id="password" name="password" required autocomplete="current-password">
                         <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
@@ -44,13 +79,13 @@
                     <label class="checkbox-wrapper">
                         <input type="checkbox" id="remember" name="remember">
                         <span class="checkmark"></span>
-                        Recuérdame
+                        <span class="font-subtitle">Recuérdame</span>
                     </label>
-                    <a href="#" class="forgot-link" onclick="return false;">¿Olvidaste tu contraseña?</a>
+                    <a href="#" class="forgot-link font-subtitle" onclick="return false;">¿Olvidaste tu contraseña?</a>
                 </div>
 
                 <button type="submit" class="login-btn">
-                    <span class="btn-text">Iniciar Sesión</span>
+                    <span class="btn-text font-subtitle">Iniciar Sesión</span>
                     <div class="btn-loader">
                         <div class="loader-dot"></div>
                         <div class="loader-dot"></div>
@@ -66,8 +101,8 @@
                         <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </div>
-                <h3>¡Bienvenido de vuelta!</h3>
-                <p>Acceso exitoso. Redirigiendo al panel de administración...</p>
+                <h3 class="font-title">¡Bienvenido de vuelta!</h3>
+                <p class="font-subtitle">Acceso exitoso. Redirigiendo al panel de administración...</p>
             </div>
         </div>
     </div>
