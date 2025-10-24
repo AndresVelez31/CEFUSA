@@ -40,6 +40,30 @@
         .font-subtitle {
             font-family: 'Bricolage Grotesque', 'Arial Narrow', sans-serif !important;
         }
+        
+        /* Botón flotante de WhatsApp */
+        .whatsapp-float {
+            animation: pulse 2s infinite;
+        }
+        .whatsapp-float:hover {
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+            }
+        }
+        
         .carousel-container {
             position: relative;
             overflow: hidden;
@@ -122,21 +146,21 @@
     <div class="flex flex-row gap-8">
         <div class="flex flex-col gap-4 w-1/2">
             <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
-                <img src="{% static 'images/copa_verano.jpg' %}" alt="Copa de Verano CEFUSA" class="w-full h-full object-cover" />
+                <img src="https://bocajuniors2016.wordpress.com/wp-content/uploads/2016/02/72847_000.jpg" alt="Copa de Verano CEFUSA" class="w-full h-full object-cover" />
             </div>
             <div class="flex flex-col gap-2">
                 <p class="text-gray-400 text-lg">Torneo</p>
-                <p class="text-3xl font-bold text-white">Copa de Verano CEFUSA</p>
+                <p class="text-3xl text-white font-subtitle">Copa de Verano CEFUSA</p>
                 <p class="text-xl text-gray-300">15-20 de julio</p>
             </div>
         </div>
         <div class="flex flex-col gap-4 w-1/2">
             <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
-                <img src="{% static 'images/torneo_nacional.jpg' %}" alt="Torneo Nacional Juvenil" class="w-full h-full object-cover" />
+                <img src="https://scontent.fbaq8-1.fna.fbcdn.net/v/t39.30808-6/489918295_1228820912577775_6626766674420830097_n.jpg?stp=dst-jpg_s960x960_tt6&_nc_cat=102&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=F_tDr7lGCIQQ7kNvwGLZ2US&_nc_oc=AdldjjAtmCAfw8dvHHfLQPPR0nk_-8NGWHI09OFtqEoNdrs3ktFVZ1gnnpGEgoC0ziQ&_nc_zt=23&_nc_ht=scontent.fbaq8-1.fna&_nc_gid=J66Tt1rwzKz6Z6Rz96sKcw&oh=00_Afd-sgpvqNhw9fzu0mcZnx176rcRrXg-YafluFsQ_Vr54g&oe=68EE4A8E" alt="Torneo Nacional Juvenil" class="w-full h-full object-cover" />
             </div>
             <div class="flex flex-col gap-2">
                 <p class="text-gray-400 text-lg">Torneo</p>
-                <p class="text-3xl font-bold text-white">Torneo Nacional Juvenil</p>
+                <p class="text-3xl text-white font-subtitle">Torneo Nacional Juvenil</p>
                 <p class="text-xl text-gray-300">5-10 de agosto</p>
             </div>
         </div>
@@ -144,21 +168,21 @@
     <div class="flex flex-row gap-8">
         <div class="flex flex-col gap-4 w-1/2">
             <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
-                <img src="{% static 'images/exhibición_navidad.jpg' %}" alt="Exhibición Navidad" class="w-full h-full object-cover" />
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3YnBvFaHtWt-Vm8ApP16IOCp4aDq6P8ANjA&s" alt="Exhibición Navidad" class="w-full h-full object-cover" />
             </div>
             <div class="flex flex-col gap-2">
                 <p class="text-gray-400 text-lg">Torneo</p>
-                <p class="text-3xl font-bold text-white">Exhibición Navidad</p>
+                <p class="text-3xl text-white font-subtitle">Exhibición Navidad</p>
                 <p class="text-xl text-gray-300">1-3 de diciembre</p>
             </div>
         </div>
         <div class="flex flex-col gap-4 w-1/2">
             <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
-                <img src="{% static 'images/clasificatorios_regionales.jpg' %}" alt="Clasificatorios Regionales" class="w-full h-full object-cover" />
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzs-GuJcfyXkDH4SH-cpaZLKzfQ8YZL9BYIQ&s" alt="Clasificatorios Regionales" class="w-full h-full object-cover" />
             </div>
             <div class="flex flex-col gap-2">
                 <p class="text-gray-400 text-lg">Torneo</p>
-                <p class="text-3xl font-bold text-white">Clasificatorios Regionales</p>
+                <p class="text-3xl text-white font-subtitle">Clasificatorios Regionales</p>
                 <p class="text-xl text-gray-300">20-25 de septiembre</p>
             </div>
         </div>
@@ -170,26 +194,26 @@
 <div x-show="currentSlide === 2" :class="{'carousel-slide-active': currentSlide === 2, 'carousel-slide-inactive': currentSlide !== 2}" class="carousel-slide">
 <div class="px-3">
 <div class="bg-black/70 rounded-2xl shadow-2xl p-12 min-h-[400px] overflow-y-auto max-w-5xl w-full mx-auto flex flex-col justify-center">
-<h2 class="text-4xl font-bold text-white mb-8 mt-2">Partidos</h2>
+<h2 class="text-4xl text-white mb-8 mt-2 font-title">Partidos</h2>
 <div class="space-y-6">
     <div class="flex flex-row gap-8">
         <div class="flex flex-col gap-4 w-1/2">
             <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
-                <img src="{% static 'images/u17_vs_rivals_fc.jpg' %}" alt="U17 vs. Rivals FC" class="w-full h-full object-cover" />
+                <img src="https://scontent.fbaq8-1.fna.fbcdn.net/v/t39.30808-6/524113006_1333773928753057_7543002104686226213_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=127cfc&_nc_ohc=ofXfE7dVJC4Q7kNvwGIgcyD&_nc_oc=AdnoL77ffEE-Ev35_Dip8BG2eqqOlvcxXXhaPksfPWKC2HoVQtTJiRWoEnWj9v3WoG0&_nc_zt=23&_nc_ht=scontent.fbaq8-1.fna&_nc_gid=ONOLGSzbdLJw3NG_CkvFWg&oh=00_Affe4UIOQV70uaR6o4VS8t8H5dDWX39ByCQxggbDJ2O31w&oe=68EE4CBB" alt="U17 vs. Rivals FC" class="w-full h-full object-cover" />
             </div>
             <div class="flex flex-col gap-2">
                 <p class="text-gray-400 text-lg">Partido</p>
-                <p class="text-3xl font-bold text-white">U17 vs. Rivals FC</p>
+                <p class="text-3xl text-white font-subtitle">U17 vs. Rivals FC</p>
                 <p class="text-xl text-gray-300">Sábado, 10:00 AM</p>
             </div>
         </div>
         <div class="flex flex-col gap-4 w-1/2">
             <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
-                <img src="{% static 'images/u15_vs_eagles_academy.jpg' %}" alt="U15 vs. Eagles Academy" class="w-full h-full object-cover" />
+                <img src="https://scontent.fbaq8-1.fna.fbcdn.net/v/t39.30808-6/516070036_1315105053953278_9080547571882265324_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=127cfc&_nc_ohc=MHSW2EhmBeQQ7kNvwGKaCXE&_nc_oc=Adk6teOtzG2DrjsHAKu7XGq0vAc352poFM2B7U4h_-ENRJjSLmgyJFbzs-GgaNNK5vg&_nc_zt=23&_nc_ht=scontent.fbaq8-1.fna&_nc_gid=f_5o6fHm2dN3M8FfNwlNHA&oh=00_AfeU1FkNAe3fU6Spms8le53ptNUIJJ9bT4Zo3NiiAnAijg&oe=68EE4B43" alt="U15 vs. Eagles Academy" class="w-full h-full object-cover" />
             </div>
             <div class="flex flex-col gap-2">
                 <p class="text-gray-400 text-lg">Partido</p>
-                <p class="text-3xl font-bold text-white">U15 vs. Eagles Academy</p>
+                <p class="text-3xl text-white font-subtitle">U15 vs. Eagles Academy</p>
                 <p class="text-xl text-gray-300">Sábado, 12:00 PM</p>
             </div>
         </div>
@@ -197,21 +221,21 @@
     <div class="flex flex-row gap-8">
         <div class="flex flex-col gap-4 w-1/2">
             <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
-                <img src="{% static 'images/u19_vs_titans_united.jpg' %}" alt="U19 vs. Titans United" class="w-full h-full object-cover" />
+                <img src="https://scontent.fbaq8-1.fna.fbcdn.net/v/t39.30808-6/492408968_1251600536970397_483189845452657679_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=127cfc&_nc_ohc=UprTOIWgduAQ7kNvwH7xZ2R&_nc_oc=AdkBgrH1YrWN8ESuk5Z8iY9FjYC6l6vVmrSpG4PtnzbFzbYVhi3rllJDUNKgYHPA8hI&_nc_zt=23&_nc_ht=scontent.fbaq8-1.fna&_nc_gid=Yh3en72Sc5Q1vhxMIx53gg&oh=00_AffxeV0poZBQTtEa2FRSQUEKU2AZQBA_90byO2qv9cgceg&oe=68EE3157" alt="U19 vs. Titans United" class="w-full h-full object-cover" />
             </div>
             <div class="flex flex-col gap-2">
                 <p class="text-gray-400 text-lg">Partido</p>
-                <p class="text-3xl font-bold text-white">U19 vs. Titans United</p>
+                <p class="text-3xl text-white font-subtitle">U19 vs. Titans United</p>
                 <p class="text-xl text-gray-300">Domingo, 2:00 PM</p>
             </div>
         </div>
         <div class="flex flex-col gap-4 w-1/2">
             <div class="h-48 w-full rounded-xl flex-shrink-0 mb-4 overflow-hidden">
-                <img src="{% static 'images/u17_vs_phoenix_fc.jpg' %}" alt="U17 vs. Phoenix FC" class="w-full h-full object-cover" />
+                <img src="https://scontent.fbaq8-1.fna.fbcdn.net/v/t39.30808-6/538382824_1357973836333066_3622324040579687866_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_ohc=Xoj48W9VCtkQ7kNvwFxhl_Y&_nc_oc=AdnaUqrWeMaUcYV2rWjQizhMjByey6szaUk0f2vIYWrMD-z-LFtda1GY06FpYSSXvD4&_nc_zt=23&_nc_ht=scontent.fbaq8-1.fna&_nc_gid=P7-aVwCg_jY7f4TfhQidUw&oh=00_AfdY-EO14Kc3vjl3fMVtfhaV1UhK_j0m2d2b9y1WFOtOQg&oe=68EE2DB2" alt="U17 vs. Phoenix FC" class="w-full h-full object-cover" />
             </div>
             <div class="flex flex-col gap-2">
                 <p class="text-gray-400 text-lg">Partido</p>
-                <p class="text-3xl font-bold text-white">U17 vs. Phoenix FC</p>
+                <p class="text-3xl text-white font-subtitle">U17 vs. Phoenix FC</p>
                 <p class="text-xl text-gray-300">Miércoles, 7:00 PM</p>
             </div>
         </div>
@@ -284,11 +308,52 @@
   </div>
 </footer>
 
-
-
-
+<!-- Botón flotante de WhatsApp -->
+<a href="https://wa.me/3002545318" 
+   target="_blank" 
+   rel="noopener noreferrer"
+   class="whatsapp-float fixed bottom-6 right-6 w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 z-50">
+  <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.484 3.488"/>
+  </svg>
+</a>
 
 </div>
 <script defer="" src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
+
+<script>
+// Script para posicionar el botón de WhatsApp
+document.addEventListener('DOMContentLoaded', function() {
+    const whatsappBtn = document.querySelector('.whatsapp-float');
+    const footer = document.querySelector('footer');
+    
+    function positionWhatsAppButton() {
+        if (!whatsappBtn || !footer) return;
+        
+        const footerRect = footer.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        const btnHeight = 56; // 14 * 4 = 56px (w-14 h-14)
+        const margin = 24; // 6 * 4 = 24px (bottom-6 right-6)
+        
+        // Si el footer está visible en la pantalla
+        if (footerRect.top < windowHeight) {
+            // Cambiar a posición absoluta, encima del footer
+            whatsappBtn.style.position = 'absolute';
+            whatsappBtn.style.bottom = `${footer.offsetHeight + margin}px`;
+            whatsappBtn.style.right = `${margin}px`;
+        } else {
+            // Mantener posición fija
+            whatsappBtn.style.position = 'fixed';
+            whatsappBtn.style.bottom = `${margin}px`;
+            whatsappBtn.style.right = `${margin}px`;
+        }
+    }
+    
+    // Ejecutar al cargar y al hacer scroll
+    positionWhatsAppButton();
+    window.addEventListener('scroll', positionWhatsAppButton);
+    window.addEventListener('resize', positionWhatsAppButton);
+});
+</script>
 
 </body></html>
