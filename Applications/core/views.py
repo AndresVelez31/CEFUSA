@@ -17,8 +17,12 @@ from .utils import (
 import json
 import re
 
+
 def landing(request):
     return render(request, 'cefusa_landing.html')
+
+def about_us(request):
+    return render(request, 'about_us.html')
 
 @login_required
 def home_page(request):
