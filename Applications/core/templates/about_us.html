@@ -70,33 +70,56 @@
 
             <div class="space-y-10">
                 <!-- QUIÉNES SOMOS -->
-                <section>
-                    <h2 class="text-4xl font-title text-[var(--primary-color)] mb-4">Quiénes Somos</h2>
-                    <p class="text-xl text-gray-200 leading-relaxed">
+                <section class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
+                    <!-- Texto -->
+                    <div class="md:w-1/2">
+                        <h2 class="text-4xl font-title text-[var(--primary-color)] mb-4">Quiénes Somos</h2>
+                        <p class="text-xl text-gray-200 leading-relaxed">
                         En CEFUSA (Corporación Deportiva de Fútbol de Sabaneta),
                         somos una corporación creada en 1983 dedicada a la formación integral de deportistas, promoviendo el desarrollo técnico, táctico y humano
-                        en cada uno de nuestros jugadores. Buscamos inspirar la excelencia, el trabajo en equipo y el compromiso dentro y fuera del campo.
-                    </p>
-                </section>
+                         en cada uno de nuestros jugadores. Buscamos inspirar la excelencia, el trabajo en equipo y el compromiso dentro y fuera del campo.
+                        </p>
+                    </div>
 
+                     <!-- Imagen -->
+                    <div class="md:w-1/2 flex justify-center">
+                        <img src="{% static 'images/quienes_somos.jpg' %}" alt="Imagen sobre nosotros"
+                    class="w-80 md:w-full h-80 rounded-lg shadow-lg">
+                    </div>
+                </section>
+               
                 <!-- MISIÓN -->
-                <section>
-                    <h2 class="text-4xl font-title text-[var(--primary-color)] mb-4">Misión</h2>
-                    <p class="text-xl text-gray-200 leading-relaxed">
-                        Nuestra misión es formar futbolistas íntegros que combinen habilidad deportiva con valores humanos sólidos,
-                        fomentando la disciplina, la responsabilidad y el respeto. Nos comprometemos a brindar un entorno de aprendizaje
-                        seguro, inclusivo y de alto rendimiento, contribuyendo al crecimiento del fútbol en nuestra comunidad.
+                <section class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
+                    <!-- Texto -->
+                    <div class="md:w-1/2">
+                        <h2 class="text-4xl font-title text-[var(--primary-color)] mb-4">Misión</h2>
+                        <p class="text-xl text-gray-200 leading-relaxed">
+                            Nuestra misión es formar futbolistas íntegros que combinen habilidad deportiva con valores humanos sólidos,
+                            fomentando la disciplina, la responsabilidad y el respeto. Nos comprometemos a brindar un entorno de aprendizaje
+                            seguro, inclusivo y de alto rendimiento, contribuyendo al crecimiento del fútbol en nuestra comunidad.
                     </p>
+                    </div>
+                     <!-- Imagen -->
+                    <div class="md:w-1/2 flex justify-center">
+                        <img src="{% static 'images/misión.jpg' %}" alt="Imagen sobre la misión"
+                             class="w-80 md:w-full h-80 rounded-lg shadow-lg">
+                    </div>
                 </section>
 
                 <!-- VISIÓN -->
-                <section>
-                    <h2 class="text-4xl font-title text-[var(--primary-color)] mb-4">Visión</h2>
-                    <p class="text-xl text-gray-200 leading-relaxed">
-                        Ser reconocidos a nivel nacional como una de las academias deportivas líderes en formación de talentos,
-                        destacando por nuestro modelo pedagógico innovador, nuestros logros competitivos y el impacto positivo
-                        que generamos en la sociedad a través del deporte.
-                    </p>
+                <section class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
+                    <div class="md:w-1/2">
+                        <h2 class="text-4xl font-title text-[var(--primary-color)] mb-4">Visión</h2>
+                        <p class="text-xl text-gray-200 leading-relaxed">
+                            Ser reconocidos a nivel nacional como una de las academias deportivas líderes en formación de talentos,
+                            destacando por nuestro modelo pedagógico innovador, nuestros logros competitivos y el impacto positivo
+                            que generamos en la sociedad a través del deporte.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 flex justify-center">
+                        <img src="{% static 'images/visión.jpg' %}" alt="Imagen sobre la visión"
+                             class="w-64 md:w-full h-80 rounded-lg shadow-lg">
+                    </div>
                 </section>
 
                 <!-- POLÍTICAS DE CALIDAD -->
