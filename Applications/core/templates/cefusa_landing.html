@@ -64,7 +64,7 @@
     </style>
 </head>
 <body>
-<div class="relative flex size-full min-h-screen flex-col bg-cover bg-center" style='background-image: url("/static/Fondo%20CEFUSA.jpg");'>
+<div class="relative flex size-full min-h-screen flex-col bg-cover bg-center" style='background-image: url("{% if landing_page and landing_page.background %}{{ landing_page.background.url }}{% else %}{% static "Fondo%20CEFUSA.jpg" %}{% endif %}");'>
         
 <header class="bg-black/80 py-4 px-6 flex justify-between items-center sticky top-0 z-50 w-full backdrop-blur-sm">
 <div class="flex items-center space-x-3">
@@ -82,8 +82,8 @@
 <div class="m-auto flex w-full max-w-6xl min-h-[350px] flex-col bg-black/80 backdrop-blur-md shadow-2xl rounded-2xl">
 <main class="flex-grow bg-transparent rounded-t-2xl">
 <div class="relative w-full text-center p-8 bg-transparent">
-<h1 class="text-5xl text-white font-title">Bienvenido a CEFUSA</h1>
-<h3 class="text-3xl text-gray-300 mt-3 font-subtitle">Tu viaje hacia la excelencia futbolística comienza aquí.</h3>
+<h1 class="text-5xl text-white font-title">{{ landing_page.title|default:"Bienvenido a CEFUSA" }}</h1>
+<h3 class="text-3xl text-gray-300 mt-3 font-subtitle">{{ landing_page.subtitle|default:"Tu viaje hacia la excelencia futbolística comienza aquí." }}</h3>
 </div>
 <div class="bg-transparent py-8 px-4 sm:px-6 lg:px-8" x-data="{ currentSlide: 0, totalSlides: 3 }">
 <div class="relative">
@@ -94,22 +94,20 @@
 <div class="bg-black/70 rounded-2xl shadow-2xl p-12 min-h-[400px] overflow-y-auto max-w-5xl w-full mx-auto flex flex-col justify-center">
 <h2 class="text-4xl text-white mb-8 mt-2 font-title">Últimas Noticias</h2>
 <div class="space-y-6">
-<div class="flex flex-col gap-4">
-<div class="h-48 bg-center bg-cover rounded-xl flex-shrink-0 mb-4" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDKuCveCqvkN4xTnN8fXIFacv_9EEc2u4hvbJZwVyLettjzyfoupmE0lx6-bHu8nQfWHTWprwZfSU3bgY-CEv-QF9ZvILWwQl0-1QAmmolvmGmGgsFT4jdZ83lRawRNtcrWVNoCfaHpKrnmY8fbcVXtnadPvMZQXn_qLyH_0Jh0QwViZoREZ721sB2KlNF3si2TjgMolLE249Nk0LwBwPKn-oqH838d6PNLjkt_kv6dQnZhuyGWULNyXr2PxoyjWgb2utf7TBZVgmk");'></div>
-<div class="flex flex-col gap-2">
-<p class="text-gray-400 text-lg">Noticias del Club</p>
-<p class="text-3xl text-white font-subtitle">CEFUSA Anuncia Nueva Instalación de Entrenamiento</p>
-<p class="text-xl text-gray-300">CEFUSA se complace en anunciar la apertura de nuestra nueva instalación de entrenamiento de última generación. Esta instalación proporcionará a nuestros atletas los mejores recursos para desarrollar sus habilidades y alcanzar su máximo potencial.</p>
-</div>
-</div>
-<div class="flex flex-col gap-4">
-<div class="h-48 bg-center bg-cover rounded-xl flex-shrink-0 mb-4" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDvUiyoX3jDTJ_JIZELc72X02bHiChlrlL3Drs-LctiMKXCV1qJRZoTKS8NutZKNe6D63SQzK-TU2TJCsrjwJSqaE11mw2pxawYeU44g4oj3oWY-bKv-JwWx9ev3niQz_bvSZdXHrM8Fekw75b40cTYtFs3iGDLIl6KPgUy1-e8X6jDGaWc6SLSBvcRVSOXS59lp1JWScolsZjfmc_VdabhNvj5ngBLyXZ11vXWXVv5VGhFTqJY0rRtXcdqWK94PW24Qyu_wfq2H3c");'></div>
-<div class="flex flex-col gap-2">
-<p class="text-gray-400 text-lg">Noticias del Club</p>
-<p class="text-3xl text-white font-subtitle">CEFUSA U17 Campeones del Campeonato Nacional</p>
-<p class="text-xl text-gray-300">¡Felicitaciones al equipo CEFUSA U17 por ganar el Campeonato Nacional! Su arduo trabajo y dedicación a lo largo de la temporada han dado sus frutos, y estamos increíblemente orgullosos de su logro.</p>
-</div>
-</div>
+{% for slide in landing_slides %}
+    {% if slide.section == 'news' %}
+        <div class="flex flex-col gap-4">
+            <div class="h-48 bg-center bg-cover rounded-xl flex-shrink-0 mb-4" style='background-image: url("{% if slide.image %}{{ slide.image.url }}{% else %}{% static "images/default_news.jpg" %}{% endif %}");'></div>
+            <div class="flex flex-col gap-2">
+                <p class="text-gray-400 text-lg">Noticias del Club</p>
+                <p class="text-3xl text-white font-subtitle">{{ slide.title }}</p>
+                <p class="text-xl text-gray-300">{{ slide.content }}</p>
+            </div>
+        </div>
+    {% endif %}
+{% empty %}
+    <p class="text-gray-400">No hay noticias configuradas.</p>
+{% endfor %}
 </div>
 </div>
 </div>

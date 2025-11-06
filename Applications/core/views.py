@@ -1,6 +1,8 @@
 
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.urls import reverse
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -18,7 +20,16 @@ import json
 import re
 
 def landing(request):
-    return render(request, 'cefusa_landing.html')
+    # Render landing page and provide dynamic content if exists
+    from .models import LandingPage
+
+    page = LandingPage.objects.first()
+    slides = page.slides.filter(active=True) if page else []
+    context = {
+        'landing_page': page,
+        'landing_slides': slides,
+    }
+    return render(request, 'cefusa_landing.html', context)
 
 @login_required
 def home_page(request):
@@ -48,6 +59,7 @@ def home_page(request):
         'can_access_dashboard': user_can_access_dashboard(user),
         'can_access_payments': user_can_access_payments(user),
         'can_access_users': user_can_access_users(user),
+        'can_access_home_content': user_is_admin(user),  # Solo admins pueden gestionar contenido
         'can_crud': user_can_crud(user),
     }
     
@@ -446,3 +458,118 @@ def reset_password(request):
         return JsonResponse({
             'error': 'Error del servidor. Intente nuevamente.'
         }, status=500)
+
+
+# ==================== LANDING PAGE MANAGEMENT VIEWS ====================
+@login_required
+def manage_landing(request):
+    """Listado y acceso a edición de la landing page (solo staff)."""
+    if not request.user.is_staff:
+        return HttpResponseForbidden('No autorizado')
+
+    from .models import LandingPage
+    page, _ = LandingPage.objects.get_or_create(pk=1)
+    slides = page.slides.all()
+
+    return render(request, 'home_content_management.html', {
+        'page': page,
+        'slides': slides,
+    })
+
+
+@login_required
+def edit_landing_page(request):
+    """Editar la configuración general de la landing page."""
+    if not request.user.is_staff:
+        return HttpResponseForbidden('No autorizado')
+
+    from .models import LandingPage
+    from .forms import LandingPageForm
+
+    page, _ = LandingPage.objects.get_or_create(pk=1)
+
+    if request.method == 'POST':
+        form = LandingPageForm(request.POST, request.FILES, instance=page)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Página principal actualizada correctamente.')
+            return redirect('manage_landing')
+    else:
+        form = LandingPageForm(instance=page)
+
+    return render(request, 'edit_home_content.html', {
+        'form': form,
+        'page': page,
+    })
+
+
+@login_required
+def create_landing_slide(request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden('No autorizado')
+
+    from .models import LandingPage, LandingSlide
+    from .forms import LandingSlideForm
+
+    page, _ = LandingPage.objects.get_or_create(pk=1)
+
+    if request.method == 'POST':
+        form = LandingSlideForm(request.POST, request.FILES)
+        if form.is_valid():
+            slide = form.save(commit=False)
+            slide.page = page
+            slide.save()
+            messages.success(request, 'Slide creado correctamente.')
+            return redirect('manage_landing')
+    else:
+        form = LandingSlideForm()
+
+    return render(request, 'edit_home_content.html', {
+        'form': form,
+        'creating': True,
+    })
+
+
+@login_required
+def edit_landing_slide(request, slide_id):
+    if not request.user.is_staff:
+        return HttpResponseForbidden('No autorizado')
+
+    from .models import LandingSlide
+    from .forms import LandingSlideForm
+
+    slide = get_object_or_404(LandingSlide, pk=slide_id)
+
+    if request.method == 'POST':
+        form = LandingSlideForm(request.POST, request.FILES, instance=slide)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Slide actualizado correctamente.')
+            return redirect('manage_landing')
+    else:
+        form = LandingSlideForm(instance=slide)
+
+    return render(request, 'edit_home_content.html', {
+        'form': form,
+        'slide': slide,
+    })
+
+
+@login_required
+def delete_landing_slide(request, slide_id):
+    if not request.user.is_staff:
+        return HttpResponseForbidden('No autorizado')
+
+    from .models import LandingSlide
+
+    slide = get_object_or_404(LandingSlide, pk=slide_id)
+    if request.method == 'POST':
+        slide.delete()
+        messages.success(request, 'Slide eliminado correctamente.')
+        return redirect('manage_landing')
+
+    # GET -> confirm
+    return render(request, 'edit_home_content.html', {
+        'confirm_delete': True,
+        'slide': slide,
+    })
