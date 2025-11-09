@@ -19,6 +19,7 @@ from .utils import (
 import json
 import re
 
+
 def landing(request):
     # Render landing page and provide dynamic content if exists
     from .models import LandingPage
@@ -30,6 +31,9 @@ def landing(request):
         'landing_slides': slides,
     }
     return render(request, 'cefusa_landing.html', context)
+
+def about_us(request):
+    return render(request, 'about_us.html')
 
 @login_required
 def home_page(request):

@@ -1,0 +1,183 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Space+Grotesk%3Awght%40400%3B500%3B700&amp;family=Bricolage+Grotesque%3Awght%40200%3B300%3B400%3B500%3B600%3B700%3B800" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<title>Sobre Nosotros - CEFUSA</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+
+<style type="text/tailwindcss">
+    :root {
+        --primary-color: #2F663C;
+        --secondary-color: #1a1a1a;
+        --background-color: #0a0a0a;
+        --text-primary: #ffffff;
+        --text-secondary: #cccccc;
+        --accent-color: #2F663C;
+    }
+
+    body {
+        font-family: 'Space Grotesk', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-primary);
+    }
+
+    @font-face {
+        font-family: 'Almaq W01 Rough';
+        src: url('{% static "fonts/AlmaqW01-Rough.woff2" %}') format('woff2'),
+             url('{% static "fonts/AlmaqW01-Rough.woff" %}') format('woff');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    .font-title {
+        font-family: 'Almaq W01 Rough', 'Arial Black', sans-serif;
+    }
+
+    .font-subtitle {
+        font-family: 'Bricolage Grotesque', 'Arial Narrow', sans-serif !important;
+    }
+</style>
+</head>
+
+<body>
+<div class="relative flex size-full min-h-screen flex-col bg-cover bg-center" style='background-image: url("/static/Fondo%20CEFUSA.jpg");'>
+
+    <!--  HEADER  -->
+    <header class="bg-black/80 py-4 px-6 flex justify-between items-center sticky top-0 z-50 w-full backdrop-blur-sm">
+        <div class="flex items-center space-x-3">
+            <img src="{% static 'logo CEFUSA.png' %}" alt="logo CEFUSA" class="h-20 w-auto mr-2" />
+            <h2 class="text-5xl text-[var(--text-primary)] uppercase font-title">CEFUSA</h2>
+        </div>
+        <nav class="flex items-center space-x-4">
+            <a href="/" class="text-[var(--text-primary)] hover:text-[var(--primary-color)] transition-colors duration-300 px-4 py-2 rounded-md">Inicio</a>
+            <button class="bg-[var(--primary-color)] text-white px-6 py-3 rounded-md font-bold hover:bg-opacity-90 transition-colors duration-300" onclick="window.location.href='/login/'">
+                <span class="truncate">Login</span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT  -->
+    <main class="flex-grow flex items-center justify-center p-6 relative z-10 animate-fade-in">
+        <div class="bg-black/80 backdrop-blur-md shadow-2xl rounded-2xl p-10 max-w-5xl w-full">
+            <h1 class="text-5xl font-title text-center mb-6 text-white">Sobre Nosotros</h1>
+            <p class="text-center text-gray-300 text-3xl mb-10 font-subtitle">El deporte tiene el poder de transformar el mundo✨.</p>
+
+            <div class="space-y-10">
+                <!-- QUIÉNES SOMOS -->
+                <section class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
+                    <!-- Texto -->
+                    <div class="md:w-1/2">
+                        <h2 class="text-4xl font-title text-[var(--primary-color)] mb-4">Quiénes Somos</h2>
+                        <p class="text-xl text-gray-200 leading-relaxed">
+                        En CEFUSA (Corporación Deportiva de Fútbol de Sabaneta),
+                        somos una corporación creada en 1983 dedicada a la formación integral de deportistas, promoviendo el desarrollo técnico, táctico y humano
+                         en cada uno de nuestros jugadores. Buscamos inspirar la excelencia, el trabajo en equipo y el compromiso dentro y fuera del campo.
+                        </p>
+                    </div>
+
+                     <!-- Imagen -->
+                    <div class="md:w-1/2 flex justify-center">
+                        <img src="{% static 'images/quienes_somos.jpg' %}" alt="Imagen sobre nosotros"
+                    class="w-80 md:w-full h-80 rounded-lg shadow-lg">
+                    </div>
+                </section>
+               
+                <!-- MISIÓN -->
+                <section class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
+                    <!-- Texto -->
+                    <div class="md:w-1/2">
+                        <h2 class="text-4xl font-title text-[var(--primary-color)] mb-4">Misión</h2>
+                        <p class="text-xl text-gray-200 leading-relaxed">
+                            Nuestra misión es formar futbolistas íntegros que combinen habilidad deportiva con valores humanos sólidos,
+                            fomentando la disciplina, la responsabilidad y el respeto. Nos comprometemos a brindar un entorno de aprendizaje
+                            seguro, inclusivo y de alto rendimiento, contribuyendo al crecimiento del fútbol en nuestra comunidad.
+                    </p>
+                    </div>
+                     <!-- Imagen -->
+                    <div class="md:w-1/2 flex justify-center">
+                        <img src="{% static 'images/misión.jpg' %}" alt="Imagen sobre la misión"
+                             class="w-80 md:w-full h-80 rounded-lg shadow-lg">
+                    </div>
+                </section>
+
+                <!-- VISIÓN -->
+                <section class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
+                    <div class="md:w-1/2">
+                        <h2 class="text-4xl font-title text-[var(--primary-color)] mb-4">Visión</h2>
+                        <p class="text-xl text-gray-200 leading-relaxed">
+                            Ser reconocidos a nivel nacional como una de las academias deportivas líderes en formación de talentos,
+                            destacando por nuestro modelo pedagógico innovador, nuestros logros competitivos y el impacto positivo
+                            que generamos en la sociedad a través del deporte.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 flex justify-center">
+                        <img src="{% static 'images/visión.jpg' %}" alt="Imagen sobre la visión"
+                             class="w-64 md:w-full h-80 rounded-lg shadow-lg">
+                    </div>
+                </section>
+
+                <!-- POLÍTICAS DE CALIDAD -->
+                <section>
+                    <h2 class="text-4xl font-title text-[var(--primary-color)] mb-4">Políticas de Calidad</h2>
+                    <ul class="list-disc list-inside text-xl text-gray-200 leading-relaxed space-y-2">
+                        <li>Compromiso con la mejora continua de nuestros procesos formativos y administrativos.</li>
+                        <li>Promoción de valores éticos, deportivos y sociales en cada integrante del club.</li>
+                        <li>Garantía de un entorno deportivo seguro, inclusivo y respetuoso.</li>
+                        <li>Innovación constante en nuestras metodologías de entrenamiento y gestión.</li>
+                        <li>Fomento de la excelencia y el desarrollo integral de cada jugador y entrenador.</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-black/80 backdrop-blur-sm py-6 px-10 w-full relative z-10 mt-auto">
+        <div class="w-full relative">
+            <div class="flex flex-col md:flex-row items-center justify-between text-center md:text-left gap-6">
+
+                <div>
+                    <h3 class="text-2xl text-white font-title">Contáctanos</h3>
+                    <p class="text-sm text-gray-300">
+                        cefusacorporaciondeportiva@gmail.com | +57 300 2545318
+                    </p>
+                </div>
+
+                <div class="absolute left-1/2 -translate-x-1/2 flex items-center space-x-6">
+                    <a href="https://www.facebook.com/CorporacionDeportivaCefusa"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="flex items-center justify-center w-12 h-12 rounded-full bg-[#1877f2] hover:bg-[#166fe5] text-white transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl">
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                    </a>
+
+                    <a href="https://www.instagram.com/cefusacorporaciondeportiva/?hl=es-la"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tr from-purple-500 via-pink-500 to-orange-400 hover:from-purple-600 hover:via-pink-600 hover:to-orange-500 text-white transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl">
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.584-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.07-1.644-.07-4.85s.013-3.583.07-4.849c.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <div>
+                    <p class="text-gray-400 text-sm md:text-right">
+                        © 2025 CEFUSA. Todos los derechos reservados.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</div>
+</body>
+</html>
