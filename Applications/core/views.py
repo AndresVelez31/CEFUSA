@@ -483,13 +483,21 @@ def manage_landing(request):
     if not request.user.is_staff:
         return HttpResponseForbidden('No autorizado')
 
+    from django.core.paginator import Paginator
     from .models import LandingPage
+    
     page, _ = LandingPage.objects.get_or_create(pk=1)
-    slides = page.slides.all()
+    slides = page.slides.all().order_by('-id')
+    
+    # Paginación: 10 slides por página
+    paginator = Paginator(slides, 10)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
 
     return render(request, 'home_content_management.html', {
         'page': page,
-        'slides': slides,
+        'slides': page_obj,
+        'paginator': paginator,
     })
 
 

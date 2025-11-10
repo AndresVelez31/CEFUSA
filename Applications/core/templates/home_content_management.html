@@ -1,204 +1,213 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
+{% block title %}Gestión de Contenido - CEFUSA{% endblock %}
+{% block content %}
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gestión de Contenido - CEFUSA</title>
+<style>
+  :root {
+    --primary-green: #2F663C;
+    --dark-bg: #1a1a1a;
+    --light-gray: #f8f9fa;
+  }
 
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  .main-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
 
-  <style>
-    :root {
-      --primary-green: #2F663C;
-      --dark-bg: #1a1a1a;
-      --light-gray: #f8f9fa;
-    }
+  .header-section {
+    background: white;
+    color: #333;
+    padding: 2rem;
+    border-bottom: 2px solid #e0e0e0;
+  }
 
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: white;
-      min-height: 100vh;
-      padding: 2rem 0;
-    }
+  .config-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--primary-green);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
 
-    .main-card {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
+  .btn-custom-primary {
+    background: var(--primary-green);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
 
-    .header-section {
-      background: white;
-      color: #333;
-      padding: 2rem;
-      border-bottom: 2px solid #e0e0e0;
-    }
+  .btn-custom-primary:hover {
+    background: #1a4d2e;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(47, 102, 60, 0.3);
+    color: white;
+  }
 
-    .config-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      border-left: 4px solid var(--primary-green);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    }
+  .btn-custom-success {
+    background: #28a745;
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
 
-    .btn-custom-primary {
-      background: var(--primary-green);
-      border: none;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 500;
-      transition: all 0.2s ease;
-    }
+  .btn-custom-success:hover {
+    background: #218838;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    color: white;
+  }
 
-    .btn-custom-primary:hover {
-      background: #1a4d2e;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(47, 102, 60, 0.3);
-      color: white;
-    }
+  .table-modern {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    background: white;
+  }
 
-    .btn-custom-success {
-      background: #28a745;
-      border: none;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 500;
-      transition: all 0.2s ease;
-    }
+  .table-modern thead {
+    background: var(--primary-green);
+    color: white;
+  }
 
-    .btn-custom-success:hover {
-      background: #218838;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
-      color: white;
-    }
+  .table-modern tbody tr {
+    transition: all 0.2s ease;
+    background: white;
+  }
 
-    .table-modern {
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      background: white;
-    }
+  .table-modern tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
 
-    .table-modern thead {
-      background: var(--primary-green);
-      color: white;
-    }
+  .badge-custom {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 500;
+  }
 
-    .table-modern tbody tr {
-      transition: all 0.2s ease;
-      background: white;
-    }
+  .action-btn {
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
 
-    .table-modern tbody tr:hover {
-      background-color: #f8f9fa;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
+  .action-btn-edit {
+    background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
+    color: white;
+    border: none;
+  }
 
-    .badge-custom {
-      padding: 0.4rem 0.8rem;
-      border-radius: 6px;
-      font-weight: 500;
-    }
+  .action-btn-edit:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(47, 102, 60, 0.4);
+    color: white;
+  }
 
-    .action-btn {
-      padding: 0.4rem 1rem;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
+  .action-btn-delete {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    border: none;
+  }
 
-    .action-btn-edit {
-      background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
-      color: white;
-      border: none;
-    }
+  .action-btn-delete:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    color: white;
+  }
 
-    .action-btn-edit:hover {
-      transform: scale(1.05);
-      box-shadow: 0 5px 15px rgba(47, 102, 60, 0.4);
-      color: white;
-    }
+  .back-link {
+    color: var(--primary-green);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-    .action-btn-delete {
-      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-      color: white;
-      border: none;
-    }
+  .back-link:hover {
+    color: #1a4d2e;
+    transform: translateX(-5px);
+  }
 
-    .action-btn-delete:hover {
-      transform: scale(1.05);
-      box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
-      color: white;
-    }
+  .section-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
 
-    .back-link {
-      color: var(--primary-green);
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
+  .section-news {
+    background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
+    color: white;
+  }
 
-    .back-link:hover {
-      color: #1a4d2e;
-      transform: translateX(-5px);
-    }
+  .section-tournaments {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+  }
 
-    .section-badge {
-      display: inline-block;
-      padding: 0.4rem 1rem;
-      border-radius: 20px;
-      font-size: 0.875rem;
-      font-weight: 600;
-    }
+  .section-matches {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+  }
 
-    .section-news {
-      background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
-      color: white;
-    }
+  .table-container {
+    max-height: 600px;
+    overflow-y: auto;
+    border-radius: 8px;
+  }
 
-    .section-tournaments {
-      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-      color: white;
-    }
+  .pagination {
+    margin-top: 1.5rem;
+  }
 
-    .section-matches {
-      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-      color: white;
-    }
-  </style>
-</head>
+  .page-link {
+    color: var(--primary-green);
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 0.75rem;
+  }
 
-<body>
-  <div class="container">
-    <div class="main-card">
+  .page-link:hover {
+    color: #1a4d2e;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+  }
+
+  .page-item.active .page-link {
+    background-color: var(--primary-green);
+    border-color: var(--primary-green);
+    color: white;
+  }
+
+  .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+  }
+</style>
+
+<div class="main-card">
       <!-- Header -->
       <div class="header-section">
-        <div class="d-flex justify-content-between align-items-center position-relative">
-          <div>
-            <h1 class="mb-2"><i class="bi bi-house-heart-fill me-3"></i>Gestión de Contenido</h1>
-            <p class="mb-0 opacity-75">Administra el contenido de la página principal</p>
-          </div>
-          <a href="/home/" class="btn btn-light btn-lg">
-            <i class="bi bi-arrow-left me-2"></i>Volver
-          </a>
+        <div>
+          <h1 class="mb-2"><i class="bi bi-house-heart-fill me-3"></i>Gestión de Contenido</h1>
+          <p class="mb-0 opacity-75">Administra el contenido de la página principal</p>
         </div>
       </div>
 
@@ -291,6 +300,75 @@
             </tbody>
           </table>
         </div>
+
+        <!-- Paginación -->
+        {% if paginator.num_pages > 1 %}
+        <nav aria-label="Navegación de páginas" class="mt-4">
+          <ul class="pagination justify-content-center">
+            <!-- Botón Primera Página -->
+            {% if slides.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1" aria-label="Primera">
+                  <i class="bi bi-chevron-double-left"></i>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ slides.previous_page_number }}" aria-label="Anterior">
+                  <i class="bi bi-chevron-left"></i>
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-double-left"></i></span>
+              </li>
+              <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+              </li>
+            {% endif %}
+
+            <!-- Números de Página -->
+            {% for num in paginator.page_range %}
+              {% if slides.number == num %}
+                <li class="page-item active">
+                  <span class="page-link">{{ num }}</span>
+                </li>
+              {% elif num > slides.number|add:'-3' and num < slides.number|add:'3' %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            <!-- Botón Última Página -->
+            {% if slides.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ slides.next_page_number }}" aria-label="Siguiente">
+                  <i class="bi bi-chevron-right"></i>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ paginator.num_pages }}" aria-label="Última">
+                  <i class="bi bi-chevron-double-right"></i>
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+              </li>
+              <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-double-right"></i></span>
+              </li>
+            {% endif %}
+          </ul>
+          
+          <!-- Información de paginación -->
+          <div class="text-center text-muted mt-2">
+            <small>
+              Mostrando {{ slides.start_index }} - {{ slides.end_index }} de {{ paginator.count }} contenido{{ paginator.count|pluralize }}
+            </small>
+          </div>
+        </nav>
+        {% endif %}
         {% else %}
         <div class="text-center py-5">
           <i class="bi bi-inbox display-1 text-muted"></i>
@@ -311,10 +389,5 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Bootstrap 5 JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+{% endblock %}
