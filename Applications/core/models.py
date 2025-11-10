@@ -34,6 +34,7 @@ class LandingSlide(models.Model):
 
 	class Meta:
 		ordering = ['section', 'order']
+		unique_together = [['section', 'order']]
 		verbose_name = 'Landing Slide'
 		verbose_name_plural = 'Landing Slides'
 

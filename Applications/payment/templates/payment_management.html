@@ -40,8 +40,8 @@
         </div>
 
         <div class="col-md-2">
-          <label class="form-label">Fecha</label>
-          <input type="date" class="form-control" name="date" value="{{ request.GET.date }}">
+          <label class="form-label">Fecha (mm/dd/aaaa)</label>
+          <input type="date" class="form-control" name="date" value="{{ request.GET.date }}" placeholder="mm/dd/aaaa">
         </div>
 
         <div class="col-md-2">
@@ -106,7 +106,6 @@
         <table class="table table-bordered table-hover">
           <thead class="table-info">
             <tr>
-              <th>ID</th>
               <th>Cuenta</th>
               <th>Fecha</th>
               <th>Nombre</th>
@@ -121,9 +120,8 @@
           <tbody>
             {% for payment in payments %}
               <tr>
-                <td>{{ payment.id }}</td>
                 <td>{{ payment.account }}</td>
-                <td>{{ payment.date }}</td>
+                <td>{{ payment.date|date:"m/d/Y" }}</td>
                 <td>{{ payment.player_name }}</td>
                 <td>{{ payment.reason }}</td>
                 <td>${{ payment.amount }}</td>
@@ -131,22 +129,15 @@
                 <td>{{ payment.sales_invoice }}</td>
                 <td>{% if payment.fk_responsible %}{{ payment.fk_responsible.first_name }} {{ payment.fk_responsible.last_name }}{% else %}-{%endif %}</td>
                 <td>
-                  <div class="btn-group btn-group-sm">
-                      <button type="button" class="btn btn-outline-primary btn-view-payment" 
-                              data-payment-id="{{ payment.id }}">
-                          Ver
-                      </button>
-                      <!-- Nuevo botón Editar directo -->
-                      <button type="button" class="btn btn-outline-warning btn-edit-pago"
-                              data-payment-id="{{ payment.id }}">
-                          Editar
-                      </button>
-                  </div>
+                  <button type="button" class="btn btn-outline-primary btn-sm btn-view-payment" 
+                          data-payment-id="{{ payment.id }}">
+                      Ver
+                  </button>
                 </td>
               </tr>
               {% empty %}
               <tr>
-                <td colspan="10" class="text-center">No hay pagos registrados</td>
+                <td colspan="9" class="text-center">No hay pagos registrados</td>
               </tr>
             {% endfor %}
           </tbody>
@@ -202,10 +193,10 @@
               </select>
             </div>
             <div class="mb-3">
-              <label class="form-label">Fecha</label>
+              <label class="form-label">Fecha (mm/dd/aaaa)</label>
               <input type="date" name="date" class="form-control" required
                      oninvalid="this.setCustomValidity('Por favor, completa este campo')" 
-                     oninput="this.setCustomValidity('')">
+                     oninput="this.setCustomValidity('')" placeholder="mm/dd/aaaa">
             </div>
             <div class="mb-3">
               <label class="form-label">Descripción</label>
@@ -440,10 +431,9 @@
                   </div>
                   <div class="card-body">
                     <div class="row g-2">
-                      <div class="col-6"><strong>ID:</strong><br><span class="text-muted">${paymentData.id}</span></div>
                       <div class="col-6"><strong>Cuenta:</strong><br><span class="text-muted">${paymentData.account}</span></div>
-                      <div class="col-6"><strong>Fecha:</strong><br><span class="text-muted">${paymentData.date}</span></div>
-                      <div class="col-6"><strong>Sucursal:</strong><br><span class="text-muted">${paymentData.branch || 'No especificada'}</span></div>
+                      <div class="col-6"><strong>Fecha (mm/dd/aaaa):</strong><br><span class="text-muted">${paymentData.date}</span></div>
+                      <div class="col-12"><strong>Sucursal:</strong><br><span class="text-muted">${paymentData.branch || 'No especificada'}</span></div>
                       <div class="col-12"><strong>Descripción:</strong><br><span class="text-muted">${paymentData.description || 'Sin descripción'}</span></div>
                     </div>
                   </div>
@@ -461,7 +451,6 @@
                       <div class="col-12"><strong>Motivo:</strong><br><span class="text-muted">${paymentData.reason}</span></div>
                       <div class="col-12"><strong>Responsable:</strong><br>
                         <span class="text-muted">${paymentData.responsible.name}</span>
-                        ${paymentData.responsible.id ? `<small class="text-secondary">(ID: ${paymentData.responsible.id})</small>` : ''}
                       </div>
                     </div>
                   </div>

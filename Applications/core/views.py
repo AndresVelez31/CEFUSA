@@ -25,10 +25,22 @@ def landing(request):
     from .models import LandingPage
 
     page = LandingPage.objects.first()
-    slides = page.slides.filter(active=True) if page else []
+    
+    # Separar slides por sección para facilitar el template
+    if page:
+        news_slides = page.slides.filter(section='news', active=True).order_by('order')[:4]
+        tournaments_slides = page.slides.filter(section='tournaments', active=True).order_by('order')[:4]
+        matches_slides = page.slides.filter(section='matches', active=True).order_by('order')[:4]
+    else:
+        news_slides = []
+        tournaments_slides = []
+        matches_slides = []
+    
     context = {
         'landing_page': page,
-        'landing_slides': slides,
+        'news_slides': news_slides,
+        'tournaments_slides': tournaments_slides,
+        'matches_slides': matches_slides,
     }
     return render(request, 'cefusa_landing.html', context)
 
@@ -471,13 +483,21 @@ def manage_landing(request):
     if not request.user.is_staff:
         return HttpResponseForbidden('No autorizado')
 
+    from django.core.paginator import Paginator
     from .models import LandingPage
+    
     page, _ = LandingPage.objects.get_or_create(pk=1)
-    slides = page.slides.all()
+    slides = page.slides.all().order_by('-id')
+    
+    # Paginación: 10 slides por página
+    paginator = Paginator(slides, 10)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
 
     return render(request, 'home_content_management.html', {
         'page': page,
-        'slides': slides,
+        'slides': page_obj,
+        'paginator': paginator,
     })
 
 

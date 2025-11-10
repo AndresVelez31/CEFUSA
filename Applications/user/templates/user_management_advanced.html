@@ -187,14 +187,13 @@
                         <table class="table table-sm table-hover">
                             <thead class="table-primary">
                                 <tr>
-                                    <th>ID</th><th>Identificación</th><th>Nombre Completo</th>
+                                    <th>Identificación</th><th>Nombre Completo</th>
                                     <th>Ciudad</th><th>Correo</th><th>Régimen</th><th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for guardian in guardians %}
                                 <tr>
-                                    <td>{{ guardian.id }}</td>
                                     <td>{{ guardian.identification }}</td>
                                     <td>{{ guardian.first_name }} {{ guardian.last_name }}</td>
                                     <td>{{ guardian.city }}</td>
@@ -223,14 +222,13 @@
                         <table class="table table-sm table-hover">
                             <thead class="table-success">
                                 <tr>
-                                    <th>ID</th><th>Identificación</th><th>Nombre Completo</th>
+                                    <th>Identificación</th><th>Nombre Completo</th>
                                     <th>Edad</th><th>Ciudad</th><th>Institución</th><th>Acudiente</th><th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for player in players %}
                                 <tr>
-                                    <td>{{ player.id }}</td>
                                     <td>{{ player.identification }}</td>
                                     <td>{{ player.first_name }} {{ player.last_name }}</td>
                                     <td>{{ player.age }} años</td>

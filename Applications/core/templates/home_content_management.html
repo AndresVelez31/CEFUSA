@@ -1,211 +1,213 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gestión de Contenido - CEFUSA</title>
-  
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <style>
-    :root {
-      --primary-green: #2F663C;
-      --dark-bg: #1a1a1a;
-      --light-gray: #f8f9fa;
-    }
-    
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 2rem 0;
-    }
-    
-    .main-card {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      overflow: hidden;
-    }
-    
-    .header-section {
-      background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
-      color: white;
-      padding: 2.5rem;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .header-section::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      animation: pulse 15s infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-    
-    .config-card {
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      border-radius: 15px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      border-left: 5px solid var(--primary-green);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .config-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
-    
-    .btn-custom-primary {
-      background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
-      border: none;
-      color: white;
-      padding: 0.8rem 2rem;
-      border-radius: 50px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(47, 102, 60, 0.3);
-    }
-    
-    .btn-custom-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(47, 102, 60, 0.5);
-      color: white;
-    }
-    
-    .btn-custom-success {
-      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-      border: none;
-      color: white;
-      padding: 0.8rem 2rem;
-      border-radius: 50px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
-    }
-    
-    .btn-custom-success:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(17, 153, 142, 0.5);
-      color: white;
-    }
-    
-    .table-modern {
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    }
-    
-    .table-modern thead {
-      background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
-      color: white;
-    }
-    
-    .table-modern tbody tr {
-      transition: all 0.3s ease;
-    }
-    
-    .table-modern tbody tr:hover {
-      background-color: #f8f9fa;
-      transform: scale(1.02);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    
-    .badge-custom {
-      padding: 0.5rem 1rem;
-      border-radius: 50px;
-      font-weight: 500;
-    }
-    
-    .action-btn {
-      padding: 0.4rem 1rem;
-      border-radius: 20px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-    
-    .action-btn-edit {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-    }
-    
-    .action-btn-edit:hover {
-      transform: scale(1.05);
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-      color: white;
-    }
-    
-    .action-btn-delete {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      color: white;
-      border: none;
-    }
-    
-    .action-btn-delete:hover {
-      transform: scale(1.05);
-      box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
-      color: white;
-    }
-    
-    .back-link {
-      color: var(--primary-green);
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .back-link:hover {
-      color: #1a4d2e;
-      transform: translateX(-5px);
-    }
-    
-    .section-badge {
-      display: inline-block;
-      padding: 0.4rem 1rem;
-      border-radius: 20px;
-      font-size: 0.875rem;
-      font-weight: 600;
-    }
-    
-    .section-news { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-    .section-tournaments { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
-    .section-matches { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="main-card">
+{% block title %}Gestión de Contenido - CEFUSA{% endblock %}
+{% block content %}
+
+<style>
+  :root {
+    --primary-green: #2F663C;
+    --dark-bg: #1a1a1a;
+    --light-gray: #f8f9fa;
+  }
+
+  .main-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .header-section {
+    background: white;
+    color: #333;
+    padding: 2rem;
+    border-bottom: 2px solid #e0e0e0;
+  }
+
+  .config-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--primary-green);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .btn-custom-primary {
+    background: var(--primary-green);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .btn-custom-primary:hover {
+    background: #1a4d2e;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(47, 102, 60, 0.3);
+    color: white;
+  }
+
+  .btn-custom-success {
+    background: #28a745;
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .btn-custom-success:hover {
+    background: #218838;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    color: white;
+  }
+
+  .table-modern {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    background: white;
+  }
+
+  .table-modern thead {
+    background: var(--primary-green);
+    color: white;
+  }
+
+  .table-modern tbody tr {
+    transition: all 0.2s ease;
+    background: white;
+  }
+
+  .table-modern tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .badge-custom {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+
+  .action-btn {
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .action-btn-edit {
+    background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
+    color: white;
+    border: none;
+  }
+
+  .action-btn-edit:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(47, 102, 60, 0.4);
+    color: white;
+  }
+
+  .action-btn-delete {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    border: none;
+  }
+
+  .action-btn-delete:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    color: white;
+  }
+
+  .back-link {
+    color: var(--primary-green);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .back-link:hover {
+    color: #1a4d2e;
+    transform: translateX(-5px);
+  }
+
+  .section-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .section-news {
+    background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
+    color: white;
+  }
+
+  .section-tournaments {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+  }
+
+  .section-matches {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+  }
+
+  .table-container {
+    max-height: 600px;
+    overflow-y: auto;
+    border-radius: 8px;
+  }
+
+  .pagination {
+    margin-top: 1.5rem;
+  }
+
+  .page-link {
+    color: var(--primary-green);
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .page-link:hover {
+    color: #1a4d2e;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+  }
+
+  .page-item.active .page-link {
+    background-color: var(--primary-green);
+    border-color: var(--primary-green);
+    color: white;
+  }
+
+  .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+  }
+</style>
+
+<div class="main-card">
       <!-- Header -->
       <div class="header-section">
-        <div class="d-flex justify-content-between align-items-center position-relative">
-          <div>
-            <h1 class="mb-2"><i class="bi bi-house-heart-fill me-3"></i>Gestión de Contenido</h1>
-            <p class="mb-0 opacity-75">Administra el contenido de la página principal</p>
-          </div>
-          <a href="/home/" class="btn btn-light btn-lg">
-            <i class="bi bi-arrow-left me-2"></i>Volver
-          </a>
+        <div>
+          <h1 class="mb-2"><i class="bi bi-house-heart-fill me-3"></i>Gestión de Contenido</h1>
+          <p class="mb-0 opacity-75">Administra el contenido de la página principal</p>
         </div>
       </div>
 
@@ -214,18 +216,18 @@
         <div class="config-card">
           <div class="row align-items-center">
             <div class="col-md-8">
-              <h3 class="mb-3"><i class="bi bi-gear-fill text-primary me-2"></i>Configuración General</h3>
+              <h3 class="mb-3"><i class="bi bi-gear-fill me-2" style="color: var(--primary-green);"></i>Configuración General</h3>
               <div class="mb-2">
-                <strong><i class="bi bi-card-heading me-2"></i>Título:</strong> 
+                <strong><i class="bi bi-card-heading me-2"></i>Título:</strong>
                 <span class="text-muted">{{ page.title|default:"No configurado" }}</span>
               </div>
               <div class="mb-2">
-                <strong><i class="bi bi-textarea-t me-2"></i>Subtítulo:</strong> 
+                <strong><i class="bi bi-textarea-t me-2"></i>Subtítulo:</strong>
                 <span class="text-muted">{{ page.subtitle|default:"No configurado" }}</span>
               </div>
               {% if page.background %}
               <div class="mb-2">
-                <strong><i class="bi bi-image me-2"></i>Imagen de fondo:</strong> 
+                <strong><i class="bi bi-image me-2"></i>Imagen de fondo:</strong>
                 <span class="badge bg-success">Configurada</span>
               </div>
               {% endif %}
@@ -240,9 +242,9 @@
 
         <!-- Slides Section -->
         <div class="d-flex justify-content-between align-items-center mb-4">
-          <h3><i class="bi bi-collection-play-fill text-success me-2"></i>Slides del Carrusel</h3>
+          <h3><i class="bi bi-collection-play-fill text-success me-2"></i>Contenido</h3>
           <a href="{% url 'create_landing_slide' %}" class="btn btn-custom-success">
-            <i class="bi bi-plus-circle me-2"></i>Nuevo Slide
+            <i class="bi bi-plus-circle me-2"></i>Nuevo Contenido
           </a>
         </div>
 
@@ -259,7 +261,7 @@
               </tr>
             </thead>
             <tbody>
-            {% for slide in slides %}
+              {% for slide in slides %}
               <tr>
                 <td class="text-center">
                   <span class="section-badge 
@@ -280,9 +282,9 @@
                 </td>
                 <td class="text-center">
                   {% if slide.active %}
-                    <span class="badge badge-custom bg-success"><i class="bi bi-check-circle-fill"></i> Activo</span>
+                  <span class="badge badge-custom bg-success"><i class="bi bi-check-circle-fill"></i> Activo</span>
                   {% else %}
-                    <span class="badge badge-custom bg-secondary"><i class="bi bi-x-circle-fill"></i> Inactivo</span>
+                  <span class="badge badge-custom bg-secondary"><i class="bi bi-x-circle-fill"></i> Inactivo</span>
                   {% endif %}
                 </td>
                 <td class="text-center">
@@ -294,17 +296,86 @@
                   </a>
                 </td>
               </tr>
-            {% endfor %}
+              {% endfor %}
             </tbody>
           </table>
         </div>
+
+        <!-- Paginación -->
+        {% if paginator.num_pages > 1 %}
+        <nav aria-label="Navegación de páginas" class="mt-4">
+          <ul class="pagination justify-content-center">
+            <!-- Botón Primera Página -->
+            {% if slides.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1" aria-label="Primera">
+                  <i class="bi bi-chevron-double-left"></i>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ slides.previous_page_number }}" aria-label="Anterior">
+                  <i class="bi bi-chevron-left"></i>
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-double-left"></i></span>
+              </li>
+              <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+              </li>
+            {% endif %}
+
+            <!-- Números de Página -->
+            {% for num in paginator.page_range %}
+              {% if slides.number == num %}
+                <li class="page-item active">
+                  <span class="page-link">{{ num }}</span>
+                </li>
+              {% elif num > slides.number|add:'-3' and num < slides.number|add:'3' %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            <!-- Botón Última Página -->
+            {% if slides.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ slides.next_page_number }}" aria-label="Siguiente">
+                  <i class="bi bi-chevron-right"></i>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ paginator.num_pages }}" aria-label="Última">
+                  <i class="bi bi-chevron-double-right"></i>
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+              </li>
+              <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-double-right"></i></span>
+              </li>
+            {% endif %}
+          </ul>
+          
+          <!-- Información de paginación -->
+          <div class="text-center text-muted mt-2">
+            <small>
+              Mostrando {{ slides.start_index }} - {{ slides.end_index }} de {{ paginator.count }} contenido{{ paginator.count|pluralize }}
+            </small>
+          </div>
+        </nav>
+        {% endif %}
         {% else %}
         <div class="text-center py-5">
           <i class="bi bi-inbox display-1 text-muted"></i>
-          <h4 class="mt-3 text-muted">No hay slides configurados</h4>
-          <p class="text-muted">Crea tu primer slide para comenzar</p>
+          <h4 class="mt-3 text-muted">No hay contenido configurado</h4>
+          <p class="text-muted">Crea tu primer contenido para comenzar</p>
           <a href="{% url 'create_landing_slide' %}" class="btn btn-custom-success mt-3">
-            <i class="bi bi-plus-circle me-2"></i>Crear Primer Slide
+            <i class="bi bi-plus-circle me-2"></i>Crear Primer Contenido
           </a>
         </div>
         {% endif %}
@@ -318,9 +389,5 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Bootstrap 5 JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock %}

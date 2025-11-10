@@ -185,7 +185,7 @@ def get_payment_details(request, payment_id):
     payment_data = {
         'id': payment.id,
         'account': payment.get_account_display(),
-        'date': payment.date.strftime('%d/%m/%Y') if payment.date else '',
+        'date': payment.date.strftime('%m/%d/%Y') if payment.date else '',
         'description': payment.description or '',
         'branch': payment.branch or '',
         'reference_1': payment.reference_1 or '',
