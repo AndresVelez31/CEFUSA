@@ -24,10 +24,22 @@ def landing(request):
     from .models import LandingPage
 
     page = LandingPage.objects.first()
-    slides = page.slides.filter(active=True) if page else []
+    
+    # Separar slides por sección para facilitar el template
+    if page:
+        news_slides = page.slides.filter(section='news', active=True).order_by('order')[:4]
+        tournaments_slides = page.slides.filter(section='tournaments', active=True).order_by('order')[:4]
+        matches_slides = page.slides.filter(section='matches', active=True).order_by('order')[:4]
+    else:
+        news_slides = []
+        tournaments_slides = []
+        matches_slides = []
+    
     context = {
         'landing_page': page,
-        'landing_slides': slides,
+        'news_slides': news_slides,
+        'tournaments_slides': tournaments_slides,
+        'matches_slides': matches_slides,
     }
     return render(request, 'cefusa_landing.html', context)
 

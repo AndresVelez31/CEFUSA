@@ -1,59 +1,65 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Editar Contenido - CEFUSA</title>
-  
+
   <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+
   <style>
     :root {
-      --primary-green: #2F663C;
+      --primary-green: #2f663c;
       --dark-bg: #1a1a1a;
       --light-gray: #f8f9fa;
     }
-    
+
     body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: "Poppins", sans-serif;
+      background: white;
       min-height: 100vh;
       padding: 2rem 0;
     }
-    
+
     .main-card {
       background: white;
       border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
       overflow: hidden;
       max-width: 900px;
       margin: 0 auto;
     }
-    
+
     .header-section {
-      background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
+      background: linear-gradient(135deg,
+          var(--primary-green) 0%,
+          #1a4d2e 100%);
       color: white;
       padding: 2rem;
       position: relative;
       overflow: hidden;
     }
-    
+
     .header-section::before {
-      content: '';
+      content: "";
       position: absolute;
       top: -50%;
       right: -50%;
       width: 200%;
       height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      background: radial-gradient(circle,
+          rgba(255, 255, 255, 0.1) 0%,
+          transparent 70%);
     }
-    
+
     .form-label {
       font-weight: 600;
       color: #333;
@@ -62,20 +68,22 @@
       align-items: center;
       gap: 0.5rem;
     }
-    
-    .form-control, .form-select {
+
+    .form-control,
+    .form-select {
       border: 2px solid #e0e0e0;
       border-radius: 10px;
       padding: 0.75rem 1rem;
       transition: all 0.3s ease;
       font-size: 1rem;
     }
-    
-    .form-control:focus, .form-select:focus {
+
+    .form-control:focus,
+    .form-select:focus {
       border-color: var(--primary-green);
       box-shadow: 0 0 0 0.2rem rgba(47, 102, 60, 0.15);
     }
-    
+
     .form-control-file {
       border: 2px dashed #e0e0e0;
       border-radius: 10px;
@@ -83,14 +91,16 @@
       cursor: pointer;
       transition: all 0.3s ease;
     }
-    
+
     .form-control-file:hover {
       border-color: var(--primary-green);
       background-color: #f8f9fa;
     }
-    
+
     .btn-custom-primary {
-      background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
+      background: linear-gradient(135deg,
+          var(--primary-green) 0%,
+          #1a4d2e 100%);
       border: none;
       color: white;
       padding: 0.8rem 2.5rem;
@@ -99,13 +109,13 @@
       transition: all 0.3s ease;
       box-shadow: 0 4px 15px rgba(47, 102, 60, 0.3);
     }
-    
+
     .btn-custom-primary:hover {
       transform: translateY(-3px);
       box-shadow: 0 6px 20px rgba(47, 102, 60, 0.5);
       color: white;
     }
-    
+
     .btn-custom-secondary {
       background: #6c757d;
       border: none;
@@ -115,37 +125,37 @@
       font-weight: 600;
       transition: all 0.3s ease;
     }
-    
+
     .btn-custom-secondary:hover {
       background: #5a6268;
       transform: translateY(-2px);
       color: white;
     }
-    
+
     .btn-danger-custom {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
       border: none;
       color: white;
       padding: 0.8rem 2.5rem;
       border-radius: 50px;
       font-weight: 600;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+      box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
     }
-    
+
     .btn-danger-custom:hover {
       transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(245, 87, 108, 0.5);
+      box-shadow: 0 6px 20px rgba(220, 53, 69, 0.5);
       color: white;
     }
-    
+
     .alert-custom {
       border-radius: 15px;
       border: none;
       padding: 1rem 1.5rem;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
-    
+
     .form-group-custom {
       background: #f8f9fa;
       padding: 1.5rem;
@@ -153,7 +163,7 @@
       margin-bottom: 1.5rem;
       border-left: 4px solid var(--primary-green);
     }
-    
+
     .help-text {
       color: #6c757d;
       font-size: 0.875rem;
@@ -162,7 +172,7 @@
       align-items: center;
       gap: 0.5rem;
     }
-    
+
     .error-text {
       color: #dc3545;
       font-size: 0.875rem;
@@ -171,16 +181,18 @@
       align-items: center;
       gap: 0.5rem;
     }
-    
+
     .confirm-delete-card {
-      background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
-      border: 2px solid #f5576c;
+      background: white;
+      border: 2px solid #dc3545;
       border-radius: 15px;
       padding: 2rem;
       text-align: center;
+      box-shadow: 0 5px 20px rgba(220, 53, 69, 0.15);
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="main-card">
@@ -189,119 +201,115 @@
         <div class="position-relative">
           <h1 class="mb-2">
             <i class="bi bi-pencil-square me-3"></i>
-            {% if confirm_delete %}
-              Confirmar Eliminación
-            {% elif creating %}
-              Crear Nuevo Slide
-            {% elif slide %}
-              Editar Slide
-            {% else %}
-              Editar Configuración
-            {% endif %}
+            {% if confirm_delete %} Confirmar Eliminación {% elif creating %}
+            Crear Nuevo Contenido {% elif slide %} Editar Contenido {% else %} Editar
+            Configuración {% endif %}
           </h1>
-          <p class="mb-0 opacity-75">Modifica el contenido de la página principal</p>
+          <p class="mb-0 opacity-75">
+            Modifica el contenido de la página principal
+          </p>
         </div>
       </div>
 
       <div class="p-4 p-md-5">
         {% if confirm_delete %}
-          <!-- Confirm Delete -->
-          <div class="confirm-delete-card">
-            <i class="bi bi-exclamation-triangle-fill display-1 text-danger mb-3"></i>
-            <h3 class="mb-3">¿Estás seguro?</h3>
-            <p class="lead mb-4">
-              Confirma que deseas eliminar el slide: <br>
-              <strong class="text-danger">{{ slide.title }}</strong>
-            </p>
-            <p class="text-muted mb-4">Esta acción no se puede deshacer.</p>
-            
-            <form method="post" class="d-inline">{% csrf_token %}
-              <button type="submit" class="btn btn-danger-custom me-2">
-                <i class="bi bi-trash-fill me-2"></i>Sí, Eliminar
-              </button>
-              <a href="{% url 'manage_landing' %}" class="btn btn-custom-secondary">
-                <i class="bi bi-x-circle me-2"></i>Cancelar
-              </a>
-            </form>
-          </div>
-        {% else %}
-          <!-- Form -->
-          <form method="post" enctype="multipart/form-data">
+        <!-- Confirm Delete -->
+        <div class="confirm-delete-card">
+          <i class="bi bi-exclamation-triangle-fill display-1 text-danger mb-3"></i>
+          <h3 class="mb-3">¿Estás seguro?</h3>
+          <p class="lead mb-4">
+            Confirma que deseas eliminar el contenido: <br />
+            <strong class="text-danger">{{ slide.title }}</strong>
+          </p>
+          <p class="text-muted mb-4">Esta acción no se puede deshacer.</p>
+
+          <form method="post" class="d-inline">
             {% csrf_token %}
-            
-            {% if form.non_field_errors %}
-              <div class="alert alert-danger alert-custom mb-4">
-                <i class="bi bi-exclamation-circle-fill me-2"></i>
-                {{ form.non_field_errors }}
-              </div>
-            {% endif %}
-
-            <div class="row">
-              {% for field in form.visible_fields %}
-                <div class="col-12 {% if field.name == 'order' or field.name == 'active' %}col-md-6{% endif %}">
-                  <div class="form-group-custom">
-                    <label for="{{ field.id_for_label }}" class="form-label">
-                      {% if field.name == 'section' %}
-                        <i class="bi bi-tag-fill"></i>
-                      {% elif field.name == 'title' %}
-                        <i class="bi bi-card-heading"></i>
-                      {% elif field.name == 'subtitle' %}
-                        <i class="bi bi-textarea-t"></i>
-                      {% elif field.name == 'content' %}
-                        <i class="bi bi-file-text"></i>
-                      {% elif field.name == 'image' or field.name == 'background' %}
-                        <i class="bi bi-image-fill"></i>
-                      {% elif field.name == 'order' %}
-                        <i class="bi bi-sort-numeric-down"></i>
-                      {% elif field.name == 'active' %}
-                        <i class="bi bi-toggle-on"></i>
-                      {% endif %}
-                      {{ field.label }}
-                      {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
-                    </label>
-                    
-                    {% if field.name == 'active' %}
-                      <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="{{ field.id_for_label }}" 
-                               name="{{ field.name }}" {% if field.value %}checked{% endif %}
-                               style="width: 3em; height: 1.5em; cursor: pointer;">
-                        <label class="form-check-label ms-2" for="{{ field.id_for_label }}">
-                          Mostrar este slide en la página
-                        </label>
-                      </div>
-                    {% else %}
-                      {{ field }}
-                    {% endif %}
-                    
-                    {% if field.help_text %}
-                      <div class="help-text">
-                        <i class="bi bi-info-circle-fill"></i>
-                        {{ field.help_text }}
-                      </div>
-                    {% endif %}
-                    
-                    {% if field.errors %}
-                      {% for error in field.errors %}
-                        <div class="error-text">
-                          <i class="bi bi-exclamation-circle-fill"></i>
-                          {{ error }}
-                        </div>
-                      {% endfor %}
-                    {% endif %}
-                  </div>
-                </div>
-              {% endfor %}
-            </div>
-
-            <div class="d-flex gap-3 justify-content-end mt-4 pt-3 border-top">
-              <a href="{% url 'manage_landing' %}" class="btn btn-custom-secondary">
-                <i class="bi bi-x-circle me-2"></i>Cancelar
-              </a>
-              <button type="submit" class="btn btn-custom-primary">
-                <i class="bi bi-check-circle-fill me-2"></i>Guardar Cambios
-              </button>
-            </div>
+            <button type="submit" class="btn btn-danger-custom me-2">
+              <i class="bi bi-trash-fill me-2"></i>Sí, Eliminar
+            </button>
+            <a href="{% url 'manage_landing' %}" class="btn btn-custom-secondary">
+              <i class="bi bi-x-circle me-2"></i>Cancelar
+            </a>
           </form>
+        </div>
+        {% else %}
+        <!-- Form -->
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger alert-custom mb-4">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>
+            {{ form.non_field_errors }}
+          </div>
+          {% endif %}
+
+          <div class="row">
+            {% for field in form.visible_fields %}
+            <div class="col-12 {% if field.name == 'order' or field.name == 'active' %}col-md-6{% endif %}">
+              <div class="form-group-custom">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  {% if field.name == 'section' %}
+                  <i class="bi bi-tag-fill"></i>
+                  {% elif field.name == 'title' %}
+                  <i class="bi bi-card-heading"></i>
+                  {% elif field.name == 'subtitle' %}
+                  <i class="bi bi-textarea-t"></i>
+                  {% elif field.name == 'content' %}
+                  <i class="bi bi-file-text"></i>
+                  {% elif field.name == 'image' or field.name == 'background' %}
+                  <i class="bi bi-image-fill"></i>
+                  {% elif field.name == 'order' %}
+                  <i class="bi bi-sort-numeric-down"></i>
+                  {% elif field.name == 'active' %}
+                  <i class="bi bi-toggle-on"></i>
+                  {% endif %}
+                  {{ field.label }}
+                  {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+
+                {% if field.name == 'active' %}
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="{{ field.id_for_label }}" name="{{ field.name }}"
+                    {% if field.value %}checked{% endif %} style="width: 3em; height: 1.5em; cursor: pointer" />
+                  <label class="form-check-label ms-2" for="{{ field.id_for_label }}">
+                    Mostrar este contenido en la página
+                  </label>
+                </div>
+                {% else %}
+                  {{ field }}
+                {% endif %}
+                
+                {% if field.help_text %}
+                <div class="help-text">
+                  <i class="bi bi-info-circle-fill"></i>
+                  {{ field.help_text }}
+                </div>
+                {% endif %}
+                
+                {% if field.errors %}
+                  {% for error in field.errors %}
+                  <div class="error-text">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    {{ error }}
+                  </div>
+                  {% endfor %}
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="d-flex gap-3 justify-content-end mt-4 pt-3 border-top">
+            <a href="{% url 'manage_landing' %}" class="btn btn-custom-secondary">
+              <i class="bi bi-x-circle me-2"></i>Cancelar
+            </a>
+            <button type="submit" class="btn btn-custom-primary">
+              <i class="bi bi-check-circle-fill me-2"></i>Guardar Cambios
+            </button>
+          </div>
+        </form>
         {% endif %}
       </div>
     </div>
@@ -309,38 +317,75 @@
 
   <!-- Bootstrap 5 JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  
+
   <script>
     // Mejorar el input de archivos
-    document.querySelectorAll('input[type="file"]').forEach(input => {
-      input.classList.add('form-control');
-      
-      input.addEventListener('change', function(e) {
+    document.querySelectorAll('input[type="file"]').forEach((input) => {
+      input.classList.add("form-control");
+
+      input.addEventListener("change", function (e) {
         const fileName = e.target.files[0]?.name;
         if (fileName) {
-          const label = this.parentElement.querySelector('.help-text');
+          const label = this.parentElement.querySelector(".help-text");
           if (label) {
             label.innerHTML = `<i class="bi bi-check-circle-fill text-success"></i> Archivo seleccionado: ${fileName}`;
           }
         }
       });
     });
-    
-    // Textarea auto-resize
-    document.querySelectorAll('textarea').forEach(textarea => {
-      textarea.classList.add('form-control');
-      textarea.style.minHeight = '120px';
+
+    // Textarea auto-resize y contador de caracteres
+    document.querySelectorAll("textarea").forEach((textarea) => {
+      textarea.classList.add("form-control");
+      textarea.style.minHeight = "120px";
+      
+      // Agregar contador de caracteres para el campo de contenido
+      if (textarea.name === 'content') {
+        const maxLength = parseInt(textarea.getAttribute('maxlength')) || 150;
+        const formGroup = textarea.closest('.form-group-custom');
+        
+        // Crear elemento del contador
+        const counterDiv = document.createElement('div');
+        counterDiv.className = 'help-text mt-2';
+        counterDiv.innerHTML = `
+          <i class="bi bi-text-paragraph"></i>
+          <span id="char-counter">
+            <strong>${textarea.value.length}</strong> / ${maxLength} caracteres
+          </span>
+        `;
+        
+        // Insertar después del textarea
+        textarea.parentNode.insertBefore(counterDiv, textarea.nextSibling);
+        
+        // Actualizar contador al escribir
+        textarea.addEventListener('input', function() {
+          const currentLength = this.value.length;
+          const counter = document.getElementById('char-counter');
+          
+          // Cambiar color según la cantidad de caracteres
+          if (currentLength > maxLength) {
+            counter.innerHTML = `<strong class="text-danger">${currentLength}</strong> / ${maxLength} caracteres <span class="text-danger">(Límite excedido)</span>`;
+          } else if (currentLength >= maxLength - 20) {
+            counter.innerHTML = `<strong class="text-warning">${currentLength}</strong> / ${maxLength} caracteres`;
+          } else {
+            counter.innerHTML = `<strong>${currentLength}</strong> / ${maxLength} caracteres`;
+          }
+        });
+      }
     });
-    
+
     // Select styling
-    document.querySelectorAll('select').forEach(select => {
-      select.classList.add('form-select');
+    document.querySelectorAll("select").forEach((select) => {
+      select.classList.add("form-select");
     });
-    
+
     // Input styling
-    document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
-      input.classList.add('form-control');
-    });
+    document
+      .querySelectorAll('input[type="text"], input[type="number"]')
+      .forEach((input) => {
+        input.classList.add("form-control");
+      });
   </script>
 </body>
+
 </html>

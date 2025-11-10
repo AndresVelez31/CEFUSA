@@ -1,170 +1,151 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Gestión de Contenido - CEFUSA</title>
-  
+
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
+
   <style>
     :root {
       --primary-green: #2F663C;
       --dark-bg: #1a1a1a;
       --light-gray: #f8f9fa;
     }
-    
+
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: white;
       min-height: 100vh;
       padding: 2rem 0;
     }
-    
+
     .main-card {
       background: white;
       border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
       overflow: hidden;
     }
-    
+
     .header-section {
-      background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
-      color: white;
-      padding: 2.5rem;
-      position: relative;
-      overflow: hidden;
+      background: white;
+      color: #333;
+      padding: 2rem;
+      border-bottom: 2px solid #e0e0e0;
     }
-    
-    .header-section::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      animation: pulse 15s infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-    
+
     .config-card {
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      border-radius: 15px;
+      background: white;
+      border-radius: 12px;
       padding: 1.5rem;
       margin-bottom: 2rem;
-      border-left: 5px solid var(--primary-green);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-left: 4px solid var(--primary-green);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     }
-    
-    .config-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
-    
+
     .btn-custom-primary {
-      background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
+      background: var(--primary-green);
       border: none;
       color: white;
-      padding: 0.8rem 2rem;
-      border-radius: 50px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(47, 102, 60, 0.3);
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.2s ease;
     }
-    
+
     .btn-custom-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(47, 102, 60, 0.5);
+      background: #1a4d2e;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(47, 102, 60, 0.3);
       color: white;
     }
-    
+
     .btn-custom-success {
-      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      background: #28a745;
       border: none;
       color: white;
-      padding: 0.8rem 2rem;
-      border-radius: 50px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.2s ease;
     }
-    
+
     .btn-custom-success:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(17, 153, 142, 0.5);
+      background: #218838;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
       color: white;
     }
-    
+
     .table-modern {
-      border-radius: 10px;
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      background: white;
     }
-    
+
     .table-modern thead {
-      background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
+      background: var(--primary-green);
       color: white;
     }
-    
+
     .table-modern tbody tr {
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
+      background: white;
     }
-    
+
     .table-modern tbody tr:hover {
       background-color: #f8f9fa;
-      transform: scale(1.02);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
-    
+
     .badge-custom {
-      padding: 0.5rem 1rem;
-      border-radius: 50px;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
       font-weight: 500;
     }
-    
+
     .action-btn {
       padding: 0.4rem 1rem;
-      border-radius: 20px;
+      border-radius: 6px;
       font-size: 0.875rem;
       font-weight: 500;
       transition: all 0.3s ease;
     }
-    
+
     .action-btn-edit {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
       color: white;
       border: none;
     }
-    
+
     .action-btn-edit:hover {
       transform: scale(1.05);
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 5px 15px rgba(47, 102, 60, 0.4);
       color: white;
     }
-    
+
     .action-btn-delete {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
       color: white;
       border: none;
     }
-    
+
     .action-btn-delete:hover {
       transform: scale(1.05);
-      box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+      box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
       color: white;
     }
-    
+
     .back-link {
       color: var(--primary-green);
       text-decoration: none;
@@ -174,12 +155,12 @@
       align-items: center;
       gap: 0.5rem;
     }
-    
+
     .back-link:hover {
       color: #1a4d2e;
       transform: translateX(-5px);
     }
-    
+
     .section-badge {
       display: inline-block;
       padding: 0.4rem 1rem;
@@ -187,12 +168,24 @@
       font-size: 0.875rem;
       font-weight: 600;
     }
-    
-    .section-news { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-    .section-tournaments { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
-    .section-matches { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
+
+    .section-news {
+      background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
+      color: white;
+    }
+
+    .section-tournaments {
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+      color: white;
+    }
+
+    .section-matches {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white;
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="main-card">
@@ -214,18 +207,18 @@
         <div class="config-card">
           <div class="row align-items-center">
             <div class="col-md-8">
-              <h3 class="mb-3"><i class="bi bi-gear-fill text-primary me-2"></i>Configuración General</h3>
+              <h3 class="mb-3"><i class="bi bi-gear-fill me-2" style="color: var(--primary-green);"></i>Configuración General</h3>
               <div class="mb-2">
-                <strong><i class="bi bi-card-heading me-2"></i>Título:</strong> 
+                <strong><i class="bi bi-card-heading me-2"></i>Título:</strong>
                 <span class="text-muted">{{ page.title|default:"No configurado" }}</span>
               </div>
               <div class="mb-2">
-                <strong><i class="bi bi-textarea-t me-2"></i>Subtítulo:</strong> 
+                <strong><i class="bi bi-textarea-t me-2"></i>Subtítulo:</strong>
                 <span class="text-muted">{{ page.subtitle|default:"No configurado" }}</span>
               </div>
               {% if page.background %}
               <div class="mb-2">
-                <strong><i class="bi bi-image me-2"></i>Imagen de fondo:</strong> 
+                <strong><i class="bi bi-image me-2"></i>Imagen de fondo:</strong>
                 <span class="badge bg-success">Configurada</span>
               </div>
               {% endif %}
@@ -240,9 +233,9 @@
 
         <!-- Slides Section -->
         <div class="d-flex justify-content-between align-items-center mb-4">
-          <h3><i class="bi bi-collection-play-fill text-success me-2"></i>Slides del Carrusel</h3>
+          <h3><i class="bi bi-collection-play-fill text-success me-2"></i>Contenido</h3>
           <a href="{% url 'create_landing_slide' %}" class="btn btn-custom-success">
-            <i class="bi bi-plus-circle me-2"></i>Nuevo Slide
+            <i class="bi bi-plus-circle me-2"></i>Nuevo Contenido
           </a>
         </div>
 
@@ -259,7 +252,7 @@
               </tr>
             </thead>
             <tbody>
-            {% for slide in slides %}
+              {% for slide in slides %}
               <tr>
                 <td class="text-center">
                   <span class="section-badge 
@@ -280,9 +273,9 @@
                 </td>
                 <td class="text-center">
                   {% if slide.active %}
-                    <span class="badge badge-custom bg-success"><i class="bi bi-check-circle-fill"></i> Activo</span>
+                  <span class="badge badge-custom bg-success"><i class="bi bi-check-circle-fill"></i> Activo</span>
                   {% else %}
-                    <span class="badge badge-custom bg-secondary"><i class="bi bi-x-circle-fill"></i> Inactivo</span>
+                  <span class="badge badge-custom bg-secondary"><i class="bi bi-x-circle-fill"></i> Inactivo</span>
                   {% endif %}
                 </td>
                 <td class="text-center">
@@ -294,17 +287,17 @@
                   </a>
                 </td>
               </tr>
-            {% endfor %}
+              {% endfor %}
             </tbody>
           </table>
         </div>
         {% else %}
         <div class="text-center py-5">
           <i class="bi bi-inbox display-1 text-muted"></i>
-          <h4 class="mt-3 text-muted">No hay slides configurados</h4>
-          <p class="text-muted">Crea tu primer slide para comenzar</p>
+          <h4 class="mt-3 text-muted">No hay contenido configurado</h4>
+          <p class="text-muted">Crea tu primer contenido para comenzar</p>
           <a href="{% url 'create_landing_slide' %}" class="btn btn-custom-success mt-3">
-            <i class="bi bi-plus-circle me-2"></i>Crear Primer Slide
+            <i class="bi bi-plus-circle me-2"></i>Crear Primer Contenido
           </a>
         </div>
         {% endif %}
@@ -323,4 +316,5 @@
   <!-- Bootstrap 5 JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
