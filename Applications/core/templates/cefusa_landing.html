@@ -83,8 +83,10 @@
                 <h2 class="text-5xl text-[var(--text-primary)] uppercase font-title">CEFUSA</h2>
             </div>
             <nav class="flex items-center space-x-4">
-                <a class="text-[var(--text-primary)] hover:text-[var(--primary-color)] transition-colors duration-300 px-4 py-2 rounded-md"
-                    href="#">Sobre Nosotros</a>
+                <a href="{% url 'about' %}" class="text-[var(--text-primary)] hover:text-[var(--primary-color)] transition-colors duration-300 px-4 py-2 rounded-md"
+                   >
+    Sobre Nosotros
+</a>
                 <button
                     class="bg-[var(--primary-color)] text-white px-6 py-3 rounded-md font-bold hover:bg-opacity-90 transition-colors duration-300"
                     onclick="window.location.href='/login/'">
