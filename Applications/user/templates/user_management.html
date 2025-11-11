@@ -168,7 +168,6 @@
                     <table class="table table-primary">
                         <thead>
                             <tr>
-                                <th scope="col">ID</th>
                                 <th scope="col">Tipo Doc</th>
                                 <th scope="col">Identificación</th>
                                 <th scope="col">Nombres</th>
@@ -183,7 +182,6 @@
                         <tbody id="guardians-body">
                             {% for guardian in guardians %}
                             <tr>
-                                <td>{{ guardian.id }}</td>
                                 <td>{{ guardian.get_document_type_display }}</td>
                                 <td>{{ guardian.identification }}</td>
                                 <td>{{ guardian.first_name }}</td>
@@ -196,7 +194,7 @@
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="10" class="text-center">No hay acudientes registrados</td>
+                                <td colspan="9" class="text-center">No hay acudientes registrados</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -210,7 +208,6 @@
                     <table class="table table-success">
                         <thead>
                             <tr>
-                                <th scope="col">ID</th>
                                 <th scope="col">Tipo Doc</th>
                                 <th scope="col">Identificación</th>
                                 <th scope="col">Nombres</th>
@@ -224,7 +221,6 @@
                         <tbody id="jugadores-body">
                             {% for player in players %}
                             <tr>
-                                <td>{{ player.id }}</td>
                                 <td>{{ player.get_document_type_display }}</td>
                                 <td>{{ player.identification }}</td>
                                 <td>{{ player.first_name }}</td>
@@ -236,7 +232,7 @@
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="10" class="text-center">No hay jugadores registrados</td>
+                                <td colspan="8" class="text-center">No hay jugadores registrados</td>
                             </tr>
                             {% endfor %}
                         </tbody>

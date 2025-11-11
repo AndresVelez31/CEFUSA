@@ -56,6 +56,10 @@ class PaymentForm(forms.ModelForm):
             field.widget.attrs['oninvalid'] = "this.setCustomValidity('Por favor, completa este campo')"
             field.widget.attrs['oninput'] = "this.setCustomValidity('')"
             
+            # Agregar placeholder para el campo de fecha
+            if field_name == 'date':
+                field.widget.attrs['placeholder'] = 'mm/dd/aaaa'
+            
             # Aplicar clases de Bootstrap
             if isinstance(field.widget, forms.Select):
                 field.widget.attrs['class'] = 'form-select'

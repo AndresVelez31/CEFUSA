@@ -1,61 +1,415 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}CEFUSA - Home{% endblock %}
 {% block content %}
-<div class="container-fluid min-vh-100 d-flex justify-content-center align-items-start" style="padding-top: 50px;">
-  <div class="row w-100 justify-content-center">
-    <div class="col-12 col-md-11 col-lg-10">
-      <div class="card shadow p-5" style="min-height: 65vh;">
-        <div class="card-body text-center d-flex flex-column justify-content-center h-100">
-          
-          <h2 class="mb-5 display-3">¿Qué quieres hacer?</h2>
-          <div class="d-grid gap-4 col-10 mx-auto">
-            
-            <!-- Gestión de Usuarios -->
-            {% if can_access_users %}
-              <a href="/user/" class="btn btn-primary btn-xl py-4">
-                <i class="bi bi-people me-3"></i> Gestión de Usuarios
+
+<style>
+  :root {
+    --primary-green: #2F663C;
+    --dark-green: #1a4d2e;
+    --light-green: #4a8556;
+  }
+  
+  body {
+    background: white;
+  }
+  
+  .home-container {
+    padding: 0 0;
+    min-height: 100vh;
+  }
+  
+  .welcome-card {
+    background: white;
+    border-radius: 30px;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.1);
+    overflow: hidden;
+    border: none;
+  }
+  
+  .hero-section {
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+    color: white;
+    padding: 3rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -30%;
+    width: 150%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: pulse 20s infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.2) rotate(180deg); }
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  .hero-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    font-weight: 300;
+  }
+  
+  .modules-section {
+    padding: 3rem 2rem;
+  }
+  
+  .section-title {
+    text-align: center;
+    color: #333;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+    width: 100%;
+  }
+  
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-green), var(--light-green));
+    border-radius: 2px;
+  }
+  
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  .module-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 2rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border: 1px solid #e0e0e0;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .module-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #2F663C;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  
+  .module-card:hover::before {
+    transform: scaleX(1);
+  }
+  
+  .module-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #d0d0d0;
+  }
+  
+  .module-card.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #f8f9fa;
+  }
+  
+  .module-card.disabled:hover {
+    transform: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border-color: #e0e0e0;
+  }
+  
+  .module-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    font-size: 1.8rem;
+    transition: all 0.3s ease;
+    position: relative;
+    flex-shrink: 0;
+  }
+  
+  .module-content {
+    flex: 1;
+    text-align: left;
+  }
+  
+  .module-card:hover .module-icon {
+    transform: scale(1.08);
+  }
+  
+  .module-icon.users {
+    background: #667eea;
+    color: white;
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
+  }
+  
+  .module-icon.payments {
+    background: #11998e;
+    color: white;
+    box-shadow: 0 4px 10px rgba(17, 153, 142, 0.2);
+  }
+  
+  .module-icon.dashboard {
+    background: #f5576c;
+    color: white;
+    box-shadow: 0 4px 10px rgba(245, 87, 108, 0.2);
+  }
+  
+  .module-icon.content {
+    background: #2F663C;
+    color: white;
+    box-shadow: 0 4px 10px rgba(47, 102, 60, 0.2);
+  }
+  
+  .module-icon.disabled-icon {
+    background: #dee2e6;
+    color: #6c757d;
+    box-shadow: none;
+  }
+  
+  .module-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+    color: #2c3e50;
+  }
+  
+  .module-description {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 0.8rem;
+  }
+  
+  .module-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  
+  .badge-readonly {
+    background: #fff3cd;
+    color: #856404;
+  }
+  
+  .badge-unavailable {
+    background: #f8d7da;
+    color: #721c24;
+  }
+  
+  .badge-full-access {
+    background: #d1ecf1;
+    color: #0c5460;
+  }
+  
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2rem;
+    }
+    
+    .module-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .modules-section {
+      padding: 2rem 1rem;
+    }
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .module-card {
+    animation: fadeInUp 0.6s ease backwards;
+  }
+  
+  .module-card:nth-child(1) { animation-delay: 0.1s; }
+  .module-card:nth-child(2) { animation-delay: 0.2s; }
+  .module-card:nth-child(3) { animation-delay: 0.3s; }
+  .module-card:nth-child(4) { animation-delay: 0.4s; }
+</style>
+
+<div class="home-container">
+  <div class="container">
+    <!-- Modules Section -->
+    <div class="modules-section">
+      <div class="module-grid">
+          <!-- Gestión de Usuarios -->
+          {% if can_access_users %}
+            <a href="/user/" class="module-card">
+              <div class="module-content">
+                <h3 class="module-title">Gestión de Usuarios</h3>
+                <p class="module-description">Administra jugadores, acudientes y perfiles de usuario</p>
                 {% if not can_crud %}
-                  <small class="d-block text-light">Solo lectura</small>
+                  <span class="module-badge badge-readonly">
+                    <i class="bi bi-eye-fill me-1"></i>Solo lectura
+                  </span>
+                {% else %}
+                  <span class="module-badge badge-full-access">
+                    <i class="bi bi-pencil-fill me-1"></i>Acceso completo
+                  </span>
                 {% endif %}
-              </a>
-            {% else %}
-              <button class="btn btn-secondary btn-xl py-4" disabled>
-                <i class="bi bi-people me-3"></i> Gestión de Usuarios
-                <small class="d-block">No disponible</small>
-              </button>
-            {% endif %}
-            
-            <!-- Gestión de Pagos -->
-            {% if can_access_payments %}
-              <a href="/payment/" class="btn btn-success btn-xl py-4">
-                <i class="bi bi-cash-coin me-3"></i> Gestión de Pagos
-              </a>
-            {% else %}
-              <button class="btn btn-secondary btn-xl py-4" disabled>
-                <i class="bi bi-cash-coin me-3"></i> Gestión de Pagos
-                <small class="d-block">No disponible</small>
-              </button>
-            {% endif %}
-            
-            <!-- Dashboard -->
-            {% if can_access_dashboard %}
-              <a href="/dashboard/" class="btn btn-warning btn-xl py-4">
-                <i class="bi bi-bar-chart me-3"></i> Ver Dashboard
-              </a>
-            {% else %}
-              <button class="btn btn-secondary btn-xl py-4" disabled>
-                <i class="bi bi-bar-chart me-3"></i> Ver Dashboard
-                <small class="d-block">No disponible</small>
-              </button>
-            {% endif %}
-            
-          </div>
+              </div>
+              <div class="module-icon users">
+                <i class="bi bi-people-fill"></i>
+              </div>
+            </a>
+          {% else %}
+            <div class="module-card disabled">
+              <div class="module-content">
+                <h3 class="module-title">Gestión de Usuarios</h3>
+                <p class="module-description">Administra jugadores, acudientes y perfiles de usuario</p>
+                <span class="module-badge badge-unavailable">
+                  <i class="bi bi-lock-fill me-1"></i>No disponible
+                </span>
+              </div>
+              <div class="module-icon disabled-icon">
+                <i class="bi bi-people-fill"></i>
+              </div>
+            </div>
+          {% endif %}
           
+          <!-- Gestión de Pagos -->
+          {% if can_access_payments %}
+            <a href="/payment/" class="module-card">
+              <div class="module-content">
+                <h3 class="module-title">Gestión de Pagos</h3>
+                <p class="module-description">Controla pagos, cuotas y transacciones financieras</p>
+                <span class="module-badge badge-full-access">
+                  <i class="bi bi-pencil-fill me-1"></i>Acceso completo
+                </span>
+              </div>
+              <div class="module-icon payments">
+                <i class="bi bi-cash-coin"></i>
+              </div>
+            </a>
+          {% else %}
+            <div class="module-card disabled">
+              <div class="module-content">
+                <h3 class="module-title">Gestión de Pagos</h3>
+                <p class="module-description">Controla pagos, cuotas y transacciones financieras</p>
+                <span class="module-badge badge-unavailable">
+                  <i class="bi bi-lock-fill me-1"></i>No disponible
+                </span>
+              </div>
+              <div class="module-icon disabled-icon">
+                <i class="bi bi-cash-coin"></i>
+              </div>
+            </div>
+          {% endif %}
+          
+          <!-- Dashboard -->
+          {% if can_access_dashboard %}
+            <a href="/dashboard/" class="module-card">
+              <div class="module-content">
+                <h3 class="module-title">Dashboard</h3>
+                <p class="module-description">Visualiza estadísticas, reportes y análisis de datos</p>
+                <span class="module-badge badge-full-access">
+                  <i class="bi bi-graph-up me-1"></i>Ver reportes
+                </span>
+              </div>
+              <div class="module-icon dashboard">
+                <i class="bi bi-bar-chart-fill"></i>
+              </div>
+            </a>
+          {% else %}
+            <div class="module-card disabled">
+              <div class="module-content">
+                <h3 class="module-title">Dashboard</h3>
+                <p class="module-description">Visualiza estadísticas, reportes y análisis de datos</p>
+                <span class="module-badge badge-unavailable">
+                  <i class="bi bi-lock-fill me-1"></i>No disponible
+                </span>
+              </div>
+              <div class="module-icon disabled-icon">
+                <i class="bi bi-bar-chart-fill"></i>
+              </div>
+            </div>
+          {% endif %}
+
+          <!-- Gestión de Contenido -->
+          {% if can_access_home_content %}
+            <a href="/manage-home/" class="module-card">
+              <div class="module-content">
+                <h3 class="module-title">Gestión de Contenido</h3>
+                <p class="module-description">Administra noticias, slides y contenido del sitio web</p>
+                <span class="module-badge badge-full-access">
+                  <i class="bi bi-pencil-fill me-1"></i>Acceso completo
+                </span>
+              </div>
+              <div class="module-icon content">
+                <i class="bi bi-house-heart-fill"></i>
+              </div>
+            </a>
+          {% else %}
+            <div class="module-card disabled">
+              <div class="module-content">
+                <h3 class="module-title">Gestión de Contenido</h3>
+                <p class="module-description">Administra noticias, slides y contenido del sitio web</p>
+                <span class="module-badge badge-unavailable">
+                  <i class="bi bi-lock-fill me-1"></i>No disponible
+                </span>
+              </div>
+              <div class="module-icon disabled-icon">
+                <i class="bi bi-house-heart-fill"></i>
+              </div>
+            </div>
+          {% endif %}
         </div>
       </div>
-    </div>
   </div>
 </div>
+
 {% endblock %}
 
 

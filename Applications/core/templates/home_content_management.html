@@ -1,0 +1,393 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Gestión de Contenido - CEFUSA{% endblock %}
+{% block content %}
+
+<style>
+  :root {
+    --primary-green: #2F663C;
+    --dark-bg: #1a1a1a;
+    --light-gray: #f8f9fa;
+  }
+
+  .main-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .header-section {
+    background: white;
+    color: #333;
+    padding: 2rem;
+    border-bottom: 2px solid #e0e0e0;
+  }
+
+  .config-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--primary-green);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .btn-custom-primary {
+    background: var(--primary-green);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .btn-custom-primary:hover {
+    background: #1a4d2e;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(47, 102, 60, 0.3);
+    color: white;
+  }
+
+  .btn-custom-success {
+    background: #28a745;
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .btn-custom-success:hover {
+    background: #218838;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    color: white;
+  }
+
+  .table-modern {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    background: white;
+  }
+
+  .table-modern thead {
+    background: var(--primary-green);
+    color: white;
+  }
+
+  .table-modern tbody tr {
+    transition: all 0.2s ease;
+    background: white;
+  }
+
+  .table-modern tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .badge-custom {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+
+  .action-btn {
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .action-btn-edit {
+    background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
+    color: white;
+    border: none;
+  }
+
+  .action-btn-edit:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(47, 102, 60, 0.4);
+    color: white;
+  }
+
+  .action-btn-delete {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    border: none;
+  }
+
+  .action-btn-delete:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    color: white;
+  }
+
+  .back-link {
+    color: var(--primary-green);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .back-link:hover {
+    color: #1a4d2e;
+    transform: translateX(-5px);
+  }
+
+  .section-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .section-news {
+    background: linear-gradient(135deg, var(--primary-green) 0%, #1a4d2e 100%);
+    color: white;
+  }
+
+  .section-tournaments {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+  }
+
+  .section-matches {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+  }
+
+  .table-container {
+    max-height: 600px;
+    overflow-y: auto;
+    border-radius: 8px;
+  }
+
+  .pagination {
+    margin-top: 1.5rem;
+  }
+
+  .page-link {
+    color: var(--primary-green);
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .page-link:hover {
+    color: #1a4d2e;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+  }
+
+  .page-item.active .page-link {
+    background-color: var(--primary-green);
+    border-color: var(--primary-green);
+    color: white;
+  }
+
+  .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+  }
+</style>
+
+<div class="main-card">
+      <!-- Header -->
+      <div class="header-section">
+        <div>
+          <h1 class="mb-2"><i class="bi bi-house-heart-fill me-3"></i>Gestión de Contenido</h1>
+          <p class="mb-0 opacity-75">Administra el contenido de la página principal</p>
+        </div>
+      </div>
+
+      <div class="p-4 p-md-5">
+        <!-- Configuración General -->
+        <div class="config-card">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <h3 class="mb-3"><i class="bi bi-gear-fill me-2" style="color: var(--primary-green);"></i>Configuración General</h3>
+              <div class="mb-2">
+                <strong><i class="bi bi-card-heading me-2"></i>Título:</strong>
+                <span class="text-muted">{{ page.title|default:"No configurado" }}</span>
+              </div>
+              <div class="mb-2">
+                <strong><i class="bi bi-textarea-t me-2"></i>Subtítulo:</strong>
+                <span class="text-muted">{{ page.subtitle|default:"No configurado" }}</span>
+              </div>
+              {% if page.background %}
+              <div class="mb-2">
+                <strong><i class="bi bi-image me-2"></i>Imagen de fondo:</strong>
+                <span class="badge bg-success">Configurada</span>
+              </div>
+              {% endif %}
+            </div>
+            <div class="col-md-4 text-end">
+              <a href="{% url 'edit_landing_page' %}" class="btn btn-custom-primary">
+                <i class="bi bi-pencil-square me-2"></i>Editar Página
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slides Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h3><i class="bi bi-collection-play-fill text-success me-2"></i>Contenido</h3>
+          <a href="{% url 'create_landing_slide' %}" class="btn btn-custom-success">
+            <i class="bi bi-plus-circle me-2"></i>Nuevo Contenido
+          </a>
+        </div>
+
+        {% if slides %}
+        <div class="table-responsive">
+          <table class="table table-modern mb-0">
+            <thead>
+              <tr>
+                <th class="text-center"><i class="bi bi-tag-fill me-2"></i>Sección</th>
+                <th><i class="bi bi-card-text me-2"></i>Título</th>
+                <th class="text-center"><i class="bi bi-sort-numeric-down me-2"></i>Orden</th>
+                <th class="text-center"><i class="bi bi-toggle-on me-2"></i>Estado</th>
+                <th class="text-center"><i class="bi bi-tools me-2"></i>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for slide in slides %}
+              <tr>
+                <td class="text-center">
+                  <span class="section-badge 
+                    {% if slide.section == 'news' %}section-news
+                    {% elif slide.section == 'tournaments' %}section-tournaments
+                    {% else %}section-matches{% endif %}">
+                    {{ slide.get_section_display }}
+                  </span>
+                </td>
+                <td>
+                  <strong>{{ slide.title|truncatewords:8 }}</strong>
+                  {% if slide.image %}
+                  <br><small class="text-success"><i class="bi bi-image-fill"></i> Con imagen</small>
+                  {% endif %}
+                </td>
+                <td class="text-center">
+                  <span class="badge badge-custom bg-info">{{ slide.order }}</span>
+                </td>
+                <td class="text-center">
+                  {% if slide.active %}
+                  <span class="badge badge-custom bg-success"><i class="bi bi-check-circle-fill"></i> Activo</span>
+                  {% else %}
+                  <span class="badge badge-custom bg-secondary"><i class="bi bi-x-circle-fill"></i> Inactivo</span>
+                  {% endif %}
+                </td>
+                <td class="text-center">
+                  <a href="{% url 'edit_landing_slide' slide.id %}" class="action-btn action-btn-edit me-2">
+                    <i class="bi bi-pencil-fill"></i> Editar
+                  </a>
+                  <a href="{% url 'delete_landing_slide' slide.id %}" class="action-btn action-btn-delete">
+                    <i class="bi bi-trash-fill"></i> Eliminar
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        {% if paginator.num_pages > 1 %}
+        <nav aria-label="Navegación de páginas" class="mt-4">
+          <ul class="pagination justify-content-center">
+            <!-- Botón Primera Página -->
+            {% if slides.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1" aria-label="Primera">
+                  <i class="bi bi-chevron-double-left"></i>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ slides.previous_page_number }}" aria-label="Anterior">
+                  <i class="bi bi-chevron-left"></i>
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-double-left"></i></span>
+              </li>
+              <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+              </li>
+            {% endif %}
+
+            <!-- Números de Página -->
+            {% for num in paginator.page_range %}
+              {% if slides.number == num %}
+                <li class="page-item active">
+                  <span class="page-link">{{ num }}</span>
+                </li>
+              {% elif num > slides.number|add:'-3' and num < slides.number|add:'3' %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            <!-- Botón Última Página -->
+            {% if slides.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ slides.next_page_number }}" aria-label="Siguiente">
+                  <i class="bi bi-chevron-right"></i>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ paginator.num_pages }}" aria-label="Última">
+                  <i class="bi bi-chevron-double-right"></i>
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+              </li>
+              <li class="page-item disabled">
+                <span class="page-link"><i class="bi bi-chevron-double-right"></i></span>
+              </li>
+            {% endif %}
+          </ul>
+          
+          <!-- Información de paginación -->
+          <div class="text-center text-muted mt-2">
+            <small>
+              Mostrando {{ slides.start_index }} - {{ slides.end_index }} de {{ paginator.count }} contenido{{ paginator.count|pluralize }}
+            </small>
+          </div>
+        </nav>
+        {% endif %}
+        {% else %}
+        <div class="text-center py-5">
+          <i class="bi bi-inbox display-1 text-muted"></i>
+          <h4 class="mt-3 text-muted">No hay contenido configurado</h4>
+          <p class="text-muted">Crea tu primer contenido para comenzar</p>
+          <a href="{% url 'create_landing_slide' %}" class="btn btn-custom-success mt-3">
+            <i class="bi bi-plus-circle me-2"></i>Crear Primer Contenido
+          </a>
+        </div>
+        {% endif %}
+
+        <!-- Back Link -->
+        <div class="mt-4 pt-3 border-top">
+          <a href="/home/" class="back-link">
+            <i class="bi bi-arrow-left-circle-fill"></i>
+            Volver al Panel Principal
+          </a>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
